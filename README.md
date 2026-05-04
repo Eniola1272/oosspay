@@ -1,36 +1,83 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# OOSSPAY
+
+A people-first community savings platform for Nigerian users. Save consistently, set financial targets, and request withdrawals — all through a personal dashboard.
+
+## Tech Stack
+
+- **Framework:** Next.js 14+ (App Router) with TypeScript
+- **UI:** shadcn/ui + Tailwind CSS v4
+- **Backend:** Supabase (PostgreSQL, Auth, RLS)
+- **Package Manager:** pnpm
+- **Forms:** React Hook Form + Zod
+- **Email:** Resend
 
 ## Getting Started
 
-First, run the development server:
+### 1. Clone and install
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone <repo-url>
+cd oosspay
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Set up environment variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+cp .env.local.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Fill in your Supabase project URL, anon key, and service role key from the [Supabase dashboard](https://app.supabase.com).
 
-## Learn More
+### 3. Set up the database
 
-To learn more about Next.js, take a look at the following resources:
+1. Open the Supabase SQL Editor
+2. Copy and run `supabase/migrations/001_initial_schema.sql`
+3. Configure Auth in the Supabase dashboard:
+   - Enable Email/Password sign-in
+   - Set `Site URL` to your app URL
+   - Add redirect URLs for password reset (e.g. `http://localhost:3000/login`)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. Run the development server
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+pnpm dev
+```
 
-## Deploy on Vercel
+Open [http://localhost:3000](http://localhost:3000).
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Project Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/
+│   ├── (auth)/         # Login, Register, Forgot Password
+│   ├── (dashboard)/    # User dashboard (protected)
+│   ├── (admin)/        # Admin panel (admin-only)
+│   └── (marketing)/    # Public landing page + static pages
+├── components/
+│   ├── auth/           # Auth forms
+│   ├── dashboard/      # Dashboard components
+│   ├── admin/          # Admin components
+│   ├── landing/        # Landing page sections
+│   └── shared/         # Navbar, Logo, LoadingSpinner
+├── context/            # AuthContext
+├── hooks/              # Data-fetching hooks
+├── lib/
+│   ├── supabase/       # Supabase clients (browser, server, admin, middleware)
+│   ├── constants.ts
+│   ├── utils.ts
+│   └── validations.ts  # Zod schemas
+└── types/              # TypeScript types matching DB schema
+```
+
+## Making a User an Admin
+
+In the Supabase Table Editor, find the user in `profiles` and set `role` to `admin`.
+
+## Deployment (Hostinger JS Hosting)
+
+1. Build: `pnpm build`
+2. Upload the `.next/`, `public/`, `package.json`, and `pnpm-lock.yaml` to Hostinger
+3. Set environment variables in the Hostinger panel
+4. Run `pnpm start` (or configure the start command in Hostinger)
