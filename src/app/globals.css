@@ -49,8 +49,10 @@
 
   /* OOSSPAY brand tokens */
   --color-brand-pink: var(--brand-pink);
+  --color-brand-wine: var(--brand-wine);
   --color-brand-dark: var(--brand-dark);
   --color-brand-light: var(--brand-light);
+  --color-brand-cream: var(--brand-cream);
   --color-brand-success: var(--brand-success);
   --color-brand-warning: var(--brand-warning);
   --color-brand-error: var(--brand-error);
@@ -96,8 +98,10 @@
 
   /* OOSSPAY custom brand variables */
   --brand-pink: #C2185B;
+  --brand-wine: #4A0820;
   --brand-dark: #1A1A2E;
   --brand-light: #FCE4EC;
+  --brand-cream: #FFF8F1;
   --brand-success: #27AE60;
   --brand-warning: #F39C12;
   --brand-error: #E74C3C;
@@ -155,4 +159,87 @@
 /* Tabular figures for balance/number displays */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* === Landing animations === */
+@keyframes oosspay-float {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes oosspay-float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%      { transform: translateY(-12px) rotate(2deg); }
+}
+
+@keyframes oosspay-blob {
+  0%, 100% { transform: translate(0px, 0px) scale(1); }
+  33%      { transform: translate(30px, -40px) scale(1.05); }
+  66%      { transform: translate(-20px, 30px) scale(0.97); }
+}
+
+@keyframes oosspay-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes oosspay-marquee-reverse {
+  0%   { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes oosspay-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes oosspay-spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes oosspay-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-float       { animation: oosspay-float 4s ease-in-out infinite; }
+.animate-float-slow  { animation: oosspay-float-slow 6s ease-in-out infinite; }
+.animate-blob        { animation: oosspay-blob 18s ease-in-out infinite; }
+.animate-marquee     { animation: oosspay-marquee 40s linear infinite; }
+.animate-marquee-rev { animation: oosspay-marquee-reverse 40s linear infinite; }
+.animate-spin-slow   { animation: oosspay-spin-slow 24s linear infinite; }
+
+/* Reveal on scroll — paired with IntersectionObserver toggling .is-visible */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mesh gradient (used on dark CTA-style sections) */
+.bg-mesh-wine {
+  background-color: #4A0820;
+  background-image:
+    radial-gradient(at 18% 22%, rgba(194, 24, 91, 0.55) 0, transparent 45%),
+    radial-gradient(at 82% 18%, rgba(122, 30, 71, 0.5) 0, transparent 50%),
+    radial-gradient(at 50% 90%, rgba(194, 24, 91, 0.35) 0, transparent 55%);
+}
+
+.bg-mesh-pink {
+  background-color: #FCE4EC;
+  background-image:
+    radial-gradient(at 12% 18%, rgba(194, 24, 91, 0.18) 0, transparent 45%),
+    radial-gradient(at 88% 12%, rgba(194, 24, 91, 0.12) 0, transparent 50%),
+    radial-gradient(at 60% 100%, rgba(74, 8, 32, 0.12) 0, transparent 55%);
+}
+
+/* Marquee track helper — child should be duplicated, parent uses overflow-hidden */
+.marquee-track {
+  display: flex;
+  width: max-content;
 }

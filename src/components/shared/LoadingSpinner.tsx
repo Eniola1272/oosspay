@@ -24,7 +24,7 @@ export function FullPageSpinner() {
       <div className="animate-pulse">
         <Logo size="lg" />
       </div>
-      <p className="text-sm text-[#666666] animate-pulse">Loading…</p>
+      <p className="text-sm text-[#666666] animate-pulse">Loading&hellip;</p>
     </div>
   );
 }

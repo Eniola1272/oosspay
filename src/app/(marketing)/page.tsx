@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Navbar } from "@/components/shared/Navbar";
 import { Hero } from "@/components/landing/Hero";
 import { TrustBar } from "@/components/landing/TrustBar";
+import { SeamlessSavings } from "@/components/landing/SeamlessSavings";
 import { About } from "@/components/landing/About";
 import { HowItWorks } from "@/components/landing/HowItWorks";
 import { Services } from "@/components/landing/Services";
@@ -9,7 +10,9 @@ import { WhyChooseUs } from "@/components/landing/WhyChooseUs";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { CTABanner } from "@/components/landing/CTABanner";
 import { FAQ } from "@/components/landing/FAQ";
+import { Newsletter } from "@/components/landing/Newsletter";
 import { Footer } from "@/components/landing/Footer";
+import { RevealProvider } from "@/components/landing/RevealProvider";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
@@ -27,19 +30,23 @@ export const metadata: Metadata = {
 export default function LandingPage() {
   return (
     <AuthProvider>
-      <Navbar />
-      <main>
-        <Hero />
-        <TrustBar />
-        <About />
-        <HowItWorks />
-        <Services />
-        <WhyChooseUs />
-        <Testimonials />
-        <CTABanner />
-        <FAQ />
-      </main>
-      <Footer />
+      <RevealProvider>
+        <Navbar />
+        <main>
+          <Hero />
+          <TrustBar />
+          <SeamlessSavings />
+          <About />
+          <HowItWorks />
+          <Services />
+          <WhyChooseUs />
+          <Testimonials />
+          <CTABanner />
+          <FAQ />
+          <Newsletter />
+        </main>
+        <Footer />
+      </RevealProvider>
     </AuthProvider>
   );
 }
