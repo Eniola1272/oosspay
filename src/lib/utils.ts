@@ -36,6 +36,13 @@ export function getSavingsProgress(current: number, target: number): number {
   return Math.min(Math.round((current / target) * 100), 100);
 }
 
+export function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
+
 export function getInitials(name: string): string {
   return name
     .split(" ")
