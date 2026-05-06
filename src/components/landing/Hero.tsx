@@ -1,20 +1,66 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ChevronDown, Star, TrendingUp, Bell } from "lucide-react";
 
-const AVATAR_INITIALS = ["EA", "NG", "CK", "AB"];
+const HERO_AVATARS = [
+  { src: "/images/person-1.png", alt: "Member" },
+  { src: "/images/testimonial-3.png", alt: "Member" },
+  { src: "/images/person-3.png", alt: "Member" },
+  { src: "/images/person-2.png", alt: "Member" },
+];
 
 export function Hero() {
   return (
     <section
       id="hero"
-      className="relative bg-mesh-pink pt-32 pb-20 overflow-hidden"
+      className="relative bg-white pt-32 pb-20 overflow-hidden"
     >
-      {/* Animated background blobs */}
-      <div className="absolute -top-40 -right-32 w-[640px] h-[640px] bg-[#C2185B]/15 rounded-full blur-[120px] pointer-events-none animate-blob" />
+      {/* Soft abstract decorations */}
+      <PiggyBankIllustration />
+
+      {/* Pink dotted pattern (top-left area) */}
+      <svg
+        aria-hidden
+        className="absolute top-32 left-8 w-32 h-32 opacity-50 pointer-events-none"
+        viewBox="0 0 120 120"
+        fill="none"
+      >
+        <defs>
+          <pattern
+            id="hero-dots"
+            x="0"
+            y="0"
+            width="14"
+            height="14"
+            patternUnits="userSpaceOnUse"
+          >
+            <circle cx="2" cy="2" r="1.5" fill="#C2185B" fillOpacity="0.35" />
+          </pattern>
+        </defs>
+        <rect width="120" height="120" fill="url(#hero-dots)" />
+      </svg>
+
+      {/* Floating pink balls — abstract, varied sizes */}
+      <div className="absolute top-40 right-[18%] w-6 h-6 rounded-full bg-linear-to-br from-[#C2185B] to-[#a01549] shadow-lg shadow-[#C2185B]/20 animate-float pointer-events-none" />
       <div
-        className="absolute top-1/2 -left-40 w-[480px] h-[480px] bg-[#4A0820]/15 rounded-full blur-[100px] pointer-events-none animate-blob"
-        style={{ animationDelay: "4s" }}
+        className="absolute top-[55%] left-[8%] w-4 h-4 rounded-full bg-[#C2185B]/70 shadow-md shadow-[#C2185B]/20 animate-float-slow pointer-events-none"
+        style={{ animationDelay: "1.2s" }}
       />
+      <div
+        className="absolute top-[70%] right-[44%] w-3 h-3 rounded-full bg-[#FCE4EC] ring-2 ring-[#C2185B]/40 animate-float pointer-events-none"
+        style={{ animationDelay: "2.4s" }}
+      />
+      <div
+        className="absolute bottom-32 left-[30%] w-8 h-8 rounded-full bg-linear-to-br from-[#FCE4EC] to-[#C2185B]/30 shadow-md animate-float-slow pointer-events-none"
+        style={{ animationDelay: "0.8s" }}
+      />
+      <div
+        className="absolute top-24 right-1/3 w-2 h-2 rounded-full bg-[#C2185B] animate-float pointer-events-none"
+        style={{ animationDelay: "3s" }}
+      />
+
+      {/* Subtle pink wash behind headline area, very faint */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-[#FCE4EC]/30 rounded-full blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
         {/* Announcement pill */}
@@ -47,7 +93,9 @@ export function Hero() {
               className="reveal text-lg text-[#1A1A2E]/65 mb-10 leading-relaxed max-w-md"
               data-reveal-delay="200"
             >
-              A people-first savings platform built for collective growth. Set targets, save consistently, and watch your financial future take shape &mdash; together.
+              A people-first savings platform built for collective growth. Set
+              targets, save consistently, and watch your financial future take
+              shape &mdash; together.
             </p>
 
             <div
@@ -59,7 +107,10 @@ export function Hero() {
                 className="group inline-flex items-center gap-2 bg-[#C2185B] hover:bg-[#a01549] text-white px-8 py-4 rounded-full font-semibold text-sm shadow-xl shadow-[#C2185B]/30 transition-all hover:-translate-y-px"
               >
                 Start Saving Today
-                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                <ArrowRight
+                  size={16}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
               </Link>
               <a
                 href="#how-it-works"
@@ -76,17 +127,18 @@ export function Hero() {
               data-reveal-delay="440"
             >
               <div className="flex -space-x-2.5">
-                {AVATAR_INITIALS.map((initials, i) => (
+                {HERO_AVATARS.map(({ src, alt }) => (
                   <span
-                    key={initials}
-                    className="w-10 h-10 rounded-full border-2 border-[#FCE4EC] flex items-center justify-center text-[11px] font-bold text-white shadow-sm"
-                    style={{
-                      background: i % 2 === 0
-                        ? "linear-gradient(135deg, #C2185B, #4A0820)"
-                        : "linear-gradient(135deg, #1A1A2E, #4A0820)",
-                    }}
+                    key={src}
+                    className="relative w-10 h-10 rounded-full border-2 border-[#FCE4EC] overflow-hidden bg-[#FCE4EC] shadow-sm"
                   >
-                    {initials}
+                    <Image
+                      src={src}
+                      alt={alt}
+                      fill
+                      sizes="40px"
+                      className="object-cover"
+                    />
                   </span>
                 ))}
                 <span className="w-10 h-10 rounded-full border-2 border-[#FCE4EC] bg-white flex items-center justify-center text-[10px] font-extrabold text-[#C2185B] shadow-sm">
@@ -96,26 +148,131 @@ export function Hero() {
               <div>
                 <div className="flex items-center gap-0.5 mb-0.5">
                   {[1, 2, 3, 4, 5].map((i) => (
-                    <Star key={i} size={13} className="text-[#C2185B] fill-[#C2185B]" />
+                    <Star
+                      key={i}
+                      size={13}
+                      className="text-[#C2185B] fill-[#C2185B]"
+                    />
                   ))}
                 </div>
                 <p className="text-sm font-semibold text-[#1A1A2E]">
-                  Trusted by <span className="text-[#C2185B]">500+</span> Nigerian savers
+                  Trusted by <span className="text-[#C2185B]">500+</span>{" "}
+                  Nigerian savers
                 </p>
               </div>
             </div>
           </div>
 
           {/* Right: Phone mockup */}
-          <div className="reveal relative flex justify-center lg:justify-end" data-reveal-delay="200">
+          <div
+            className="reveal relative flex justify-center lg:justify-end"
+            data-reveal-delay="200"
+          >
             <PhoneMockup />
           </div>
         </div>
       </div>
-
-      {/* Bottom fade into next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-linear-to-b from-transparent to-white pointer-events-none z-0" />
     </section>
+  );
+}
+
+function PiggyBankIllustration() {
+  return (
+    <svg
+      aria-hidden
+      className="absolute -bottom-10 right-[6%] w-72 h-72 lg:w-96 lg:h-96 opacity-[0.12] pointer-events-none rotate-[-8deg]"
+      viewBox="0 0 200 160"
+      fill="none"
+    >
+      <defs>
+        <linearGradient id="piggy-grad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#C2185B" />
+          <stop offset="100%" stopColor="#4A0820" />
+        </linearGradient>
+      </defs>
+
+      {/* Body */}
+      <ellipse cx="100" cy="92" rx="68" ry="48" fill="url(#piggy-grad)" />
+
+      {/* Snout */}
+      <ellipse cx="160" cy="92" rx="22" ry="20" fill="url(#piggy-grad)" />
+      <circle cx="160" cy="88" r="3" fill="#1A1A2E" opacity="0.4" />
+      <circle cx="160" cy="98" r="3" fill="#1A1A2E" opacity="0.4" />
+
+      {/* Coin slot */}
+      <rect
+        x="86"
+        y="48"
+        width="28"
+        height="6"
+        rx="3"
+        fill="#1A1A2E"
+        opacity="0.55"
+      />
+
+      {/* Eye */}
+      <circle cx="138" cy="78" r="3.5" fill="#1A1A2E" opacity="0.6" />
+      <circle cx="139" cy="77" r="1" fill="#fff" />
+
+      {/* Ear */}
+      <path d="M122 56 L132 38 L140 60 Z" fill="url(#piggy-grad)" />
+
+      {/* Tail (curly) */}
+      <path
+        d="M34 84 q-10 -2 -8 -10 q2 -7 9 -5"
+        stroke="url(#piggy-grad)"
+        strokeWidth="5"
+        strokeLinecap="round"
+        fill="none"
+      />
+
+      {/* Legs */}
+      <rect
+        x="62"
+        y="132"
+        width="10"
+        height="18"
+        rx="3"
+        fill="url(#piggy-grad)"
+      />
+      <rect
+        x="92"
+        y="134"
+        width="10"
+        height="18"
+        rx="3"
+        fill="url(#piggy-grad)"
+      />
+      <rect
+        x="122"
+        y="134"
+        width="10"
+        height="18"
+        rx="3"
+        fill="url(#piggy-grad)"
+      />
+      <rect
+        x="148"
+        y="132"
+        width="10"
+        height="18"
+        rx="3"
+        fill="url(#piggy-grad)"
+      />
+
+      {/* Coin dropping in */}
+      <circle cx="100" cy="22" r="9" fill="#C2185B" opacity="0.7" />
+      <text
+        x="100"
+        y="26"
+        textAnchor="middle"
+        fontSize="11"
+        fontWeight="bold"
+        fill="#fff"
+      >
+        ₦
+      </text>
+    </svg>
   );
 }
 
@@ -146,7 +303,9 @@ function PhoneMockup() {
           <div className="px-5 pt-3 pb-4">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-[9px] text-gray-400 uppercase tracking-wide">Welcome back</p>
+                <p className="text-[9px] text-gray-400 uppercase tracking-wide">
+                  Welcome back
+                </p>
                 <p className="text-sm font-bold text-[#1A1A2E]">Adaeze</p>
               </div>
               <div className="w-8 h-8 rounded-full bg-linear-to-br from-[#C2185B] to-[#4A0820] flex items-center justify-center text-white text-[10px] font-bold">
@@ -158,44 +317,68 @@ function PhoneMockup() {
             <div className="relative overflow-hidden bg-linear-to-br from-[#C2185B] via-[#a01549] to-[#4A0820] rounded-2xl p-4 text-white mb-3">
               <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full bg-white/10" />
               <div className="absolute -bottom-10 -left-6 w-20 h-20 rounded-full bg-white/5" />
-              <p className="text-[10px] text-white/70 font-medium relative">Total Balance</p>
+              <p className="text-[10px] text-white/70 font-medium relative">
+                Total Balance
+              </p>
               <p className="text-2xl font-extrabold mb-2 relative tabular-nums">
                 &#8358;20,000<span className="text-sm text-white/60">.00</span>
               </p>
               <div className="h-1.5 bg-white/20 rounded-full overflow-hidden relative">
                 <div className="h-full w-3/4 bg-white rounded-full" />
               </div>
-              <p className="text-[9px] text-white/70 mt-1 relative">75% of &#8358;26,500 goal</p>
+              <p className="text-[9px] text-white/70 mt-1 relative">
+                75% of &#8358;26,500 goal
+              </p>
             </div>
 
             {/* Quick stats */}
             <div className="grid grid-cols-2 gap-2 mb-3">
               <div className="bg-[#FCE4EC]/60 rounded-xl p-2.5">
-                <p className="text-[8px] text-gray-500 uppercase font-medium">This Month</p>
-                <p className="text-xs font-bold text-[#1A1A2E] tabular-nums">&#8358;5,200</p>
+                <p className="text-[8px] text-gray-500 uppercase font-medium">
+                  This Month
+                </p>
+                <p className="text-xs font-bold text-[#1A1A2E] tabular-nums">
+                  &#8358;5,200
+                </p>
               </div>
               <div className="bg-[#FCE4EC]/60 rounded-xl p-2.5">
-                <p className="text-[8px] text-gray-500 uppercase font-medium">Streak</p>
+                <p className="text-[8px] text-gray-500 uppercase font-medium">
+                  Streak
+                </p>
                 <p className="text-xs font-bold text-[#1A1A2E]">28 days</p>
               </div>
             </div>
 
             {/* Recent activity */}
             <div className="space-y-1.5">
-              <p className="text-[8px] text-gray-400 uppercase tracking-wide font-semibold">Recent</p>
+              <p className="text-[8px] text-gray-400 uppercase tracking-wide font-semibold">
+                Recent
+              </p>
               <div className="flex items-center justify-between bg-gray-50 rounded-lg px-2.5 py-1.5">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-[#27AE60]/15 flex items-center justify-center text-[9px] text-[#27AE60] font-bold">+</div>
-                  <span className="text-[9px] font-semibold text-[#1A1A2E]">Deposit</span>
+                  <div className="w-6 h-6 rounded-full bg-[#27AE60]/15 flex items-center justify-center text-[9px] text-[#27AE60] font-bold">
+                    +
+                  </div>
+                  <span className="text-[9px] font-semibold text-[#1A1A2E]">
+                    Deposit
+                  </span>
                 </div>
-                <span className="text-[9px] font-bold text-[#27AE60] tabular-nums">+&#8358;5,000</span>
+                <span className="text-[9px] font-bold text-[#27AE60] tabular-nums">
+                  +&#8358;5,000
+                </span>
               </div>
               <div className="flex items-center justify-between bg-gray-50 rounded-lg px-2.5 py-1.5">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-[#C2185B]/15 flex items-center justify-center text-[9px] text-[#C2185B] font-bold">&#9733;</div>
-                  <span className="text-[9px] font-semibold text-[#1A1A2E]">Goal hit</span>
+                  <div className="w-6 h-6 rounded-full bg-[#C2185B]/15 flex items-center justify-center text-[9px] text-[#C2185B] font-bold">
+                    &#9733;
+                  </div>
+                  <span className="text-[9px] font-semibold text-[#1A1A2E]">
+                    Goal hit
+                  </span>
                 </div>
-                <span className="text-[9px] font-bold text-[#1A1A2E]">Phone</span>
+                <span className="text-[9px] font-bold text-[#1A1A2E]">
+                  Phone
+                </span>
               </div>
             </div>
           </div>
@@ -209,7 +392,9 @@ function PhoneMockup() {
             <TrendingUp size={14} className="text-[#27AE60]" />
           </div>
           <div>
-            <p className="text-[9px] text-gray-400 uppercase tracking-wide font-medium">Growth</p>
+            <p className="text-[9px] text-gray-400 uppercase tracking-wide font-medium">
+              Growth
+            </p>
             <p className="text-xs font-extrabold text-[#1A1A2E]">+12% MoM</p>
           </div>
         </div>
@@ -225,8 +410,12 @@ function PhoneMockup() {
             <Bell size={14} className="text-[#C2185B]" />
           </div>
           <div>
-            <p className="text-[9px] text-gray-400 uppercase tracking-wide font-medium">Notification</p>
-            <p className="text-xs font-extrabold text-[#1A1A2E]">Goal reached!</p>
+            <p className="text-[9px] text-gray-400 uppercase tracking-wide font-medium">
+              Notification
+            </p>
+            <p className="text-xs font-extrabold text-[#1A1A2E]">
+              Goal reached!
+            </p>
           </div>
         </div>
       </div>
@@ -236,7 +425,9 @@ function PhoneMockup() {
         className="absolute -left-8 bottom-12 bg-[#1A1A2E] rounded-2xl shadow-2xl px-3 py-2 animate-float z-20"
         style={{ animationDelay: "0.8s", animationDuration: "5s" }}
       >
-        <p className="text-[8px] text-white/60 uppercase tracking-wide font-medium">Streak</p>
+        <p className="text-[8px] text-white/60 uppercase tracking-wide font-medium">
+          Streak
+        </p>
         <div className="flex items-center gap-1">
           <span className="text-sm font-bold text-[#F39C12]">&#9889;</span>
           <p className="text-xs font-extrabold text-white">28 days</p>
