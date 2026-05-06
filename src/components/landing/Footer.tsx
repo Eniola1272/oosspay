@@ -1,144 +1,199 @@
+"use client";
+
+import { useState, type SVGProps } from "react";
 import Link from "next/link";
-import { Logo } from "@/components/shared/Logo";
-import { MessageCircle, Camera, Music2, Mail, MapPin } from "lucide-react";
-import { WHATSAPP_LINK } from "@/lib/constants";
+import { Send } from "lucide-react";
 
 export function Footer() {
-  const year = new Date().getFullYear();
+  const [email, setEmail] = useState("");
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setEmail("");
+  }
 
   return (
-    <footer className="relative bg-[#1A1A2E] text-white overflow-hidden z-60">
-      <div className="absolute top-0 right-1/4 w-96 h-96 rounded-full bg-[#C2185B]/15 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-72 h-72 rounded-full bg-[#4A0820]/30 blur-[100px] pointer-events-none" />
-
-      <div className="container mx-auto px-4 max-w-7xl py-20 relative z-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10">
-          <div className="lg:col-span-5 space-y-5">
-            <Logo variant="white" showTagline size="lg" />
-            <p className="text-white/60 text-sm leading-relaxed max-w-sm">
-              Africa People First Economic Community &mdash; Making Many Wealthy
-              one saver at a time.
+    <footer className="bg-[#5f1f3e] text-white pt-20 pb-8 px-6">
+      <div className="max-w-7xl mx-auto">
+        {/* Top Row */}
+        <div className="grid lg:grid-cols-2 gap-12 items-center border-b border-white/10 pb-16 mb-16">
+          <div>
+            <h3 className="text-3xl font-bold mb-4">Keep up with the latest</h3>
+            <p className="text-pink-100 text-lg">
+              Join our newsletter to get the latest news and resources.
             </p>
-
-            <div className="flex items-center gap-3 text-white/50 text-xs">
-              <span className="inline-flex items-center gap-1.5">
-                <MapPin size={12} /> Nigeria
-              </span>
-              <span className="text-white/20">|</span>
-              <span className="inline-flex items-center gap-1.5">
-                <Mail size={12} /> hello@oosspay.com
-              </span>
-            </div>
           </div>
 
-          <div className="lg:col-span-3">
-            <h3 className="font-extrabold text-white mb-5 text-sm uppercase tracking-wider">
-              Explore
-            </h3>
-            <ul className="space-y-3">
-              {[
-                { label: "Home", href: "#hero" },
-                { label: "About", href: "/about" },
-                { label: "How It Works", href: "#how-it-works" },
-                { label: "Services", href: "#services" },
-                { label: "FAQ", href: "#faq" },
-              ].map(({ label, href }) => (
-                <li key={label}>
-                  <Link
-                    href={href}
-                    className="text-white/55 hover:text-[#C2185B] text-sm transition-colors"
-                  >
-                    {label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <div className="flex flex-col items-end">
+            <div className="w-full max-w-md">
+              <label htmlFor="footer-email" className="text-sm font-medium text-pink-200 mb-2 block">
+                Subscribe
+              </label>
+              <form className="flex gap-2" onSubmit={onSubmit}>
+                <input
+                  id="footer-email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  className="bg-white/10 border border-white/20 text-white placeholder:text-white/40 rounded-full px-6 py-3 flex-1 min-w-0 focus:outline-none focus:border-white/50 focus:bg-white/20 transition-all"
+                />
+                <button
+                  type="submit"
+                  className="bg-white text-[#5f1f3e] px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors flex items-center gap-2"
+                >
+                  Join <Send size={18} />
+                </button>
+              </form>
 
-          <div className="lg:col-span-2">
-            <h3 className="font-extrabold text-white mb-5 text-sm uppercase tracking-wider">
-              Account
-            </h3>
-            <ul className="space-y-3">
-              <li>
-                <Link
-                  href="/login"
-                  className="text-white/55 hover:text-[#C2185B] text-sm transition-colors"
-                >
-                  Login
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/register"
-                  className="text-white/55 hover:text-[#C2185B] text-sm transition-colors"
-                >
-                  Sign Up
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/terms"
-                  className="text-white/55 hover:text-[#C2185B] text-sm transition-colors"
-                >
-                  Terms
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/privacy"
-                  className="text-white/55 hover:text-[#C2185B] text-sm transition-colors"
-                >
-                  Privacy
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div className="lg:col-span-2">
-            <h3 className="font-extrabold text-white mb-5 text-sm uppercase tracking-wider">
-              Connect
-            </h3>
-            <div className="flex flex-col gap-3">
-              <a
-                href={WHATSAPP_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-white/55 hover:text-[#25D366] text-sm transition-colors"
-              >
-                <MessageCircle size={15} /> WhatsApp
-              </a>
-              <a
-                href="https://instagram.com/oosspayofficial"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-white/55 hover:text-[#E1306C] text-sm transition-colors"
-              >
-                <Camera size={15} /> Instagram
-              </a>
-              <a
-                href="https://tiktok.com/@oosspay"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-white/55 hover:text-white text-sm transition-colors"
-              >
-                <Music2 size={15} /> TikTok
-              </a>
+              <div className="flex gap-4 mt-6 justify-start lg:justify-start">
+                <SocialLink href="https://facebook.com" label="Facebook">
+                  <FacebookIcon />
+                </SocialLink>
+                <SocialLink href="https://twitter.com" label="Twitter">
+                  <TwitterIcon />
+                </SocialLink>
+                <SocialLink href="https://instagram.com/oosspayofficial" label="Instagram">
+                  <InstagramIcon />
+                </SocialLink>
+                <SocialLink href="https://linkedin.com" label="LinkedIn">
+                  <LinkedinIcon />
+                </SocialLink>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-16 pt-8 border-t border-white/10">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-            <p className="text-white/40 text-xs">
-              &copy; {year} OOSSPAY. Powered by OOSS. All rights reserved.
+        {/* Bottom Row */}
+        <div className="grid lg:grid-cols-4 gap-12 items-start relative">
+          {/* Logo */}
+          <div className="lg:col-span-1">
+            <div className="flex items-center gap-2 mb-6">
+              <span className="font-bold text-2xl tracking-tight text-white">OOSSPAY</span>
+            </div>
+            <p className="text-pink-100/60 text-sm max-w-xs">
+              Making many wealthy. Starting with you. Safe, transparent, and collaborative savings.
             </p>
-            <p className="text-white/30 text-xs italic">
-              Built with people-first principles &mdash; in Nigeria.
+          </div>
+
+          {/* Links Grid */}
+          <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
+            <FooterColumn
+              title="Company"
+              items={[
+                { label: "About Us", href: "/about" },
+                { label: "Careers", href: "/about" },
+                { label: "Contact", href: "/about" },
+                { label: "Blog", href: "/about" },
+              ]}
+            />
+            <FooterColumn
+              title="Product"
+              items={[
+                { label: "Target Savings", href: "/savings" },
+                { label: "Group Kolo", href: "/savings" },
+                { label: "Investment", href: "/savings" },
+                { label: "Pricing", href: "/about" },
+              ]}
+            />
+            <FooterColumn
+              title="Legal"
+              items={[
+                { label: "Terms of Service", href: "/terms" },
+                { label: "Privacy Policy", href: "/privacy" },
+                { label: "Security", href: "/privacy" },
+                { label: "Cookie Policy", href: "/privacy" },
+              ]}
+            />
+          </div>
+
+          {/* Copyright */}
+          <div className="lg:absolute lg:bottom-0 lg:right-0 pt-8 lg:pt-0 mt-8 lg:mt-0 border-t border-white/10 lg:border-0 w-full lg:w-auto text-left lg:text-right">
+            <p className="text-pink-100/40 text-xs">
+              &copy; {new Date().getFullYear()} OOSSPAY Inc. All rights reserved.
             </p>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterColumn({ title, items }: { title: string; items: { label: string; href: string }[] }) {
+  return (
+    <div>
+      <h4 className="font-bold text-white mb-6 uppercase tracking-wider text-sm">{title}</h4>
+      <ul className="space-y-4">
+        {items.map(({ label, href }) => (
+          <li key={label}>
+            <Link
+              href={href}
+              className="text-pink-100 hover:text-white transition-colors text-sm"
+            >
+              {label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function SocialLink({
+  href,
+  label,
+  children,
+}: {
+  href: string;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-white/20 transition-colors"
+    >
+      {children}
+    </a>
+  );
+}
+
+// Inline brand icons (lucide-react in this project doesn't ship Facebook/Twitter/Instagram/Linkedin)
+function FacebookIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.14 8.44 9.94v-7.03H7.9v-2.91h2.54V9.84c0-2.51 1.49-3.9 3.78-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.91h-2.34V22c4.78-.8 8.43-4.94 8.43-9.94z" />
+    </svg>
+  );
+}
+
+function TwitterIcon(props: SVGProps<SVGSVGElement>) {
+  // X/Twitter mark
+  return (
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zM17.083 19.77h1.833L7.084 4.126H5.117z" />
+    </svg>
+  );
+}
+
+function InstagramIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden {...props}>
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  );
+}
+
+function LinkedinIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg width={18} height={18} viewBox="0 0 24 24" fill="currentColor" aria-hidden {...props}>
+      <path d="M20.452 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.356V9h3.414v1.561h.046c.477-.9 1.637-1.852 3.37-1.852 3.601 0 4.266 2.37 4.266 5.455v6.288zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.554V9h3.565v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.226.792 24 1.771 24h20.451C23.2 24 24 23.226 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
   );
 }

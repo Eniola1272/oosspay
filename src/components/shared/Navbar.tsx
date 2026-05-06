@@ -130,13 +130,36 @@ const navGroups: NavGroup[] = [
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastY = useRef(0);
   const { user } = useAuth();
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    lastY.current = window.scrollY;
+    const HIDE_AFTER = 80; // don't hide while near the very top
+    const DELTA = 8; // ignore tiny jitter
+
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 20);
+
+      const diff = y - lastY.current;
+      if (Math.abs(diff) < DELTA) return;
+
+      if (diff > 0 && y > HIDE_AFTER) {
+        // scrolling down past threshold → hide
+        setHidden(true);
+        setActiveMenu(null);
+      } else if (diff < 0) {
+        // scrolling up → reveal
+        setHidden(false);
+      }
+      lastY.current = y;
+    };
+
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -156,7 +179,8 @@ export function Navbar() {
     <header
       className={cn(
         "fixed left-4 right-4 z-50 transition-all duration-300 max-w-7xl mx-auto",
-        scrolled ? "top-3" : "top-4"
+        scrolled ? "top-3" : "top-4",
+        hidden ? "-translate-y-[150%] opacity-0" : "translate-y-0 opacity-100"
       )}
     >
       <div
