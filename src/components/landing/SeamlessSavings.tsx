@@ -36,7 +36,7 @@ export function SeamlessSavings() {
           <div className="reveal relative rounded-[2.5rem] overflow-hidden bg-[#2D0F1F] group min-h-[420px] lg:min-h-0">
             <div className="absolute inset-0 bg-linear-to-t from-[#7A2850]/85 via-[#2D0F1F]/40 to-transparent z-10" />
 
-            <div className="absolute -top-4 -right-4 w-[220px] md:w-[320px] lg:w-[360px] xl:w-[400px] aspect-[1/2] z-0 rotate-[45deg] translate-x-[20%] -translate-y-[20%]">
+            <div className="absolute top-0 right-0 w-[160px] md:w-[240px] lg:w-[280px] xl:w-[300px] aspect-[1/2] z-0 rotate-[45deg] translate-x-[25%] -translate-y-[25%]">
               <Image
                 src="/images/phone-mockup.png"
                 alt="OOSSPAY app interface"
