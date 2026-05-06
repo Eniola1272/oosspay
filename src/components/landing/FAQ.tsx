@@ -40,7 +40,7 @@ const faqs = [
 
 export function FAQ() {
   return (
-    <section id="faq" className="relative py-24 bg-white overflow-hidden">
+    <section id="faq" className="relative py-32 bg-white overflow-hidden">
       <div className="absolute top-20 -right-20 w-72 h-72 rounded-full bg-[#FCE4EC]/40 blur-[80px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-3xl relative z-10">

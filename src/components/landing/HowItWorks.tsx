@@ -23,11 +23,11 @@ const steps = [
 
 export function HowItWorks() {
   return (
-    <section id="how-it-works" className="relative py-24 bg-[#FAFAFA] overflow-hidden">
+    <section id="how-it-works" className="relative py-32 bg-[#FAFAFA] overflow-hidden">
       <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-[#C2185B]/30 to-transparent" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        <div className="reveal text-center mb-16 space-y-3">
+        <div className="reveal text-center mb-20 space-y-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C2185B]">How It Works</p>
           <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A1A2E] tracking-tight">
             Start Saving in <span className="text-[#C2185B]">3 Simple Steps</span>
@@ -62,7 +62,7 @@ export function HowItWorks() {
             />
           </svg>
 
-          <div className="grid md:grid-cols-3 gap-8 relative z-10">
+          <div className="grid md:grid-cols-3 gap-12 lg:gap-16 relative z-10">
             {steps.map(({ number, icon: Icon, title, desc }, i) => (
               <div
                 key={number}

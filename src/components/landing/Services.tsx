@@ -55,9 +55,9 @@ const ACCENTS: Record<Accent, string> = {
 
 export function Services() {
   return (
-    <section id="services" className="relative py-24 bg-white">
+    <section id="services" className="relative py-32 bg-white">
       <div className="container mx-auto px-4 max-w-7xl">
-        <div className="reveal flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14">
+        <div className="reveal flex flex-col md:flex-row md:items-end justify-between gap-6 mb-20">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C2185B] mb-4">Our Services</p>
             <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A1A2E] tracking-tight leading-[1.05]">
@@ -70,7 +70,7 @@ export function Services() {
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-5">
+        <div className="grid lg:grid-cols-3 gap-6 lg:gap-7">
           {services.map(({ icon: Icon, title, desc, accent, span }, i) => {
             const isDark = accent !== "white";
             return (

@@ -16,10 +16,17 @@ import { RevealProvider } from "@/components/landing/RevealProvider";
 import { AuthProvider } from "@/context/AuthContext";
 
 export const metadata: Metadata = {
-  title: "OOSSPAY — Save Smarter, Grow Together | People-First Savings Platform",
+  title:
+    "OOSSPAY — Save Smarter, Grow Together | People-First Savings Platform",
   description:
     "OOSSPAY is Nigeria's people-first savings community. Set targets, save consistently, and track your wealth — all from your personal dashboard. Join 500+ members today.",
-  keywords: ["OOSSPAY", "savings platform Nigeria", "target savings", "save money Nigeria", "people first savings"],
+  keywords: [
+    "OOSSPAY",
+    "savings platform Nigeria",
+    "target savings",
+    "save money Nigeria",
+    "people first savings",
+  ],
   openGraph: {
     title: "OOSSPAY — Your Wealth Starts With Your Community",
     description:

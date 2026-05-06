@@ -84,7 +84,7 @@ export function TrustBar() {
       </div>
 
       {/* Stats grid */}
-      <div className="container mx-auto px-4 max-w-6xl py-14">
+      <div className="container mx-auto px-4 max-w-6xl py-20">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-10 gap-x-6 divide-x divide-[#E0E0E0]">
           {stats.map((s, i) => (
             <div key={s.label} className={i === 0 ? "" : "px-6"}>

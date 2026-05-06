@@ -1,4 +1,11 @@
+import Image from "next/image";
 import { CheckCircle2, Sparkles, Award } from "lucide-react";
+
+const FOUNDER_AVATARS = [
+  "/images/person-1.png",
+  "/images/person-2.png",
+  "/images/person-3.png",
+];
 
 const reasons = [
   {
@@ -25,7 +32,7 @@ const reasons = [
 
 export function WhyChooseUs() {
   return (
-    <section id="why-us" className="relative py-24 overflow-hidden bg-mesh-pink">
+    <section id="why-us" className="relative py-32 overflow-hidden bg-mesh-pink">
       <div className="absolute -top-20 right-0 w-[500px] h-[500px] rounded-full bg-[#C2185B]/15 blur-[120px] pointer-events-none animate-blob" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
@@ -43,32 +50,40 @@ export function WhyChooseUs() {
               </p>
             </div>
 
-            <div className="reveal hidden lg:block relative bg-white rounded-3xl p-6 shadow-xl border border-white max-w-sm" data-reveal-delay="200">
-              <div className="absolute -top-3 -right-3 w-12 h-12 rounded-2xl bg-linear-to-br from-[#C2185B] to-[#4A0820] flex items-center justify-center shadow-lg">
+            <div className="reveal hidden lg:block relative bg-white rounded-3xl overflow-hidden shadow-xl border border-white max-w-sm mt-10" data-reveal-delay="200">
+              <div className="absolute -top-3 -right-3 w-12 h-12 rounded-2xl bg-linear-to-br from-[#C2185B] to-[#4A0820] flex items-center justify-center shadow-lg z-10">
                 <Award size={20} className="text-white" />
               </div>
-              <div className="flex items-center gap-2 mb-4">
-                <Sparkles size={14} className="text-[#C2185B]" />
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#C2185B]">The OOSSPAY Promise</span>
+
+              {/* Savings box hero image */}
+              <div className="relative aspect-[5/3] bg-linear-to-br from-[#FCE4EC] to-white">
+                <Image
+                  src="/images/savings-box.png"
+                  alt="OOSSPAY savings box"
+                  fill
+                  sizes="380px"
+                  className="object-contain p-6"
+                />
               </div>
-              <p className="text-sm text-[#1A1A2E] font-semibold leading-relaxed mb-3">
-                &ldquo;Your savings will never fund our bonuses. Period.&rdquo;
-              </p>
-              <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
-                <div className="flex -space-x-2">
-                  {["EA", "NG", "CK"].map((initials, idx) => (
-                    <div
-                      key={initials}
-                      className="w-7 h-7 rounded-full border-2 border-white text-[10px] font-bold text-white flex items-center justify-center"
-                      style={{
-                        background: idx % 2 === 0 ? "linear-gradient(135deg, #C2185B, #4A0820)" : "linear-gradient(135deg, #1A1A2E, #4A0820)",
-                      }}
-                    >
-                      {initials}
-                    </div>
-                  ))}
+
+              <div className="p-6 pt-4">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles size={14} className="text-[#C2185B]" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#C2185B]">The OOSSPAY Promise</span>
                 </div>
-                <p className="text-[10px] text-[#1A1A2E]/55 font-medium">&mdash; The OOSSPAY founding team</p>
+                <p className="text-sm text-[#1A1A2E] font-semibold leading-relaxed mb-4">
+                  &ldquo;Your savings will never fund our bonuses. Period.&rdquo;
+                </p>
+                <div className="flex items-center gap-3 pt-4 border-t border-gray-100">
+                  <div className="flex -space-x-2">
+                    {FOUNDER_AVATARS.map((src) => (
+                      <span key={src} className="relative w-7 h-7 rounded-full border-2 border-white overflow-hidden bg-[#FCE4EC]">
+                        <Image src={src} alt="Founder" fill sizes="28px" className="object-cover" />
+                      </span>
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-[#1A1A2E]/55 font-medium">&mdash; The OOSSPAY founding team</p>
+                </div>
               </div>
             </div>
           </div>

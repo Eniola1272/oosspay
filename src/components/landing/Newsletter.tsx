@@ -21,7 +21,7 @@ export function Newsletter() {
   }
 
   return (
-    <section id="newsletter" className="relative bg-[#FCE4EC] py-20 overflow-hidden">
+    <section id="newsletter" className="relative bg-[#FCE4EC] py-28 overflow-hidden">
       <div className="absolute -top-20 -right-20 w-[400px] h-[400px] rounded-full bg-[#C2185B]/15 blur-[100px] pointer-events-none animate-blob" />
       <div className="absolute -bottom-20 -left-20 w-[400px] h-[400px] rounded-full bg-[#4A0820]/10 blur-[100px] pointer-events-none animate-blob" style={{ animationDelay: "3s" }} />
 

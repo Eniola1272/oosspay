@@ -3,7 +3,7 @@ import { ArrowRight, Shield, Clock, Star, TrendingUp, Wallet, Sparkles } from "l
 
 export function CTABanner() {
   return (
-    <section id="cta" className="relative py-24 overflow-hidden">
+    <section id="cta" className="relative py-32 overflow-hidden">
       <div className="absolute inset-0 bg-mesh-wine" />
       <div className="absolute -top-32 -left-32 w-[600px] h-[600px] rounded-full bg-[#C2185B]/30 blur-[120px] animate-blob pointer-events-none" />
       <div

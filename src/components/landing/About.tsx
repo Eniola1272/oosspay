@@ -1,12 +1,13 @@
-import { Eye, Target, Heart, PiggyBank, Coins } from "lucide-react";
+import Image from "next/image";
+import { Eye, Target, Heart, Coins, Sparkles } from "lucide-react";
 
 export function About() {
   return (
-    <section id="about" className="relative py-24 bg-white overflow-hidden">
+    <section id="about" className="relative py-32 bg-white overflow-hidden">
       <div className="absolute top-1/3 -left-24 w-72 h-72 rounded-full bg-[#FCE4EC]/40 blur-[80px] pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-20 items-center">
           {/* Left: Copy + Pillars */}
           <div className="space-y-6">
             <div className="reveal">
@@ -43,41 +44,41 @@ export function About() {
             </div>
           </div>
 
-          {/* Right: Visual money jar */}
+          {/* Right: Photo with floating cards */}
           <div className="reveal relative" data-reveal-delay="200">
-            <div className="relative aspect-square max-w-md mx-auto">
-              <div className="absolute inset-0 bg-linear-to-br from-[#FCE4EC] via-white to-[#FCE4EC]/40 rounded-[3rem]" />
-              <div className="absolute inset-8 bg-linear-to-br from-[#C2185B]/10 to-transparent rounded-[2.5rem]" />
-              <div className="absolute inset-12 rounded-full border-2 border-dashed border-[#C2185B]/20 animate-spin-slow" />
+            <div className="relative max-w-md mx-auto">
+              <div className="absolute -inset-6 bg-linear-to-br from-[#FCE4EC] via-white to-[#FCE4EC]/30 rounded-[3rem] -z-10" />
 
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-[#C2185B]/30 blur-3xl rounded-full" />
-                  <div className="relative w-32 h-32 rounded-full bg-linear-to-br from-[#C2185B] to-[#4A0820] flex items-center justify-center shadow-2xl shadow-[#C2185B]/40">
-                    <PiggyBank size={56} className="text-white" strokeWidth={1.5} />
-                  </div>
-                </div>
+              <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <Image
+                  src="/images/girl-holding-tablet.png"
+                  alt="A young Nigerian saver tracking her goals on her tablet"
+                  fill
+                  sizes="(min-width: 1024px) 480px, 90vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-linear-to-t from-[#1A1A2E]/30 via-transparent to-transparent" />
               </div>
 
-              <div className="absolute top-12 left-4 bg-white rounded-2xl px-3 py-2 shadow-xl flex items-center gap-2 animate-float">
+              <div className="absolute -top-4 -left-4 bg-white rounded-2xl px-4 py-2.5 shadow-xl flex items-center gap-2 animate-float">
                 <Coins size={14} className="text-[#F39C12]" />
                 <span className="text-xs font-bold text-[#1A1A2E] tabular-nums">+&#8358;5,200</span>
               </div>
 
               <div
-                className="absolute bottom-16 right-4 bg-white rounded-2xl px-3 py-2 shadow-xl animate-float-slow"
+                className="absolute bottom-8 -right-4 bg-white rounded-2xl px-4 py-3 shadow-xl animate-float-slow"
                 style={{ animationDelay: "1s" }}
               >
-                <p className="text-[9px] text-gray-400 uppercase font-bold">Saved</p>
-                <p className="text-sm font-extrabold text-[#1A1A2E] tabular-nums">&#8358;150K</p>
+                <p className="text-[9px] text-gray-400 uppercase font-bold tracking-wider">Total Saved</p>
+                <p className="text-base font-extrabold text-[#1A1A2E] tabular-nums">&#8358;150,000</p>
               </div>
 
               <div
-                className="absolute top-1/3 right-8 bg-[#1A1A2E] rounded-2xl px-3 py-2 shadow-xl animate-float"
+                className="absolute top-1/3 -right-6 bg-[#1A1A2E] rounded-2xl px-3 py-2 shadow-xl animate-float"
                 style={{ animationDelay: "2s" }}
               >
                 <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#27AE60]" />
+                  <Sparkles size={11} className="text-[#FCE4EC]" />
                   <span className="text-[10px] font-bold text-white">Goal Active</span>
                 </div>
               </div>

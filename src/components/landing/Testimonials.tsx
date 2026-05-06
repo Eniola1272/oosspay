@@ -35,12 +35,12 @@ export function Testimonials() {
   return (
     <section
       id="testimonials"
-      className="relative py-24 bg-white overflow-hidden"
+      className="relative py-32 bg-white overflow-hidden"
     >
       <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#FCE4EC]/40 blur-[100px] rounded-full pointer-events-none" />
 
       <div className="container mx-auto px-4 max-w-7xl relative z-10">
-        <div className="reveal text-center mb-14 space-y-3">
+        <div className="reveal text-center mb-20 space-y-4">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C2185B]">
             What Our Members Say
           </p>
@@ -51,7 +51,7 @@ export function Testimonials() {
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 items-stretch">
+        <div className="grid md:grid-cols-3 gap-8 items-stretch">
           {testimonials.map(
             ({ quote, name, location, role, image, highlight }, i) => (
               <div
