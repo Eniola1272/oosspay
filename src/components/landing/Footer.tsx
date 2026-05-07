@@ -65,55 +65,57 @@ export function Footer() {
           </div>
         </div>
 
-        {/* Bottom Row */}
-        <div className="grid lg:grid-cols-4 gap-12 items-start relative">
-          {/* Logo */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center gap-2 mb-6">
+        {/* Footer Links Row */}
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 md:gap-12 mb-16">
+          {/* Logo & Tagline */}
+          <div>
+            <div className="flex items-center gap-2 mb-4">
               <span className="font-bold text-2xl tracking-tight text-white">OOSSPAY</span>
             </div>
-            <p className="text-pink-100/60 text-sm max-w-xs">
-              Making many wealthy. Starting with you. Safe, transparent, and collaborative savings.
+            <p className="text-pink-100/60 text-sm">
+              Africa&apos;s First Digital Cooperative Society
             </p>
           </div>
 
-          {/* Links Grid */}
-          <div className="lg:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
-            <FooterColumn
-              title="Company"
-              items={[
-                { label: "About Us", href: "/about" },
-                { label: "Careers", href: "/about" },
-                { label: "Contact", href: "/about" },
-                { label: "Blog", href: "/about" },
-              ]}
-            />
-            <FooterColumn
-              title="Product"
-              items={[
-                { label: "Target Savings", href: "/savings" },
-                { label: "Group Kolo", href: "/savings" },
-                { label: "Investment", href: "/savings" },
-                { label: "Pricing", href: "/about" },
-              ]}
-            />
-            <FooterColumn
-              title="Legal"
-              items={[
-                { label: "Terms of Service", href: "/terms" },
-                { label: "Privacy Policy", href: "/privacy" },
-                { label: "Security", href: "/privacy" },
-                { label: "Cookie Policy", href: "/privacy" },
-              ]}
-            />
-          </div>
+          <FooterColumn
+            title="Quick Links"
+            items={[
+              { label: "Home", href: "/" },
+              { label: "How it works", href: "/#how-it-works" },
+              { label: "Services", href: "/#services" },
+            ]}
+          />
+          <FooterColumn
+            title="Company"
+            items={[
+              { label: "About", href: "/about" },
+              { label: "Meet the Team", href: "/about#team" },
+              { label: "Blog", href: "/blog" },
+            ]}
+          />
+          <FooterColumn
+            title="Support"
+            items={[
+              { label: "Help", href: "/help" },
+              { label: "FAQ", href: "/faq" },
+              { label: "Contact", href: "/contact" },
+            ]}
+          />
+          <FooterColumn
+            title="Legal"
+            items={[
+              { label: "Privacy Policy", href: "/privacy" },
+              { label: "Terms of Services", href: "/terms" },
+              { label: "Cookies", href: "/cookies" },
+            ]}
+          />
+        </div>
 
-          {/* Copyright */}
-          <div className="lg:absolute lg:bottom-0 lg:right-0 pt-8 lg:pt-0 mt-8 lg:mt-0 border-t border-white/10 lg:border-0 w-full lg:w-auto text-left lg:text-right">
-            <p className="text-pink-100/40 text-xs">
-              &copy; {new Date().getFullYear()} OOSSPAY Inc. All rights reserved.
-            </p>
-          </div>
+        {/* Copyright */}
+        <div className="border-t border-white/10 pt-8 text-left">
+          <p className="text-pink-100/40 text-xs">
+            &copy; {new Date().getFullYear()} OOSSPAY Inc. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>
