@@ -1,8 +1,22 @@
-import { Crosshair, CalendarCheck, Wallet, BarChart2, BookOpen, Users, ArrowUpRight } from "lucide-react";
+import {
+  Crosshair,
+  CalendarCheck,
+  Wallet,
+  BarChart2,
+  BookOpen,
+  Users,
+  ArrowUpRight,
+} from "lucide-react";
 
 type Accent = "wine" | "pink" | "white";
 
-const services: Array<{ icon: typeof Crosshair; title: string; desc: string; accent: Accent; span: string }> = [
+const services: Array<{
+  icon: typeof Crosshair;
+  title: string;
+  desc: string;
+  accent: Accent;
+  span: string;
+}> = [
   {
     icon: Crosshair,
     title: "Target Savings",
@@ -59,14 +73,18 @@ export function Services() {
       <div className="container mx-auto px-4 max-w-7xl">
         <div className="reveal flex flex-col md:flex-row md:items-end justify-between gap-6 mb-20">
           <div className="max-w-2xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C2185B] mb-4">Our Services</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#C2185B] mb-4">
+              Our Services
+            </p>
             <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A1A2E] tracking-tight leading-[1.05]">
-              Everything You Need to Build<br />
+              Everything You Need to Build
+              <br />
               <span className="text-[#C2185B]">Financial Discipline</span>
             </h2>
           </div>
           <p className="text-[#1A1A2E]/60 max-w-sm md:text-right">
-            Simple, powerful tools designed for real Nigerians with real financial goals.
+            Simple, powerful tools designed for real Nigerians with real
+            financial goals.
           </p>
         </div>
 
@@ -79,24 +97,32 @@ export function Services() {
                 className={`reveal relative overflow-hidden rounded-3xl border p-7 min-h-[260px] flex flex-col justify-between group hover:shadow-2xl hover:-translate-y-1 transition-all ${ACCENTS[accent]} ${span}`}
                 data-reveal-delay={`${(i % 3) * 100}`}
               >
-                <div className={`absolute -top-16 -right-16 w-48 h-48 rounded-full blur-3xl pointer-events-none ${isDark ? "bg-white/10" : "bg-[#FCE4EC]/60"}`} />
+                <div
+                  className={`absolute -top-16 -right-16 w-48 h-48 rounded-full blur-3xl pointer-events-none ${isDark ? "bg-white/10" : "bg-[#FCE4EC]/60"}`}
+                />
 
                 <div className="relative">
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 transition-colors ${isDark ? "bg-white/15 backdrop-blur-sm" : "bg-[#FCE4EC] group-hover:bg-[#C2185B]"}`}>
-                    <Icon size={22} className={isDark ? "text-white" : "text-[#C2185B] group-hover:text-white transition-colors"} />
+                  <div
+                    className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-5 transition-colors ${isDark ? "bg-white/15 backdrop-blur-sm" : "bg-[#FCE4EC] group-hover:bg-[#C2185B]"}`}
+                  >
+                    <Icon
+                      size={22}
+                      className={
+                        isDark
+                          ? "text-white"
+                          : "text-[#C2185B] group-hover:text-white transition-colors"
+                      }
+                    />
                   </div>
-                  <h3 className={`text-xl font-extrabold mb-2 tracking-tight ${isDark ? "text-white" : "text-[#1A1A2E]"}`}>
+                  <h3
+                    className={`text-xl font-extrabold mb-2 tracking-tight ${isDark ? "text-white" : "text-[#1A1A2E]"}`}
+                  >
                     {title}
                   </h3>
                   <p
                     className={`text-sm leading-relaxed ${isDark ? "text-white/75" : "text-[#1A1A2E]/60"}`}
                     dangerouslySetInnerHTML={{ __html: desc }}
                   />
-                </div>
-
-                <div className={`relative flex items-center gap-2 mt-6 text-xs font-bold ${isDark ? "text-white/90" : "text-[#C2185B]"}`}>
-                  <span>Learn more</span>
-                  <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                 </div>
               </div>
             );
