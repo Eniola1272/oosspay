@@ -8,7 +8,6 @@ import { HowItWorks } from "@/components/landing/HowItWorks";
 import { Services } from "@/components/landing/Services";
 import { WhyChooseUs } from "@/components/landing/WhyChooseUs";
 import { Testimonials } from "@/components/landing/Testimonials";
-import { CTABanner } from "@/components/landing/CTABanner";
 import { FAQ } from "@/components/landing/FAQ";
 import { Newsletter } from "@/components/landing/Newsletter";
 import { Footer } from "@/components/landing/Footer";
@@ -48,7 +47,6 @@ export default function LandingPage() {
           <Services />
           <WhyChooseUs />
           <Testimonials />
-          <CTABanner />
           <FAQ />
           <Newsletter />
         </main>

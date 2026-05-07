@@ -23,14 +23,19 @@ export function Logo({ size = "md", variant = "colored", showTagline = false, cl
 
   return (
     <Link href="/" className={cn("inline-flex items-center gap-2 leading-none", className)}>
-      <Image
-        src="/images/oosspay-logo.png"
-        alt="OOSSPAY"
-        width={s.mark}
-        height={s.mark}
-        priority
-        className="shrink-0"
-      />
+      <span
+        className="relative shrink-0 inline-block"
+        style={{ width: s.mark, height: s.mark }}
+      >
+        <Image
+          src="/images/oosspay-logo.png"
+          alt="OOSSPAY"
+          fill
+          sizes={`${s.mark}px`}
+          priority
+          className="object-contain"
+        />
+      </span>
       <span className="flex flex-col leading-none">
         <span className={cn("font-extrabold tracking-tight", s.text)}>
           <span className={isWhite ? "text-white" : "text-[#C2185B]"}>OOSS</span>

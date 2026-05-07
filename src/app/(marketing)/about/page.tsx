@@ -68,15 +68,28 @@ export default function AboutPage() {
       <Navbar />
       <main>
         {/* Hero */}
-        <section className="pt-32 pb-20 bg-linear-to-br from-[#FCE4EC]/40 via-white to-white">
-          <div className="container mx-auto px-4 max-w-4xl text-center space-y-6">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#C2185B]">
+        <section className="relative pt-32 pb-20 overflow-hidden">
+          {/* Background Image */}
+          <Image
+            src="/images/college-students.png"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+            priority
+          />
+          {/* Dark Overlay */}
+          <div className="absolute inset-0 bg-[#1A1A2E]/75" />
+          <div className="absolute inset-0 bg-linear-to-b from-[#2D0F1F]/60 via-transparent to-[#1A1A2E]/80" />
+
+          <div className="container mx-auto px-4 max-w-4xl text-center space-y-6 relative z-10">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#FCE4EC]">
               About OOSSPAY
             </p>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-[#1A1A2E] leading-tight">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
               We&apos;re Building Wealth for the Many, Not the Few
             </h1>
-            <p className="text-lg text-[#666666] leading-relaxed max-w-2xl mx-auto">
+            <p className="text-lg text-white/75 leading-relaxed max-w-2xl mx-auto">
               OOSSPAY was born from a simple belief: that financial growth
               should never be a solo journey. We&apos;re a community-first
               platform that exists to help everyday Africans build savings

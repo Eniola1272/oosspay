@@ -6,23 +6,23 @@ import { WHATSAPP_LINK } from "@/lib/constants";
 const faqs = [
   {
     q: "What is OOSSPAY?",
-    a: "OOSSPAY is a people-first savings platform that helps you save consistently, set financial targets, and track your progress through a secure personal dashboard &mdash; all backed by a supportive community.",
+    a: "OOSSPAY is a people-first savings platform that helps you save consistently, set financial targets, and track your progress through a secure personal dashboard — all backed by a supportive community.",
   },
   {
     q: "Is my money safe with OOSSPAY?",
-    a: "Absolutely. Your savings are tracked transparently on your dashboard. Every deposit and withdrawal is recorded and visible to you in real time. We operate with full transparency &mdash; your trust is our foundation.",
+    a: "Absolutely. Your savings are tracked transparently on your dashboard. Every deposit and withdrawal is recorded and visible to you in real time. We operate with full transparency — your trust is our foundation.",
   },
   {
     q: "How do I save money on OOSSPAY?",
-    a: "After creating your account, you&apos;ll see OOSSPAY&apos;s official account details on your dashboard. Simply transfer your savings to that account, and your balance updates once the deposit is confirmed by our team.",
+    a: "After creating your account, you'll see OOSSPAY's official account details on your dashboard. Simply transfer your savings to that account, and your balance updates once the deposit is confirmed by our team.",
   },
   {
     q: "Can I withdraw my money anytime?",
-    a: "Yes. Simply fill out the withdrawal request form on your dashboard. Our team processes withdrawal requests promptly, and you&apos;ll receive a notification when the funds hit your bank account.",
+    a: "Yes. Simply fill out the withdrawal request form on your dashboard. Our team processes withdrawal requests promptly, and you'll receive a notification when the funds hit your bank account.",
   },
   {
     q: "Is there a minimum amount I need to save?",
-    a: "No minimum. Whether you&apos;re starting with 1,000 naira or 100,000 naira, OOSSPAY is built for savers at every level. The most important thing is consistency, not the amount.",
+    a: "No minimum. Whether you're starting with 1,000 naira or 100,000 naira, OOSSPAY is built for savers at every level. The most important thing is consistency, not the amount.",
   },
   {
     q: "What is Target Savings?",
@@ -30,11 +30,11 @@ const faqs = [
   },
   {
     q: "Does OOSSPAY charge any fees?",
-    a: "OOSSPAY is committed to the People Over Profit principle. We keep our fees transparent and minimal. Any applicable fees are clearly communicated upfront &mdash; never hidden.",
+    a: "OOSSPAY is committed to the People Over Profit principle. We keep our fees transparent and minimal. Any applicable fees are clearly communicated upfront — never hidden.",
   },
   {
     q: "How do I contact OOSSPAY?",
-    a: "You can reach us through WhatsApp, Instagram (@oosspayofficial), TikTok (@oosspay), or via your dashboard&apos;s support section. We&apos;re always here to help.",
+    a: "You can reach us through WhatsApp, Instagram (@oosspayofficial), TikTok (@oosspay), or via your dashboard's support section. We're always here to help.",
   },
 ];
 
@@ -66,10 +66,9 @@ export function FAQ() {
               <AccordionTrigger className="text-left font-bold text-[#1A1A2E] hover:text-[#C2185B] hover:no-underline py-5 text-base">
                 {faq.q}
               </AccordionTrigger>
-              <AccordionContent
-                className="text-[#1A1A2E]/65 leading-relaxed pb-5"
-                dangerouslySetInnerHTML={{ __html: faq.a }}
-              />
+              <AccordionContent className="text-[#1A1A2E]/65 leading-relaxed pb-5">
+                {faq.a}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
