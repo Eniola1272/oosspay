@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowUpRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -80,11 +81,9 @@ export default function WithdrawPage() {
   }
 
   return (
-    <div className="space-y-6 pb-24 lg:pb-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-[#1A1A2E]">Withdraw Funds</h1>
-        <p className="text-sm text-[#666666] mt-1">Your money is yours. Request a withdrawal and our team will process it promptly.</p>
-      </div>
+    <div className="flex flex-col min-h-screen pb-20 lg:pb-6">
+      <DashboardTopBar title="Withdraw Funds" subtitle="Your money is yours. Request a withdrawal and our team will process it promptly." />
+      <div className="p-5 lg:p-6 space-y-6">
 
       <div className="grid lg:grid-cols-2 gap-6 items-start">
         {/* Form */}
@@ -225,6 +224,7 @@ export default function WithdrawPage() {
             )}
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );

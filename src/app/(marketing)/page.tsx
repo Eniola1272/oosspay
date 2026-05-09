@@ -9,7 +9,6 @@ import { Services } from "@/components/landing/Services";
 import { WhyChooseUs } from "@/components/landing/WhyChooseUs";
 import { Testimonials } from "@/components/landing/Testimonials";
 import { FAQ } from "@/components/landing/FAQ";
-import { Newsletter } from "@/components/landing/Newsletter";
 import { Footer } from "@/components/landing/Footer";
 import { RevealProvider } from "@/components/landing/RevealProvider";
 import { AuthProvider } from "@/context/AuthContext";
@@ -48,7 +47,6 @@ export default function LandingPage() {
           <WhyChooseUs />
           <Testimonials />
           <FAQ />
-          <Newsletter />
         </main>
         <Footer />
       </RevealProvider>

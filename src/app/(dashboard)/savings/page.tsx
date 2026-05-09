@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Metadata } from "next";
+import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { Plus, Target, Pencil, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -111,17 +112,15 @@ export default function SavingsPage() {
   }
 
   return (
-    <div className="space-y-6 pb-24 lg:pb-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-2xl font-extrabold text-[#1A1A2E]">My Savings Targets</h1>
-          <p className="text-sm text-[#666666] mt-1">Set goals, track your progress, and celebrate every milestone.</p>
+    <div className="flex flex-col min-h-screen pb-20 lg:pb-6">
+      <DashboardTopBar title="My Savings Targets" subtitle="Set goals, track your progress, and celebrate every milestone." />
+      <div className="p-5 lg:p-6 space-y-6">
+        <div className="flex justify-end">
+          <Button onClick={() => { setEditing(null); setModalOpen(true); }}
+            className="bg-[#C2185B] hover:bg-[#a31545] text-white">
+            <Plus size={16} className="mr-2" /> Create New Target
+          </Button>
         </div>
-        <Button onClick={() => { setEditing(null); setModalOpen(true); }}
-          className="bg-[#C2185B] hover:bg-[#a31545] text-white">
-          <Plus size={16} className="mr-2" /> Create New Target
-        </Button>
-      </div>
 
       {isLoading ? (
         <div className="grid sm:grid-cols-2 gap-4">
@@ -176,12 +175,13 @@ export default function SavingsPage() {
         </>
       )}
 
-      <TargetModal
-        open={modalOpen}
-        onClose={() => { setModalOpen(false); setEditing(null); }}
-        editing={editing}
-        onSaved={refetch}
-      />
+        <TargetModal
+          open={modalOpen}
+          onClose={() => { setModalOpen(false); setEditing(null); }}
+          editing={editing}
+          onSaved={refetch}
+        />
+      </div>
     </div>
   );
 }

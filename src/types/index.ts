@@ -37,6 +37,9 @@ export interface Transaction {
   amount: number;
   description: string | null;
   reference: string | null;
+  receipt_url: string | null;
+  deposit_request_date: string | null;
+  admin_note: string | null;
   status: TransactionStatus;
   recorded_by: string | null;
   created_at: string;

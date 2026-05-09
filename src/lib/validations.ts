@@ -80,6 +80,15 @@ export const announcementSchema = z.object({
   body: z.string().min(10, "Message must be at least 10 characters"),
 });
 
+export const depositRequestSchema = z.object({
+  amount: z
+    .number({ message: "Enter a valid amount" })
+    .positive("Amount must be greater than zero")
+    .min(100, "Minimum deposit is ₦100"),
+  deposit_date: z.string().min(1, "Please enter the date you made the transfer"),
+  description: z.string().optional().or(z.literal("")),
+});
+
 export const depositAccountSchema = z.object({
   bank_name: z.string().min(2, "Bank name is required"),
   account_number: z
@@ -98,4 +107,5 @@ export type WithdrawalInput = z.infer<typeof withdrawalSchema>;
 export type BalanceUpdateInput = z.infer<typeof balanceUpdateSchema>;
 export type WithdrawalReviewInput = z.infer<typeof withdrawalReviewSchema>;
 export type AnnouncementInput = z.infer<typeof announcementSchema>;
+export type DepositRequestInput = z.infer<typeof depositRequestSchema>;
 export type DepositAccountInput = z.infer<typeof depositAccountSchema>;

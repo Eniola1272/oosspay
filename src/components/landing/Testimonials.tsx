@@ -5,7 +5,7 @@ const testimonials = [
   {
     quote:
       "I used to struggle saving 5,000 naira a month. With OOSSPAY, I&apos;ve saved over 150,000 naira in 6 months. The target tracker kept me going even when I wanted to give up.",
-    name: "Adaeze O.",
+    name: "Chiamaka O.",
     location: "Lagos",
     role: "Small Business Owner",
     image: "/images/testimonial-1.png",
@@ -14,7 +14,7 @@ const testimonials = [
   {
     quote:
       "What I love most is the transparency. I can see everything &mdash; every deposit, every update. No surprises. It&apos;s the first platform where I actually trust where my money is.",
-    name: "Emeka R.",
+    name: "Abiodun R.",
     location: "Abuja",
     role: "Software Engineer",
     image: "/images/testimonial-3.png",
@@ -23,7 +23,7 @@ const testimonials = [
   {
     quote:
       "The community aspect makes all the difference. It&apos;s not just an app &mdash; you feel like you&apos;re part of something bigger. People Over Profit isn&apos;t just a slogan here.",
-    name: "Chidinma B.",
+    name: "Nuru B.",
     location: "Port Harcourt",
     role: "Marketing Lead",
     image: "/images/testimonial-2.png",

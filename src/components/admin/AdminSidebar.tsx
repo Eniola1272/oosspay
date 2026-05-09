@@ -2,26 +2,43 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, CreditCard, Settings, ExternalLink, LogOut } from "lucide-react";
-import { useState } from "react";
+import { LayoutDashboard, Users, CreditCard, Settings, ExternalLink, LogOut, Inbox } from "lucide-react";
+import { useState, useEffect } from "react";
 import { Logo } from "@/components/shared/Logo";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 
 const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/withdrawals", label: "Withdrawals", icon: CreditCard },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+  { href: "/admin",            label: "Dashboard",   icon: LayoutDashboard, exact: true },
+  { href: "/admin/users",      label: "Users",        icon: Users },
+  { href: "/admin/deposits",   label: "Deposits",     icon: Inbox },
+  { href: "/admin/withdrawals",label: "Withdrawals",  icon: CreditCard },
+  { href: "/admin/settings",   label: "Settings",     icon: Settings },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
   const { signOut } = useAuth();
   const [logoutOpen, setLogoutOpen] = useState(false);
+  const [pendingDeposits, setPendingDeposits] = useState(0);
+
+  useEffect(() => {
+    const supabase = createClient();
+    async function loadCount() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { count } = await (supabase as any)
+        .from("transactions")
+        .select("*", { count: "exact", head: true })
+        .eq("type", "deposit")
+        .eq("status", "pending");
+      setPendingDeposits(count ?? 0);
+    }
+    loadCount();
+  }, []);
 
   async function handleLogout() {
     await signOut();
@@ -39,6 +56,7 @@ export function AdminSidebar() {
         <nav className="flex-1 py-4 px-3 space-y-1">
           {navItems.map(({ href, label, icon: Icon, exact }) => {
             const active = exact ? pathname === href : pathname.startsWith(href);
+            const showBadge = href === "/admin/deposits" && pendingDeposits > 0;
             return (
               <Link
                 key={href}
@@ -51,7 +69,12 @@ export function AdminSidebar() {
                 )}
               >
                 <Icon size={18} />
-                <span>{label}</span>
+                <span className="flex-1">{label}</span>
+                {showBadge && (
+                  <span className="bg-[#F39C12] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+                    {pendingDeposits}
+                  </span>
+                )}
               </Link>
             );
           })}
