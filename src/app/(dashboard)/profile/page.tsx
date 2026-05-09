@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { User, Shield, AlertTriangle } from "lucide-react";
+import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,20 +73,21 @@ export default function ProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
-        <Skeleton className="h-28 rounded-2xl" />
-        <Skeleton className="h-64 rounded-2xl" />
-        <Skeleton className="h-52 rounded-2xl" />
+      <div className="flex flex-col min-h-screen">
+        <DashboardTopBar title="My Profile" subtitle="Manage your personal information and account settings." />
+        <div className="p-5 lg:p-6 space-y-6 max-w-2xl">
+          <Skeleton className="h-28 rounded-2xl" />
+          <Skeleton className="h-64 rounded-2xl" />
+          <Skeleton className="h-52 rounded-2xl" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 max-w-2xl pb-24 lg:pb-6">
-      <div>
-        <h1 className="text-2xl font-extrabold text-[#1A1A2E]">My Profile</h1>
-        <p className="text-sm text-[#666666] mt-1">Manage your personal information and account settings.</p>
-      </div>
+    <div className="flex flex-col min-h-screen pb-20 lg:pb-6">
+      <DashboardTopBar title="My Profile" subtitle="Manage your personal information and account settings." />
+      <div className="p-5 lg:p-6 space-y-6 max-w-2xl">
 
       {/* Profile header */}
       <Card>
@@ -223,6 +225,7 @@ export default function ProfilePage() {
           </div>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   );
 }

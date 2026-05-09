@@ -5,6 +5,7 @@ import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { NotificationItem } from "@/components/dashboard/NotificationItem";
 import { useNotifications } from "@/hooks/useNotifications";
 import { createClient } from "@/lib/supabase/client";
@@ -32,23 +33,17 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="space-y-5 pb-24 lg:pb-6">
-      <div className="flex items-center justify-between flex-wrap gap-3">
-        <div>
-          <h1 className="text-2xl font-extrabold text-[#1A1A2E] flex items-center gap-2">
-            Notifications
-            {unreadCount > 0 && (
-              <span className="bg-[#C2185B] text-white text-xs font-bold px-2 py-0.5 rounded-full">{unreadCount} unread</span>
-            )}
-          </h1>
-          <p className="text-sm text-[#666666] mt-1">Stay up to date with your savings activity.</p>
-        </div>
-        {unreadCount > 0 && (
+    <div className="flex flex-col min-h-screen pb-20 lg:pb-6">
+      <DashboardTopBar title="Notifications" subtitle="Stay up to date with your savings activity." />
+      <div className="p-5 lg:p-6 space-y-5">
+      {unreadCount > 0 && (
+        <div className="flex items-center justify-between">
+          <span className="bg-[#C2185B] text-white text-xs font-bold px-2.5 py-1 rounded-full">{unreadCount} unread</span>
           <Button variant="outline" size="sm" onClick={markAllRead} className="border-[#C2185B] text-[#C2185B]">
             Mark All as Read
           </Button>
-        )}
-      </div>
+        </div>
+      )}
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as typeof tab)}>
         <TabsList className="bg-[#FAFAFA] border border-[#E0E0E0] flex-wrap h-auto gap-1 p-1">
@@ -85,6 +80,7 @@ export default function NotificationsPage() {
         ) : (
           filtered.map((n) => <NotificationItem key={n.id} notification={n} onClick={() => markRead(n)} />)
         )}
+      </div>
       </div>
     </div>
   );
