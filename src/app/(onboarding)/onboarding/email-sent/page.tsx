@@ -1,19 +1,43 @@
 "use client";
 
-import { useState } from "react";
-import { useAuth } from "@/context/AuthContext";
+import { useState, useEffect } from "react";
 import { Mail } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
 export default function EmailSentPage() {
-  const { profile } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    const stored = sessionStorage.getItem("pending_email");
+    if (stored) setEmail(stored);
+  }, []);
+
+  // Count down the resend cooldown
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
+    return () => clearTimeout(t);
+  }, [cooldown]);
 
   async function resend() {
+    if (!email || cooldown > 0) return;
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
+    const supabase = createClient();
+    const { error } = await supabase.auth.resend({
+      type: "signup",
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+    });
     setLoading(false);
-    toast.success("Verification email re-sent. Check your inbox.");
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Verification email re-sent. Check your inbox.");
+      setCooldown(60);
+    }
   }
 
   return (
@@ -31,21 +55,32 @@ export default function EmailSentPage() {
               </svg>
             </div>
           </div>
-          <h1 className="text-xl font-bold text-[#1A1A2E]">To login, check your email</h1>
+          <h1 className="text-xl font-bold text-[#1A1A2E]">Check your email</h1>
           <p className="text-sm text-[#999999] text-center leading-relaxed">
-            For security, we&apos;ve sent an email to{" "}
-            <strong className="text-[#1A1A2E]">{profile?.email ?? "your email address"}</strong>. Simply click the link in
-            the email and you&apos;ll be set.
+            We&apos;ve sent a confirmation link to{" "}
+            <strong className="text-[#1A1A2E]">{email || "your email address"}</strong>.
+            Click the link to verify your account and continue.
           </p>
         </div>
 
         <button
           onClick={resend}
-          disabled={loading}
+          disabled={loading || cooldown > 0 || !email}
           className="w-full h-12 rounded-xl bg-[#1A1A2E] hover:bg-[#2a2a4a] text-white font-semibold text-sm transition-colors disabled:opacity-60"
         >
-          {loading ? "Sending…" : "Send it again"}
+          {loading
+            ? "Sending…"
+            : cooldown > 0
+            ? `Resend in ${cooldown}s`
+            : "Resend confirmation email"}
         </button>
+
+        <p className="text-center text-xs text-[#999999]">
+          Wrong email?{" "}
+          <a href="/register" className="text-[#C2185B] hover:underline">
+            Sign up again
+          </a>
+        </p>
       </div>
     </div>
   );

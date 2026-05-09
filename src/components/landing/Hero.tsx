@@ -321,7 +321,7 @@ function PhoneMockup() {
                 Total Balance
               </p>
               <p className="text-2xl font-extrabold mb-2 relative tabular-nums">
-                &#8358;20,000<span className="text-sm text-white/60">.00</span>
+                &#8358;20,400,000<span className="text-sm text-white/60">.00</span>
               </p>
               <div className="h-1.5 bg-white/20 rounded-full overflow-hidden relative">
                 <div className="h-full w-3/4 bg-white rounded-full" />

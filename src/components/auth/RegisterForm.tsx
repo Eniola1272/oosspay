@@ -75,10 +75,13 @@ export function RegisterForm() {
 
   async function onSubmit(data: FormData) {
     setLoading(true);
-    const { error } = await supabase.auth.signUp({
+    const { data: authData, error } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
-      options: { data: { full_name: data.full_name, phone: "" } },
+      options: {
+        data: { full_name: data.full_name },
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
     });
     setLoading(false);
     if (error) {
@@ -88,7 +91,14 @@ export function RegisterForm() {
       return;
     }
     toast.success(`Welcome to OOSSPAY, ${data.full_name.split(" ")[0]}!`);
-    router.push("/onboarding/account-type");
+    if (!authData.session) {
+      // Email confirmation required — save email so email-sent page can use it
+      sessionStorage.setItem("pending_email", data.email);
+      router.push("/onboarding/email-sent");
+    } else {
+      // Email confirmation disabled in Supabase — skip straight to onboarding
+      router.push("/onboarding/account-type");
+    }
   }
 
   return (

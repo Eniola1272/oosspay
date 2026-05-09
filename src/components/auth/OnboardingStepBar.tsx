@@ -6,10 +6,10 @@ import { Logo } from "@/components/shared/Logo";
 import Link from "next/link";
 
 const STEPS = [
-  { label: "Email", paths: ["/onboarding/email-sent", "/onboarding/email-verified"] },
+  { label: "Email",        paths: ["/onboarding/email-sent", "/onboarding/email-verified"] },
   { label: "Account Type", paths: ["/onboarding/account-type"] },
-  { label: "Country", paths: ["/onboarding/country"] },
-  { label: "2FA", paths: ["/onboarding/phone", "/onboarding/verify"] },
+  { label: "Country",      paths: ["/onboarding/country"] },
+  { label: "Phone",        paths: ["/onboarding/phone"] },
 ];
 
 export function OnboardingStepBar() {

@@ -252,24 +252,61 @@ export default function AboutPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-[#FCE4EC]/30 text-center">
-          <div className="container mx-auto px-4 max-w-xl space-y-6">
-            <h2 className="text-3xl font-extrabold text-[#1A1A2E]">
-              Ready to Start Your Savings Journey?
+        <section className="relative py-28 overflow-hidden bg-gradient-to-br from-[#1A1A2E] via-[#2D0F1F] to-[#1A1A2E] text-center">
+          {/* Decorative orbs */}
+          <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[400px] h-[400px] rounded-full bg-[#C2185B]/20 blur-[140px] pointer-events-none" />
+          <div className="absolute bottom-0 right-1/4 w-[300px] h-[300px] rounded-full bg-[#FCE4EC]/10 blur-[100px] pointer-events-none" />
+
+          <div className="container mx-auto px-4 max-w-2xl relative z-10 space-y-8">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2">
+              <Sparkles size={14} className="text-[#FCE4EC]" />
+              <span className="text-xs font-semibold uppercase tracking-widest text-[#FCE4EC]">
+                Start Today — It&apos;s Free
+              </span>
+            </div>
+
+            <h2 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
+              Ready to Start Your{" "}
+              <span className="bg-gradient-to-r from-[#FCE4EC] to-[#F48FB1] bg-clip-text text-transparent">
+                Savings Journey?
+              </span>
             </h2>
-            <p className="text-[#666666]">
+
+            <p className="text-lg text-white/65 leading-relaxed max-w-lg mx-auto">
               Join the OOSSPAY community today and take the first step toward
-              your financial goals.
+              your financial goals. No hidden fees. No tricks. Just growth.
             </p>
-            <Link
-              href="/register"
-              className={cn(
-                buttonVariants({ size: "lg" }),
-                "bg-[#C2185B] hover:bg-[#a31545] text-white px-10 rounded-full",
-              )}
-            >
-              Create Your Free Account <ArrowRight size={18} className="ml-2" />
-            </Link>
+
+            <div className="pt-2">
+              <Link
+                href="/register"
+                className={cn(
+                  buttonVariants({ size: "lg" }),
+                  "bg-[#C2185B] hover:bg-[#E91E63] text-white px-10 rounded-full shadow-[0_0_30px_rgba(194,24,91,0.4)] hover:shadow-[0_0_50px_rgba(194,24,91,0.6)] transition-all duration-300 hover:scale-105",
+                )}
+              >
+                Create Your Free Account <ArrowRight size={18} className="ml-2" />
+              </Link>
+            </div>
+
+            {/* Trust strip */}
+            <div className="flex items-center justify-center gap-6 pt-4 text-white/40 text-xs font-medium">
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 size={14} />
+                <span>No hidden fees</span>
+              </div>
+              <div className="w-px h-3.5 bg-white/20" />
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 size={14} />
+                <span>Withdraw anytime</span>
+              </div>
+              <div className="w-px h-3.5 bg-white/20" />
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 size={14} />
+                <span>Community-backed</span>
+              </div>
+            </div>
           </div>
         </section>
       </main>
