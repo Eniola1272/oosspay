@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { RefreshCw, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBalance } from "@/hooks/useBalance";
 import { formatNaira } from "@/lib/utils";
@@ -38,12 +39,12 @@ export function BalanceCard() {
       {/* Actions */}
       <div className="space-y-4 mt-auto pt-5">
         <div className="flex gap-3">
-          <a
-            href="#deposit-details"
+          <Link
+            href="/deposit"
             className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl bg-white text-[#C2185B] text-sm font-bold hover:bg-[#FCE4EC] transition-colors"
           >
             <ArrowDownLeft size={15} /> Save Now
-          </a>
+          </Link>
           <Link
             href="/withdraw"
             className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl border border-white/40 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
