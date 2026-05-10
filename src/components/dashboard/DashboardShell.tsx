@@ -2,6 +2,7 @@
 
 import { SidebarProvider, useSidebar } from "./SidebarContext";
 import { DashboardSidebar } from "./DashboardSidebar";
+import { SupportWidget } from "./SupportWidget";
 
 function Shell({ children }: { children: React.ReactNode }) {
   const { collapsed } = useSidebar();
@@ -14,6 +15,7 @@ function Shell({ children }: { children: React.ReactNode }) {
       >
         {children}
       </main>
+      <SupportWidget />
     </div>
   );
 }
