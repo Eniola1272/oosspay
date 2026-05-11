@@ -43,13 +43,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const warningRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchProfile = useCallback(async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userId)
-      .single();
-    setProfile(data ?? null);
-  }, [supabase]);
+    const response = await fetch("/api/profile");
+    const result = await response.json().catch(() => ({ profile: null }));
+
+    if (response.ok) {
+      setProfile(result.profile ?? null);
+    } else {
+      setProfile({
+        id: userId,
+        full_name: "",
+        email: "",
+        phone: null,
+        bank_name: null,
+        bank_account_number: null,
+        bank_account_name: null,
+        role: "user",
+        avatar_url: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+  }, []);
 
   const refreshProfile = useCallback(async () => {
     if (!user) return;
@@ -98,9 +112,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user, resetTimer]);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
       setUser(user);
-      if (user) fetchProfile(user.id);
+      if (user) await fetchProfile(user.id);
       setIsLoading(false);
     });
 
