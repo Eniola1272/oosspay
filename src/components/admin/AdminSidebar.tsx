@@ -2,7 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, CreditCard, Settings, ExternalLink, LogOut, Inbox } from "lucide-react";
+import {
+  LayoutDashboard, Users, CreditCard, Settings,
+  ExternalLink, LogOut, Inbox, ScrollText,
+} from "lucide-react";
 import { useState, useEffect } from "react";
 import { Logo } from "@/components/shared/Logo";
 import { Badge } from "@/components/ui/badge";
@@ -12,19 +15,30 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { createClient } from "@/lib/supabase/client";
 
-const navItems = [
-  { href: "/admin",            label: "Dashboard",   icon: LayoutDashboard, exact: true },
-  { href: "/admin/users",      label: "Users",        icon: Users },
-  { href: "/admin/deposits",   label: "Deposits",     icon: Inbox },
-  { href: "/admin/withdrawals",label: "Withdrawals",  icon: CreditCard },
-  { href: "/admin/settings",   label: "Settings",     icon: Settings },
+const ADMIN_NAV = [
+  { href: "/admin",             label: "Dashboard",    icon: LayoutDashboard, exact: true },
+  { href: "/admin/users",       label: "Users",         icon: Users },
+  { href: "/admin/deposits",    label: "Deposits",      icon: Inbox },
+  { href: "/admin/withdrawals", label: "Withdrawals",   icon: CreditCard },
+  { href: "/admin/settings",    label: "Settings",      icon: Settings },
+];
+
+const SUPER_ADMIN_NAV = [
+  { href: "/admin",             label: "Dashboard",    icon: LayoutDashboard, exact: true },
+  { href: "/admin/users",       label: "Users",         icon: Users },
+  { href: "/admin/deposits",    label: "Deposits",      icon: Inbox },
+  { href: "/admin/withdrawals", label: "Withdrawals",   icon: CreditCard },
+  { href: "/admin/activity",    label: "Activity Log",  icon: ScrollText },
+  { href: "/admin/settings",    label: "Settings",      icon: Settings },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
-  const { signOut } = useAuth();
+  const { signOut, isSuperAdmin } = useAuth();
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [pendingDeposits, setPendingDeposits] = useState(0);
+
+  const navItems = isSuperAdmin ? SUPER_ADMIN_NAV : ADMIN_NAV;
 
   useEffect(() => {
     const supabase = createClient();
@@ -50,13 +64,19 @@ export function AdminSidebar() {
       <aside className="hidden lg:flex flex-col w-60 min-h-screen bg-[#1A1A2E] fixed left-0 top-0 bottom-0 z-40">
         <div className="p-6 border-b border-white/10">
           <Logo variant="white" showTagline size="md" />
-          <Badge className="mt-2 bg-[#C2185B] text-white text-[10px]">Admin</Badge>
+          <Badge className={`mt-2 text-white text-[10px] ${
+            isSuperAdmin ? "bg-amber-500" : "bg-[#C2185B]"
+          }`}>
+            {isSuperAdmin ? "Super Admin" : "Admin"}
+          </Badge>
         </div>
 
         <nav className="flex-1 py-4 px-3 space-y-1">
           {navItems.map(({ href, label, icon: Icon, exact }) => {
             const active = exact ? pathname === href : pathname.startsWith(href);
-            const showBadge = href === "/admin/deposits" && pendingDeposits > 0;
+            const showDepositBadge = href === "/admin/deposits" && pendingDeposits > 0;
+            const isActivityLog = href === "/admin/activity";
+
             return (
               <Link
                 key={href}
@@ -64,13 +84,17 @@ export function AdminSidebar() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
                   active
-                    ? "bg-[#C2185B]/20 text-[#C2185B] border-l-4 border-[#C2185B] pl-2"
+                    ? isActivityLog
+                      ? "bg-amber-500/20 text-amber-400 border-l-4 border-amber-400 pl-2"
+                      : "bg-[#C2185B]/20 text-[#C2185B] border-l-4 border-[#C2185B] pl-2"
+                    : isActivityLog
+                    ? "text-amber-400/70 hover:text-amber-400 hover:bg-amber-500/10"
                     : "text-white/70 hover:text-white hover:bg-white/10"
                 )}
               >
                 <Icon size={18} />
                 <span className="flex-1">{label}</span>
-                {showBadge && (
+                {showDepositBadge && (
                   <span className="bg-[#F39C12] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
                     {pendingDeposits}
                   </span>

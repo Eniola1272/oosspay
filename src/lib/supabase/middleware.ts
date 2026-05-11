@@ -55,7 +55,7 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .single() as { data: { role: string } | null };
 
-    if (!profile || profile.role !== "admin") {
+    if (!profile || (profile.role !== "admin" && profile.role !== "super_admin")) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }

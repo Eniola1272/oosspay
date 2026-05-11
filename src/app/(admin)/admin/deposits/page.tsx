@@ -97,6 +97,7 @@ export default function AdminDepositsPage() {
     const { error } = await sb.from("transactions").update({
       status: "failed",
       admin_note: note || null,
+      recorded_by: user?.id ?? null,
     }).eq("id", tx.id);
 
     if (error) { toast.error(error.message); setSubmitting(false); return; }

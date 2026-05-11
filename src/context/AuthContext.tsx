@@ -10,6 +10,7 @@ interface AuthContextValue {
   profile: Profile | null;
   isLoading: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   signOut: () => Promise<void>;
 }
 
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextValue>({
   profile: null,
   isLoading: true,
   isAdmin: false,
+  isSuperAdmin: false,
   signOut: async () => {},
 });
 
@@ -70,7 +72,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         user,
         profile,
         isLoading,
-        isAdmin: profile?.role === "admin",
+        isAdmin: profile?.role === "admin" || profile?.role === "super_admin",
+        isSuperAdmin: profile?.role === "super_admin",
         signOut,
       }}
     >

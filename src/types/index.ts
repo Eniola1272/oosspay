@@ -1,4 +1,4 @@
-export type UserRole = "user" | "admin";
+export type UserRole = "user" | "admin" | "super_admin";
 
 export type TransactionType = "deposit" | "withdrawal";
 export type TransactionStatus = "pending" | "completed" | "failed";
