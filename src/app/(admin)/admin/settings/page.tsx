@@ -44,7 +44,7 @@ export default function AdminSettingsPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sb = supabase as any;
 
-    const { data } = await sb.from("platform_settings").select("*").eq("key", "deposit_account").single();
+    const { data } = await sb.from("platform_settings").select("*").eq("key", "deposit_account_details").single();
     if (data?.value) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const v = data.value as any;
@@ -75,7 +75,7 @@ export default function AdminSettingsPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sb = supabase as any;
     const { error } = await sb.from("platform_settings").upsert({
-      key: "deposit_account",
+      key: "deposit_account_details",
       value: data,
     }, { onConflict: "key" });
     setSavingAccount(false);
