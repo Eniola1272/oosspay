@@ -40,7 +40,7 @@ export async function GET() {
   const sb = createAdminClient() as any;
   const { data, error: fetchError } = await sb
     .from("transactions")
-    .select("*, profiles(full_name, email)")
+    .select("*, profiles!transactions_user_id_fkey(full_name, email)")
     .eq("type", "deposit")
     .order("created_at", { ascending: false });
 

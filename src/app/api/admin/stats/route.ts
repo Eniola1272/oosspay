@@ -29,8 +29,8 @@ export async function GET() {
     sb.from("profiles").select("id", { count: "exact", head: true }),
     sb.from("withdrawal_requests").select("id", { count: "exact", head: true }).eq("status", "pending"),
     sb.from("transactions").select("amount").eq("type", "deposit").gte("created_at", today).eq("status", "completed"),
-    sb.from("transactions").select("id, amount, description, created_at, type, profiles(full_name)").order("created_at", { ascending: false }).limit(5),
-    sb.from("withdrawal_requests").select("id, amount, created_at, profiles(full_name)").order("created_at", { ascending: false }).limit(5),
+    sb.from("transactions").select("id, amount, description, created_at, type, profiles!transactions_user_id_fkey(full_name)").order("created_at", { ascending: false }).limit(5),
+    sb.from("withdrawal_requests").select("id, amount, created_at, profiles!withdrawal_requests_user_id_fkey(full_name)").order("created_at", { ascending: false }).limit(5),
   ]);
 
   const totalUsers = usersRes.count ?? 0;

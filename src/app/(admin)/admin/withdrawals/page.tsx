@@ -51,7 +51,7 @@ export default function AdminWithdrawalsPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await (supabase as any)
       .from("withdrawal_requests")
-      .select("*, profiles(full_name, email)")
+      .select("*, profiles!withdrawal_requests_user_id_fkey(full_name, email)")
       .order("created_at", { ascending: false });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,7 +63,10 @@ export default function AdminWithdrawalsPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = tab === "all" ? requests : requests.filter((r) => r.status === tab);
 
