@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import {
@@ -71,14 +71,14 @@ export default function DepositPage() {
 
   const deposits = transactions.filter((tx) => tx.type === "deposit");
 
-  const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<DepositRequestInput>({
+  const { register, handleSubmit, control, reset, formState: { errors } } = useForm<DepositRequestInput>({
     resolver: zodResolver(depositRequestSchema),
     defaultValues: {
       deposit_date: new Date().toISOString().split("T")[0],
     },
   });
 
-  const amount = watch("amount", 0);
+  const amount = useWatch({ control, name: "amount", defaultValue: 0 });
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -108,6 +108,7 @@ export default function DepositPage() {
 
     if (receiptFile) {
       const ext = receiptFile.name.split(".").pop();
+      // eslint-disable-next-line react-hooks/purity
       const path = `${user.id}/${Date.now()}.${ext}`;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: uploadError } = await (supabase as any).storage
@@ -115,41 +116,43 @@ export default function DepositPage() {
         .upload(path, receiptFile);
 
       if (uploadError) {
-        toast.error("Failed to upload receipt. Please try again.");
-        setLoading(false);
-        return;
+        toast.warning("Receipt upload failed, so the request will be submitted without it.");
+        receipt_url = null;
+      } else {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: urlData } = (supabase as any).storage
+          .from("receipts")
+          .getPublicUrl(path);
+        receipt_url = urlData.publicUrl;
       }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: urlData } = (supabase as any).storage
-        .from("receipts")
-        .getPublicUrl(path);
-      receipt_url = urlData.publicUrl;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from("transactions").insert({
-      user_id: user.id,
-      type: "deposit",
-      amount: data.amount,
-      description: data.description || "Savings Deposit",
-      deposit_request_date: data.deposit_date,
-      receipt_url,
-      status: "pending",
+    const response = await fetch("/api/deposit-requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        amount: data.amount,
+        deposit_date: data.deposit_date,
+        description: data.description,
+        receipt_url,
+      }),
     });
+    const result = await response.json();
 
-    setLoading(false);
-
-    if (error) {
-      toast.error(error.message);
+    if (!response.ok) {
+      toast.error(result.error ?? "Could not submit deposit request");
+      setLoading(false);
       return;
     }
 
     setSubmitted(true);
-    refetch();
-    reset();
+    await refetch();
+    reset({
+      deposit_date: new Date().toISOString().split("T")[0],
+    });
     setReceiptFile(null);
     setReceiptPreview(null);
+    setLoading(false);
   }
 
   return (

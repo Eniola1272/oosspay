@@ -13,7 +13,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SavingsTargetCard } from "@/components/dashboard/SavingsTargetCard";
 import { useSavingsTargets } from "@/hooks/useSavingsTargets";
 import { useAuth } from "@/context/AuthContext";
-import { createClient } from "@/lib/supabase/client";
 import { savingsTargetSchema, type SavingsTargetInput } from "@/lib/validations";
 import { toast } from "sonner";
 import type { SavingsTarget } from "@/types";
@@ -24,7 +23,6 @@ function TargetModal({
   open: boolean; onClose: () => void; editing?: SavingsTarget | null; onSaved: () => void | Promise<void>;
 }) {
   const { user } = useAuth();
-  const supabase = createClient();
   const [loading, setLoading] = useState(false);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<SavingsTargetInput>({
@@ -39,23 +37,22 @@ function TargetModal({
   async function onSubmit(data: SavingsTargetInput) {
     if (!user) return;
     setLoading(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sb = supabase as any;
     if (editing) {
-      const { error } = await sb.from("savings_targets").update({
-        name: data.name, target_amount: data.target_amount, deadline: data.deadline || null,
-      }).eq("id", editing.id);
-      if (error) { toast.error(error.message); } else { toast.success("Target updated!"); onSaved(); onClose(); }
-    } else {
-      const { error } = await sb.from("savings_targets").insert({
-        user_id: user.id,
-        name: data.name,
-        target_amount: data.target_amount,
-        current_amount: 0,
-        deadline: data.deadline || null,
-        status: "active",
+      const response = await fetch("/api/savings-targets", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editing.id, ...data }),
       });
-      if (error) { toast.error(error.message); } else { toast.success("Target created!"); await onSaved(); onClose(); }
+      const result = await response.json();
+      if (!response.ok) { toast.error(result.error ?? "Could not update target"); } else { toast.success("Target updated!"); await onSaved(); onClose(); }
+    } else {
+      const response = await fetch("/api/savings-targets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      if (!response.ok) { toast.error(result.error ?? "Could not create target"); } else { toast.success("Target created!"); await onSaved(); onClose(); }
     }
     setLoading(false);
     reset();
@@ -101,7 +98,6 @@ function TargetModal({
 
 export default function SavingsPage() {
   const { targets, isLoading, refetch } = useSavingsTargets();
-  const supabase = createClient();
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<SavingsTarget | null>(null);
 
@@ -110,9 +106,9 @@ export default function SavingsPage() {
 
   async function deleteTarget(id: string) {
     if (!confirm("Delete this savings target?")) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from("savings_targets").delete().eq("id", id);
-    if (error) { toast.error(error.message); } else { toast.success("Target deleted"); refetch(); }
+    const response = await fetch(`/api/savings-targets?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+    const result = await response.json();
+    if (!response.ok) { toast.error(result.error ?? "Could not delete target"); } else { toast.success("Target deleted"); refetch(); }
   }
 
   return (

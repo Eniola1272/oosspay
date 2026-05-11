@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 import type { SavingsTarget } from "@/types";
 
@@ -18,18 +17,12 @@ export function useSavingsTargets() {
     }
 
     setIsLoading(true);
-    const supabase = createClient();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data, error } = await (supabase as any)
-      .from("savings_targets")
-      .select("*")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+    const response = await fetch("/api/savings-targets");
+    const result = await response.json().catch(() => ({ targets: [] }));
 
-    if (!error) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (response.ok) {
       setTargets(
-        (data ?? []).map((target: any) => ({
+        ((result.targets ?? []) as SavingsTarget[]).map((target) => ({
           ...target,
           status: target.status ?? "active",
           current_amount: Number(target.current_amount ?? 0),
@@ -42,6 +35,7 @@ export function useSavingsTargets() {
   }, [user]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchTargets();
   }, [fetchTargets]);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from "react";
 import type { User } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -16,6 +16,8 @@ interface AuthContextValue {
   isLoading: boolean;
   isAdmin: boolean;
   isSuperAdmin: boolean;
+  updateProfile: (profile: Profile) => void;
+  refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -25,11 +27,13 @@ const AuthContext = createContext<AuthContextValue>({
   isLoading: true,
   isAdmin: false,
   isSuperAdmin: false,
+  updateProfile: () => {},
+  refreshProfile: async () => {},
   signOut: async () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,14 +42,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const warningRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  async function fetchProfile(userId: string) {
+  const fetchProfile = useCallback(async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
       .select("*")
       .eq("id", userId)
       .single();
     setProfile(data ?? null);
-  }
+  }, [supabase]);
+
+  const refreshProfile = useCallback(async () => {
+    if (!user) return;
+    await fetchProfile(user.id);
+  }, [fetchProfile, user]);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -72,6 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (warningRef.current) clearTimeout(warningRef.current);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setShowWarning(false);
       return;
     }
@@ -106,8 +116,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     return () => subscription.unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchProfile, supabase]);
 
   return (
     <AuthContext.Provider
@@ -117,6 +126,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         isAdmin: profile?.role === "admin" || profile?.role === "super_admin",
         isSuperAdmin: profile?.role === "super_admin",
+        updateProfile: setProfile,
+        refreshProfile,
         signOut,
       }}
     >

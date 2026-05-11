@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useAuth } from "@/context/AuthContext";
-import { createClient } from "@/lib/supabase/client";
 import { profileSchema, type ProfileInput } from "@/lib/validations";
 import { getInitials, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
@@ -26,8 +25,7 @@ const NIGERIAN_BANKS = [
 ];
 
 export default function ProfilePage() {
-  const { profile, isLoading } = useAuth();
-  const supabase = createClient();
+  const { profile, isLoading, updateProfile } = useAuth();
   const [saving, setSaving] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
@@ -51,25 +49,51 @@ export default function ProfilePage() {
   async function onSubmitPersonal(data: ProfileInput) {
     if (!profile) return;
     setSaving(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from("profiles").update({
-      full_name: data.full_name, phone: data.phone || null,
-    }).eq("id", profile.id);
+    const response = await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await response.json();
     setSaving(false);
-    if (error) { toast.error(error.message); } else { toast.success("Personal information updated!"); }
+    if (!response.ok) {
+      toast.error(result.error ?? "Could not update personal information");
+    } else {
+      updateProfile(result.profile);
+      reset({
+        full_name: result.profile.full_name ?? "",
+        phone: result.profile.phone ?? "",
+        bank_name: result.profile.bank_name ?? "",
+        bank_account_number: result.profile.bank_account_number ?? "",
+        bank_account_name: result.profile.bank_account_name ?? "",
+      });
+      toast.success("Personal information updated!");
+    }
   }
 
   async function onSubmitBank(data: ProfileInput) {
     if (!profile) return;
     setSaving(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from("profiles").update({
-      bank_name: data.bank_name || null,
-      bank_account_number: data.bank_account_number || null,
-      bank_account_name: data.bank_account_name || null,
-    }).eq("id", profile.id);
+    const response = await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    const result = await response.json();
     setSaving(false);
-    if (error) { toast.error(error.message); } else { toast.success("Bank details updated!"); }
+    if (!response.ok) {
+      toast.error(result.error ?? "Could not update bank details");
+    } else {
+      updateProfile(result.profile);
+      reset({
+        full_name: result.profile.full_name ?? "",
+        phone: result.profile.phone ?? "",
+        bank_name: result.profile.bank_name ?? "",
+        bank_account_number: result.profile.bank_account_number ?? "",
+        bank_account_name: result.profile.bank_account_name ?? "",
+      });
+      toast.success("Bank details updated!");
+    }
   }
 
   if (isLoading) {
