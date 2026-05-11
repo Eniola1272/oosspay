@@ -50,7 +50,7 @@ export default function AdminUsersPage() {
     <div>
       <AdminTopBar title="Manage Users" subtitle={`${users.length} registered members`} />
 
-      <div className="p-6 space-y-5">
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
         <div className="relative max-w-sm">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#666666]" />
           <Input

@@ -104,7 +104,7 @@ export default function AdminUserDetailPage() {
     return (
       <div>
         <AdminTopBar title="Member Detail" />
-        <div className="p-6 space-y-5">
+        <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
           <Skeleton className="h-8 w-32" />
           <Skeleton className="h-36 rounded-2xl" />
           <div className="grid md:grid-cols-2 gap-5">
@@ -122,7 +122,7 @@ export default function AdminUserDetailPage() {
     <div>
       <AdminTopBar title={user.full_name ?? "Member Detail"} subtitle={user.email} />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 lg:p-6 space-y-5 lg:space-y-6">
         <button
           onClick={() => router.push(`${basePath}/users`)}
           className="flex items-center gap-1.5 text-sm text-[#666666] hover:text-[#1A1A2E] transition-colors"

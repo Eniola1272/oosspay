@@ -106,7 +106,7 @@ export default function AdminWithdrawalsPage() {
     <div>
       <AdminTopBar title="Withdrawal Requests" subtitle="Review and process member withdrawal requests." />
 
-      <div className="p-6 space-y-5">
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
         <Tabs value={tab} onValueChange={(v) => setTab(v as TabValue)}>
           <TabsList className="bg-[#FAFAFA] border border-[#E0E0E0] flex-wrap h-auto gap-1 p-1">
             {TABS.map(({ label, value }) => {

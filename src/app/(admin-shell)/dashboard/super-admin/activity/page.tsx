@@ -110,7 +110,7 @@ export default function ActivityLogPage() {
     <div>
       <AdminTopBar title="Activity Log" subtitle="Every admin action on deposits and withdrawals — who did what, and when." />
 
-      <div className="p-6 space-y-5">
+      <div className="p-4 lg:p-6 space-y-4 lg:space-y-5">
         <div className="flex items-center gap-2 text-xs text-[#666666] bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 w-fit">
           <Filter size={13} className="text-amber-500" /> Super Admin view only
         </div>

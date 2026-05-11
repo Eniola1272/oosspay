@@ -51,7 +51,7 @@ export default function AdminDashboardPage() {
     <div>
       <AdminTopBar title="Admin Overview" subtitle="Platform activity at a glance." />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 lg:p-6 space-y-5 lg:space-y-6">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {statCards.map(({ label, value, icon: Icon, color, fmt }) => (
             <Card key={label} className="border-[#E0E0E0]">

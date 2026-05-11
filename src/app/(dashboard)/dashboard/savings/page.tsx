@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import type { Metadata } from "next";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { Plus, Target, Pencil, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -22,7 +21,7 @@ import type { SavingsTarget } from "@/types";
 function TargetModal({
   open, onClose, editing, onSaved
 }: {
-  open: boolean; onClose: () => void; editing?: SavingsTarget | null; onSaved: () => void;
+  open: boolean; onClose: () => void; editing?: SavingsTarget | null; onSaved: () => void | Promise<void>;
 }) {
   const { user } = useAuth();
   const supabase = createClient();
@@ -49,9 +48,14 @@ function TargetModal({
       if (error) { toast.error(error.message); } else { toast.success("Target updated!"); onSaved(); onClose(); }
     } else {
       const { error } = await sb.from("savings_targets").insert({
-        user_id: user.id, name: data.name, target_amount: data.target_amount, deadline: data.deadline || null,
+        user_id: user.id,
+        name: data.name,
+        target_amount: data.target_amount,
+        current_amount: 0,
+        deadline: data.deadline || null,
+        status: "active",
       });
-      if (error) { toast.error(error.message); } else { toast.success("Target created!"); onSaved(); onClose(); }
+      if (error) { toast.error(error.message); } else { toast.success("Target created!"); await onSaved(); onClose(); }
     }
     setLoading(false);
     reset();

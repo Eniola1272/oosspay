@@ -96,7 +96,7 @@ export default function AdminSettingsPage() {
     <div>
       <AdminTopBar title="Platform Settings" subtitle="Manage deposit account details and member announcements." />
 
-      <div className="p-6 space-y-6">
+      <div className="p-4 lg:p-6 space-y-5 lg:space-y-6">
         <Card>
           <CardHeader>
             <CardTitle className="text-base text-[#1A1A2E] flex items-center gap-2">
