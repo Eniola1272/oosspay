@@ -40,13 +40,13 @@ export function BalanceCard() {
       <div className="space-y-4 mt-auto pt-5">
         <div className="flex gap-3">
           <Link
-            href="/deposit"
+            href="/dashboard/deposit"
             className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl bg-white text-[#C2185B] text-sm font-bold hover:bg-[#FCE4EC] transition-colors"
           >
             <ArrowDownLeft size={15} /> Save Now
           </Link>
           <Link
-            href="/withdraw"
+            href="/dashboard/withdraw"
             className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl border border-white/40 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
           >
             <ArrowUpRight size={15} /> Withdraw

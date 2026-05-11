@@ -60,7 +60,7 @@ export function RecentActivityWidget() {
     <div className="bg-white rounded-2xl border border-[#EBEBEB] p-5 flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <p className="text-sm font-bold text-[#1A1A2E]">Recent Activity</p>
-        <Link href="/deposit" className="text-xs text-[#C2185B] font-semibold hover:underline">
+        <Link href="/dashboard/deposit" className="text-xs text-[#C2185B] font-semibold hover:underline">
           View History →
         </Link>
       </div>

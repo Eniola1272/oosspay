@@ -17,11 +17,11 @@ import { useNotifications } from "@/hooks/useNotifications";
 import { useSidebar } from "./SidebarContext";
 
 const NAV_ITEMS = [
-  { href: "/dashboard",      label: "Dashboard",   icon: LayoutDashboard },
-  { href: "/savings",        label: "My Savings",  icon: Target },
-  { href: "/withdraw",       label: "Withdraw",    icon: Wallet },
-  { href: "/notifications",  label: "Notifications", icon: Bell },
-  { href: "/profile",        label: "Profile",     icon: User },
+  { href: "/dashboard",                label: "Dashboard",     icon: LayoutDashboard },
+  { href: "/dashboard/savings",        label: "My Savings",    icon: Target },
+  { href: "/dashboard/withdraw",       label: "Withdraw",      icon: Wallet },
+  { href: "/dashboard/notifications",  label: "Notifications", icon: Bell },
+  { href: "/dashboard/profile",        label: "Profile",       icon: User },
 ];
 
 interface NavItemProps {
@@ -34,7 +34,7 @@ interface NavItemProps {
 
 function NavItem({ href, label, icon: Icon, collapsed, badge }: NavItemProps) {
   const pathname = usePathname();
-  const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href + "/"));
+  const active = pathname === href || (href !== "/dashboard" && href !== "/dashboard/profile" && pathname.startsWith(href));
   return (
     <Link
       href={href}
@@ -111,28 +111,66 @@ export function DashboardSidebar() {
         </nav>
 
         {/* User + logout */}
-        <div className="border-t border-white/10 p-2 space-y-1">
-          <button
-            onClick={() => setLogoutOpen(true)}
-            title={collapsed ? "Logout" : undefined}
-            className={cn(
-              "flex items-center gap-3 rounded-lg text-sm font-medium text-white/65 hover:text-white hover:bg-white/10 w-full transition-all",
-              collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
-            )}
-          >
-            <LogOut size={18} className="shrink-0" />
-            {!collapsed && <span>Logout</span>}
-          </button>
+        <div className="border-t border-white/10 p-2">
+          {collapsed ? (
+            /* Collapsed: avatar only */
+            <div className="flex flex-col items-center gap-1 py-1">
+              <Link href="/dashboard/profile" title="Profile">
+                {profile?.avatar_url ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={profile.avatar_url}
+                    alt={profile.full_name ?? "Avatar"}
+                    className="w-9 h-9 rounded-full object-cover border-2 border-white/20 hover:border-[#C2185B] transition-all"
+                  />
+                ) : (
+                  <div className="w-9 h-9 rounded-full bg-[#C2185B] flex items-center justify-center text-white text-sm font-bold border-2 border-white/20 hover:border-white/50 transition-all">
+                    {profile?.full_name?.charAt(0).toUpperCase() ?? "U"}
+                  </div>
+                )}
+              </Link>
+              <button
+                onClick={() => setLogoutOpen(true)}
+                title="Logout"
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
+          ) : (
+            /* Expanded: avatar card + logout */
+            <div className="space-y-1">
+              <button
+                onClick={() => setLogoutOpen(true)}
+                className="flex items-center gap-3 rounded-lg text-sm font-medium text-white/65 hover:text-white hover:bg-white/10 w-full transition-all px-3 py-2.5"
+              >
+                <LogOut size={18} className="shrink-0" />
+                <span>Logout</span>
+              </button>
 
-          {!collapsed && profile && (
-            <div className="flex items-center gap-2 px-3 py-2">
-              <div className="w-8 h-8 rounded-full bg-[#C2185B] flex items-center justify-center shrink-0 text-white text-xs font-bold">
-                {profile.full_name?.charAt(0).toUpperCase() ?? "U"}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-white truncate">{profile.full_name}</p>
-                <p className="text-[10px] text-white/50 truncate">{profile.email}</p>
-              </div>
+              {profile && (
+                <Link
+                  href="/dashboard/profile"
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-white/10 transition-all group"
+                >
+                  {profile.avatar_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={profile.avatar_url}
+                      alt={profile.full_name ?? "Avatar"}
+                      className="w-9 h-9 rounded-full object-cover border-2 border-white/20 group-hover:border-[#C2185B] transition-all shrink-0"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-linear-to-br from-[#C2185B] to-[#4A0820] flex items-center justify-center text-white text-sm font-bold shrink-0 border-2 border-white/10 group-hover:border-[#C2185B] transition-all">
+                      {profile.full_name?.charAt(0).toUpperCase() ?? "U"}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-white truncate leading-tight">{profile.full_name}</p>
+                    <p className="text-[10px] text-white/50 truncate mt-0.5">{profile.email}</p>
+                  </div>
+                </Link>
+              )}
             </div>
           )}
         </div>

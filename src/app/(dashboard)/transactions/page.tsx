@@ -1,5 +1,2 @@
 import { redirect } from "next/navigation";
-
-export default function TransactionsPage() {
-  redirect("/withdraw");
-}
+export default function TxRedirect() { redirect("/dashboard/transactions"); }

@@ -21,7 +21,7 @@ export function NotificationsPreviewWidget() {
             </span>
           )}
         </div>
-        <Link href="/notifications" className="text-xs text-[#C2185B] font-semibold hover:underline">
+        <Link href="/dashboard/notifications" className="text-xs text-[#C2185B] font-semibold hover:underline">
           View All
         </Link>
       </div>

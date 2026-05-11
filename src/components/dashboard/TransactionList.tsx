@@ -59,7 +59,7 @@ export function TransactionList({ limit = 5 }: { limit?: number }) {
   return (
     <div>
       {transactions.map((tx) => <TransactionRow key={tx.id} tx={tx} />)}
-      <Link href="/withdraw" className="block text-center text-sm text-[#C2185B] hover:underline mt-4 font-medium">
+      <Link href="/dashboard/withdraw" className="block text-center text-sm text-[#C2185B] hover:underline mt-4 font-medium">
         View Full History →
       </Link>
     </div>

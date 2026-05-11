@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard, Users, CreditCard, Settings,
-  ExternalLink, LogOut, Inbox, ScrollText,
+  LogOut, ChevronLeft, ChevronRight, Inbox, ScrollText,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Logo } from "@/components/shared/Logo";
@@ -13,32 +13,80 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
+import { useAdminSidebar } from "./AdminSidebarContext";
 import { createClient } from "@/lib/supabase/client";
 
 const ADMIN_NAV = [
-  { href: "/admin",             label: "Dashboard",    icon: LayoutDashboard, exact: true },
-  { href: "/admin/users",       label: "Users",         icon: Users },
-  { href: "/admin/deposits",    label: "Deposits",      icon: Inbox },
-  { href: "/admin/withdrawals", label: "Withdrawals",   icon: CreditCard },
-  { href: "/admin/settings",    label: "Settings",      icon: Settings },
+  { href: "/dashboard/admin",             label: "Dashboard",    icon: LayoutDashboard, exact: true },
+  { href: "/dashboard/admin/users",       label: "Users",        icon: Users },
+  { href: "/dashboard/admin/deposits",    label: "Deposits",     icon: Inbox },
+  { href: "/dashboard/admin/withdrawals", label: "Withdrawals",  icon: CreditCard },
+  { href: "/dashboard/admin/settings",    label: "Settings",     icon: Settings },
 ];
 
 const SUPER_ADMIN_NAV = [
-  { href: "/admin",             label: "Dashboard",    icon: LayoutDashboard, exact: true },
-  { href: "/admin/users",       label: "Users",         icon: Users },
-  { href: "/admin/deposits",    label: "Deposits",      icon: Inbox },
-  { href: "/admin/withdrawals", label: "Withdrawals",   icon: CreditCard },
-  { href: "/admin/activity",    label: "Activity Log",  icon: ScrollText },
-  { href: "/admin/settings",    label: "Settings",      icon: Settings },
+  { href: "/dashboard/super-admin",             label: "Dashboard",    icon: LayoutDashboard, exact: true },
+  { href: "/dashboard/super-admin/users",       label: "Users",        icon: Users },
+  { href: "/dashboard/super-admin/deposits",    label: "Deposits",     icon: Inbox },
+  { href: "/dashboard/super-admin/withdrawals", label: "Withdrawals",  icon: CreditCard },
+  { href: "/dashboard/super-admin/activity",    label: "Activity Log", icon: ScrollText },
+  { href: "/dashboard/super-admin/settings",    label: "Settings",     icon: Settings },
 ];
+
+interface NavItemProps {
+  href: string;
+  label: string;
+  icon: React.ElementType;
+  exact?: boolean;
+  collapsed: boolean;
+  badge?: number;
+  isAmber?: boolean;
+}
+
+function NavItem({ href, label, icon: Icon, exact, collapsed, badge, isAmber }: NavItemProps) {
+  const pathname = usePathname();
+  const active = exact ? pathname === href : pathname.startsWith(href);
+  const activeColor = isAmber
+    ? "bg-amber-500/20 text-amber-400 border-l-4 border-amber-400 pl-2"
+    : "bg-[#C2185B]/20 text-[#C2185B] border-l-4 border-[#C2185B] pl-2";
+  const hoverColor = isAmber
+    ? "text-amber-400/70 hover:text-amber-400 hover:bg-amber-500/10"
+    : "text-white/70 hover:text-white hover:bg-white/10";
+
+  return (
+    <Link
+      href={href}
+      title={collapsed ? label : undefined}
+      className={cn(
+        "flex items-center gap-3 rounded-lg text-sm font-medium transition-all relative",
+        collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5",
+        active ? activeColor : hoverColor,
+      )}
+    >
+      <Icon size={18} className="shrink-0" />
+      {!collapsed && <span className="flex-1">{label}</span>}
+      {badge && badge > 0 && !collapsed && (
+        <span className="bg-[#F39C12] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
+          {badge}
+        </span>
+      )}
+      {badge && badge > 0 && collapsed && (
+        <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#F39C12] rounded-full" />
+      )}
+    </Link>
+  );
+}
 
 export function AdminSidebar() {
   const pathname = usePathname();
-  const { signOut, isSuperAdmin } = useAuth();
+  const { profile, signOut, isSuperAdmin } = useAuth();
+  const { collapsed, setCollapsed } = useAdminSidebar();
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [pendingDeposits, setPendingDeposits] = useState(0);
 
-  const navItems = isSuperAdmin ? SUPER_ADMIN_NAV : ADMIN_NAV;
+  const isSuper = isSuperAdmin || pathname.startsWith("/dashboard/super-admin");
+  const navItems = isSuper ? SUPER_ADMIN_NAV : ADMIN_NAV;
+  const accentColor = isSuper ? "bg-amber-500" : "bg-[#C2185B]";
 
   useEffect(() => {
     const supabase = createClient();
@@ -59,72 +107,157 @@ export function AdminSidebar() {
     window.location.href = "/";
   }
 
+  const depositHref = isSuper ? "/dashboard/super-admin/deposits" : "/dashboard/admin/deposits";
+
   return (
     <>
-      <aside className="hidden lg:flex flex-col w-60 min-h-screen bg-[#1A1A2E] fixed left-0 top-0 bottom-0 z-40">
-        <div className="p-6 border-b border-white/10">
-          <Logo variant="white" showTagline size="md" />
-          <Badge className={`mt-2 text-white text-[10px] ${
-            isSuperAdmin ? "bg-amber-500" : "bg-[#C2185B]"
-          }`}>
-            {isSuperAdmin ? "Super Admin" : "Admin"}
-          </Badge>
+      <aside
+        className={cn(
+          "hidden lg:flex flex-col min-h-screen bg-[#1A1A2E] fixed left-0 top-0 bottom-0 z-40 transition-all duration-300",
+          collapsed ? "w-[68px]" : "w-60"
+        )}
+      >
+        {/* Logo + collapse */}
+        <div className={cn(
+          "flex items-center border-b border-white/10 h-[65px]",
+          collapsed ? "justify-center px-2" : "justify-between px-4"
+        )}>
+          {!collapsed && <Logo variant="white" size="md" />}
+          <button
+            onClick={() => setCollapsed(!collapsed)}
+            className="w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-all shrink-0"
+          >
+            {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+          </button>
         </div>
 
-        <nav className="flex-1 py-4 px-3 space-y-1">
-          {navItems.map(({ href, label, icon: Icon, exact }) => {
-            const active = exact ? pathname === href : pathname.startsWith(href);
-            const showDepositBadge = href === "/admin/deposits" && pendingDeposits > 0;
-            const isActivityLog = href === "/admin/activity";
+        {/* Role badge */}
+        {!collapsed && (
+          <div className="px-4 pt-3 pb-1">
+            <Badge className={`${accentColor} text-white text-[10px]`}>
+              {isSuper ? "Super Admin" : "Admin"}
+            </Badge>
+          </div>
+        )}
 
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
-                  active
-                    ? isActivityLog
-                      ? "bg-amber-500/20 text-amber-400 border-l-4 border-amber-400 pl-2"
-                      : "bg-[#C2185B]/20 text-[#C2185B] border-l-4 border-[#C2185B] pl-2"
-                    : isActivityLog
-                    ? "text-amber-400/70 hover:text-amber-400 hover:bg-amber-500/10"
-                    : "text-white/70 hover:text-white hover:bg-white/10"
-                )}
-              >
-                <Icon size={18} />
-                <span className="flex-1">{label}</span>
-                {showDepositBadge && (
-                  <span className="bg-[#F39C12] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
-                    {pendingDeposits}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
+        {/* Nav */}
+        <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
+          {navItems.map(({ href, label, icon, exact }) => (
+            <NavItem
+              key={href}
+              href={href}
+              label={label}
+              icon={icon}
+              exact={exact}
+              collapsed={collapsed}
+              isAmber={isSuper}
+              badge={href === depositHref ? pendingDeposits : undefined}
+            />
+          ))}
 
-          <div className="pt-4 border-t border-white/10 mt-4">
+          {/* Divider + user view link */}
+          <div className={cn("pt-3 mt-2 border-t border-white/10")}>
             <Link
               href="/dashboard"
-              className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 transition-all"
+              title={collapsed ? "User View" : undefined}
+              className={cn(
+                "flex items-center gap-3 rounded-lg text-sm font-medium text-white/40 hover:text-white/70 hover:bg-white/10 transition-all",
+                collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
+              )}
             >
-              <ExternalLink size={18} />
-              <span>User View</span>
+              <LayoutDashboard size={16} className="shrink-0" />
+              {!collapsed && <span>User View</span>}
             </Link>
           </div>
         </nav>
 
-        <div className="p-3 border-t border-white/10">
-          <button
-            onClick={() => setLogoutOpen(true)}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-white/70 hover:text-white hover:bg-white/10 w-full transition-all"
-          >
-            <LogOut size={18} />
-            <span>Logout</span>
-          </button>
+        {/* User + logout */}
+        <div className="border-t border-white/10 p-2">
+          {collapsed ? (
+            <div className="flex flex-col items-center gap-1 py-1">
+              {profile?.avatar_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={profile.avatar_url}
+                  alt={profile.full_name ?? "Avatar"}
+                  className="w-9 h-9 rounded-full object-cover border-2 border-white/20"
+                />
+              ) : (
+                <div className={cn(
+                  "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold border-2 border-white/20",
+                  isSuper ? "bg-amber-500" : "bg-[#C2185B]"
+                )}>
+                  {profile?.full_name?.charAt(0).toUpperCase() ?? "A"}
+                </div>
+              )}
+              <button
+                onClick={() => setLogoutOpen(true)}
+                title="Logout"
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all"
+              >
+                <LogOut size={16} />
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-1">
+              <button
+                onClick={() => setLogoutOpen(true)}
+                className="flex items-center gap-3 rounded-lg text-sm font-medium text-white/65 hover:text-white hover:bg-white/10 w-full transition-all px-3 py-2.5"
+              >
+                <LogOut size={18} className="shrink-0" />
+                <span>Logout</span>
+              </button>
+
+              {profile && (
+                <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
+                  {profile.avatar_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={profile.avatar_url}
+                      alt={profile.full_name ?? "Avatar"}
+                      className="w-9 h-9 rounded-full object-cover border-2 border-white/20 shrink-0"
+                    />
+                  ) : (
+                    <div className={cn(
+                      "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 border-2 border-white/10",
+                      isSuper ? "bg-linear-to-br from-amber-400 to-amber-600" : "bg-linear-to-br from-[#C2185B] to-[#4A0820]"
+                    )}>
+                      {profile.full_name?.charAt(0).toUpperCase() ?? "A"}
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-white truncate leading-tight">{profile.full_name}</p>
+                    <p className="text-[10px] text-white/50 truncate mt-0.5">{profile.email}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </aside>
 
+      {/* Mobile bottom nav */}
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A2E] border-t border-white/10 flex">
+        {navItems.slice(0, 5).map(({ href, label, icon: Icon, exact }) => {
+          const active = exact ? pathname === href : pathname.startsWith(href);
+          const activeTextColor = isSuper ? "text-amber-400" : "text-[#C2185B]";
+          return (
+            <Link
+              key={href}
+              href={href}
+              className={cn(
+                "flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-[10px] font-medium transition-colors",
+                active ? activeTextColor : "text-white/50"
+              )}
+            >
+              <Icon size={20} />
+              {label}
+            </Link>
+          );
+        })}
+      </nav>
+
+      {/* Logout dialog */}
       <Dialog open={logoutOpen} onOpenChange={setLogoutOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>

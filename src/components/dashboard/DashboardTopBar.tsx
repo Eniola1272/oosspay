@@ -44,7 +44,7 @@ export function DashboardTopBar({ title, subtitle, showGreeting = false }: Dashb
           <Search size={18} />
         </button>
         <Link
-          href="/notifications"
+          href="/dashboard/notifications"
           className="relative w-9 h-9 rounded-full hover:bg-[#F5F5F5] flex items-center justify-center text-[#666666] transition-colors"
         >
           <Bell size={18} />
