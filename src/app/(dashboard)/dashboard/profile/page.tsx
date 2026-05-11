@@ -3,12 +3,13 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Shield, AlertTriangle } from "lucide-react";
+import { User, Shield, AlertTriangle, BadgeCheck } from "lucide-react";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useAuth } from "@/context/AuthContext";
@@ -95,11 +96,25 @@ export default function ProfilePage() {
           <div className="w-16 h-16 rounded-full bg-[#C2185B] flex items-center justify-center text-white text-2xl font-bold shrink-0">
             {profile?.full_name ? getInitials(profile.full_name) : <User size={28} />}
           </div>
-          <div>
-            <p className="text-lg font-bold text-[#1A1A2E]">{profile?.full_name ?? "—"}</p>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <p className="text-lg font-bold text-[#1A1A2E]">{profile?.full_name ?? "—"}</p>
+              {profile?.role && (
+                <Badge className={
+                  profile.role === "super_admin"
+                    ? "bg-amber-500 text-white text-[10px] gap-1"
+                    : profile.role === "admin"
+                    ? "bg-[#C2185B] text-white text-[10px] gap-1"
+                    : "bg-[#E0E0E0] text-[#666666] text-[10px] gap-1"
+                }>
+                  <BadgeCheck size={10} />
+                  {profile.role === "super_admin" ? "Super Admin" : profile.role === "admin" ? "Admin" : "Member"}
+                </Badge>
+              )}
+            </div>
             <p className="text-sm text-[#666666]">{profile?.email}</p>
             {profile?.created_at && (
-              <p className="text-xs text-[#666666]/70 mt-0.5">Member since {formatDate(profile.created_at)}</p>
+              <p className="text-xs text-[#666666]/70">Member since {formatDate(profile.created_at)}</p>
             )}
           </div>
         </CardContent>
