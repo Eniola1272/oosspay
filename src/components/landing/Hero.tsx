@@ -338,7 +338,7 @@ function PhoneMockup() {
                   This Month
                 </p>
                 <p className="text-xs font-bold text-[#1A1A2E] tabular-nums">
-                  &#8358;5,200
+                  &#8358;5,200,000
                 </p>
               </div>
               <div className="bg-[#FCE4EC]/60 rounded-xl p-2.5">

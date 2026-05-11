@@ -284,7 +284,7 @@ export function Navbar() {
               href="/dashboard"
               className={cn(buttonVariants(), "bg-[#C2185B] hover:bg-[#a31545] text-white rounded-full px-5 h-9 text-xs")}
             >
-              Dashboard
+              Go to Dashboard
             </Link>
           ) : (
             <>
@@ -358,7 +358,7 @@ export function Navbar() {
                     onClick={() => setOpen(false)}
                     className={cn(buttonVariants(), "bg-[#C2185B] hover:bg-[#a31545] text-white w-full justify-center rounded-full")}
                   >
-                    Dashboard
+                    Go to Dashboard
                   </Link>
                 ) : (
                   <>
