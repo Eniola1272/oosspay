@@ -73,12 +73,16 @@ function AccountMenu({
   collapsed,
   profile,
   unreadCount,
+  isAdmin,
+  isSuperAdmin,
   onNavigate,
   onLogout,
 }: {
   collapsed: boolean;
   profile: Profile | null;
   unreadCount: number;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
   onNavigate: (href: string) => void;
   onLogout: () => void;
 }) {
@@ -156,6 +160,18 @@ function AccountMenu({
           <ShieldCheck size={15} />
           Account security
         </DropdownMenuItem>
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => onNavigate(isSuperAdmin ? "/dashboard/super-admin" : "/dashboard/admin")}
+              className="cursor-pointer gap-2 px-2 py-2 text-amber-600 font-semibold"
+            >
+              <ShieldCheck size={15} className="text-amber-500" />
+              Switch to Admin
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={onLogout}
@@ -171,7 +187,7 @@ function AccountMenu({
 }
 
 export function DashboardSidebar() {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, isAdmin, isSuperAdmin } = useAuth();
   const { unreadCount } = useNotifications();
   const router = useRouter();
   const pathname = usePathname();
@@ -228,6 +244,8 @@ export function DashboardSidebar() {
                 collapsed
                 profile={profile}
                 unreadCount={unreadCount}
+                isAdmin={isAdmin}
+                isSuperAdmin={isSuperAdmin}
                 onNavigate={(href) => router.push(href)}
                 onLogout={() => setLogoutOpen(true)}
               />
@@ -237,6 +255,8 @@ export function DashboardSidebar() {
               collapsed={false}
               profile={profile}
               unreadCount={unreadCount}
+              isAdmin={isAdmin}
+              isSuperAdmin={isSuperAdmin}
               onNavigate={(href) => router.push(href)}
               onLogout={() => setLogoutOpen(true)}
             />

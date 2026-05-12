@@ -23,9 +23,13 @@ export async function updateSession(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
   const { pathname } = request.nextUrl;
 
-  // Redirect authenticated users away from auth pages
+  // Redirect authenticated users away from auth pages → send to their role's dashboard
   if (user && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: p } = await (supabase as any).from("profiles").select("role").eq("id", user.id).single() as { data: { role: string } | null };
+    const role = p?.role ?? "user";
+    const dest = role === "super_admin" ? "/dashboard/super-admin" : role === "admin" ? "/dashboard/admin" : "/dashboard";
+    return NextResponse.redirect(new URL(dest, request.url));
   }
 
   // Protect all /dashboard routes
