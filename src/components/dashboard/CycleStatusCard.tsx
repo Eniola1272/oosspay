@@ -43,7 +43,7 @@ export function CycleStatusCard({ withdrawAmount = 0 }: { withdrawAmount?: numbe
         <Calendar size={15} className="shrink-0 mt-0.5 text-blue-500" />
         <p>
           Your savings cycle begins when your first deposit is confirmed. After that, a{" "}
-          <strong>3-month lock window</strong> applies — withdrawals before the final 7 days attract a{" "}
+          <strong>3-month lock window</strong> applies: withdrawals before the final 7 days attract a{" "}
           <strong>{(PENALTY_RATE * 100).toFixed(1)}% penalty</strong>.
         </p>
       </div>
@@ -58,11 +58,11 @@ export function CycleStatusCard({ withdrawAmount = 0 }: { withdrawAmount?: numbe
       <div className="bg-[#27AE60]/8 border border-[#27AE60]/25 rounded-2xl px-4 py-4 space-y-1">
         <div className="flex items-center gap-2">
           <Unlock size={15} className="text-[#27AE60] shrink-0" />
-          <p className="font-semibold text-sm text-[#1a6e3a]">Withdrawal Day — No penalty!</p>
+          <p className="font-semibold text-sm text-[#1a6e3a]">Withdrawal Day: No penalty!</p>
         </div>
         <p className="text-xs text-[#555] pl-5">
           You are in the free withdrawal window (Cycle {data.cycleNumber}). This window closes on{" "}
-          <strong>{fmt(data.cycleEnd)}</strong> — {data.daysLeftInCycle} day{data.daysLeftInCycle !== 1 ? "s" : ""} left.
+          <strong>{fmt(data.cycleEnd)}</strong>, with {data.daysLeftInCycle} day{data.daysLeftInCycle !== 1 ? "s" : ""} left.
         </p>
       </div>
     );
@@ -73,7 +73,7 @@ export function CycleStatusCard({ withdrawAmount = 0 }: { withdrawAmount?: numbe
       <div className="flex items-center gap-2">
         <Lock size={15} className="text-amber-600 shrink-0" />
         <p className="font-semibold text-sm text-amber-900">
-          Savings locked — {data.daysUntilFreeWindow} day{data.daysUntilFreeWindow !== 1 ? "s" : ""} until Withdrawal Day
+          Savings locked: {data.daysUntilFreeWindow} day{data.daysUntilFreeWindow !== 1 ? "s" : ""} until Withdrawal Day
         </p>
       </div>
       <p className="text-xs text-amber-800 pl-5">

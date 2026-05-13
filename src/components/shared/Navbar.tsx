@@ -89,7 +89,7 @@ const navGroups: NavGroup[] = [
       {
         label: "Email",
         href: "mailto:hello@oosspay.com",
-        description: "hello@oosspay.com — we reply within 24 hours.",
+        description: "hello@oosspay.com. We reply within 24 hours.",
         icon: Mail,
         external: true,
       },

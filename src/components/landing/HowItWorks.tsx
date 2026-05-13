@@ -5,19 +5,19 @@ const steps = [
     number: "01",
     icon: UserPlus,
     title: "Create Your Free Account",
-    desc: "Sign up in under 2 minutes with your name, email, and phone number. Your personal savings dashboard is ready instantly — no paperwork, no waiting.",
+    desc: "Sign up in under 2 minutes with your name, email, and phone number. Your personal savings dashboard is ready instantly, with no paperwork and no waiting.",
   },
   {
     number: "02",
     icon: Target,
     title: "Set Your Savings Target",
-    desc: "Whether you're saving for rent, a business, school fees, or just a safety net — set a goal, choose a timeline, and watch your progress in real time.",
+    desc: "Whether you're saving for rent, a business, school fees, or just a safety net: set a goal, choose a timeline, and watch your progress in real time.",
   },
   {
     number: "03",
     icon: Wallet,
     title: "Save, Track, and Withdraw With Ease",
-    desc: "Make deposits to your OOSSPAY account, track every naira on your dashboard, and request withdrawals anytime — your money is always accessible.",
+    desc: "Make deposits to your OOSSPAY account, track every naira on your dashboard, and request withdrawals anytime; your money is always accessible.",
   },
 ];
 

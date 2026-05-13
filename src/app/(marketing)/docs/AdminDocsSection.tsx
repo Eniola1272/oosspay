@@ -187,7 +187,7 @@ export function AdminDocsSection() {
           </div>
 
           <p className="text-sm font-semibold text-[#1A1A2E] mt-2">
-            Member Detail Page — <span className="font-mono font-normal text-sm">/dashboard/admin/users/[id]</span>
+            Member Detail Page: <span className="font-mono font-normal text-sm">/dashboard/admin/users/[id]</span>
           </p>
           <p className="text-sm text-[#444]">
             Shows full profile info, current balance, all savings targets (with progress), full
@@ -203,7 +203,7 @@ export function AdminDocsSection() {
               { label: "Amount (₦)",        type: "Number",   required: true,  notes: "Must be greater than zero" },
               { label: "Description",        type: "Text",     required: false, notes: 'e.g. "Monthly savings deposit"' },
               { label: "Reference",          type: "Text",     required: false, notes: "Bank transfer reference number" },
-              { label: "Allocate to Target", type: "Dropdown", required: false, notes: "Optional — choose an active savings target to credit" },
+              { label: "Allocate to Target", type: "Dropdown", required: false, notes: "Optional: choose an active savings target to credit" },
             ]} />
             <ToastTable rows={[
               { scenario: "Deposit recorded", message: "[₦Amount] deposited successfully", type: "success" },

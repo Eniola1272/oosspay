@@ -54,7 +54,7 @@ export async function GET() {
   const txActivity = (recentTxRes.data ?? []).map((t: any) => ({
     id: `tx-${t.id}`,
     type: t.type === "deposit" ? "deposit" : "withdrawal_request",
-    description: `${t.type === "deposit" ? "Deposit" : "Withdrawal"} — ${t.profiles?.full_name ?? "Unknown member"}`,
+    description: `${t.type === "deposit" ? "Deposit" : "Withdrawal"}: ${t.profiles?.full_name ?? "Unknown member"}`,
     amount: Number(t.amount),
     created_at: t.created_at,
   }));
@@ -63,7 +63,7 @@ export async function GET() {
   const wActivity = (recentWRes.data ?? []).map((w: any) => ({
     id: `wr-${w.id}`,
     type: "withdrawal_request",
-    description: `Withdrawal request — ${w.profiles?.full_name ?? "Unknown member"}`,
+    description: `Withdrawal request: ${w.profiles?.full_name ?? "Unknown member"}`,
     amount: Number(w.amount),
     created_at: w.created_at,
   }));

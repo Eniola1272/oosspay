@@ -87,7 +87,7 @@ export default function AdminWithdrawalsPage() {
     const notifMsg = newStatus === "completed"
       ? `Your withdrawal has been completed. ${wr.is_penalized ? `${formatNaira(payout)} has been sent to your bank account (${(Number(wr.penalty_rate) * 100).toFixed(1)}% early withdrawal penalty of ${formatNaira(Number(wr.penalty_amount))} was deducted).` : `${formatNaira(payout)} has been sent to your bank account.`}`
       : newStatus === "approved"
-      ? `Your withdrawal request of ${formatNaira(Number(wr.amount))} has been approved and will be processed soon.${wr.is_penalized ? ` Note: a ${(Number(wr.penalty_rate) * 100).toFixed(1)}% early withdrawal penalty applies — you will receive ${formatNaira(payout)}.` : ""}`
+      ? `Your withdrawal request of ${formatNaira(Number(wr.amount))} has been approved and will be processed soon.${wr.is_penalized ? ` Note: a ${(Number(wr.penalty_rate) * 100).toFixed(1)}% early withdrawal penalty applies; you will receive ${formatNaira(payout)}.` : ""}`
       : newStatus === "rejected"
       ? `Your withdrawal request of ${formatNaira(Number(wr.amount))} was declined.${note ? ` Reason: ${note}` : ""}`
       : `Your withdrawal status has been updated.`;
@@ -183,7 +183,7 @@ export default function AdminWithdrawalsPage() {
                       </div>
                       {wr.is_penalized && (
                         <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm space-y-1">
-                          <p className="font-semibold text-amber-900">Early Withdrawal — Penalty Applied</p>
+                          <p className="font-semibold text-amber-900">Early Withdrawal: Penalty Applied</p>
                           <div className="grid grid-cols-3 gap-3 text-xs">
                             <div><p className="text-amber-700">Requested</p><p className="font-bold text-[#1A1A2E]">{formatNaira(Number(wr.amount))}</p></div>
                             <div><p className="text-amber-700">Penalty ({(Number(wr.penalty_rate) * 100).toFixed(1)}%)</p><p className="font-bold text-[#E74C3C]">−{formatNaira(Number(wr.penalty_amount))}</p></div>

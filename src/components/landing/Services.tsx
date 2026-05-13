@@ -27,7 +27,7 @@ const services: Array<{
   {
     icon: CalendarCheck,
     title: "Consistent Savings",
-    desc: "Build the habit that changes everything. Daily, weekly, or monthly — OOSSPAY keeps you accountable.",
+    desc: "Build the habit that changes everything. Daily, weekly, or monthly: OOSSPAY keeps you accountable.",
     accent: "white",
     span: "lg:col-span-1",
   },
@@ -41,7 +41,7 @@ const services: Array<{
   {
     icon: BarChart2,
     title: "Real-Time Dashboard",
-    desc: "See your savings balance, transactions, and target progress at a glance — 24/7, from any device.",
+    desc: "See your savings balance, transactions, and target progress at a glance, 24/7 from any device.",
     accent: "pink",
     span: "lg:col-span-2",
   },

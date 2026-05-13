@@ -195,7 +195,7 @@ export default function DepositPage() {
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-[#1A1A2E] flex items-center gap-2">
                   <ArrowDownLeft size={15} className="text-[#C2185B]" />
-                  Step 1 — Transfer to this account
+                  Step 1: Transfer to this account
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -254,7 +254,7 @@ export default function DepositPage() {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base text-[#1A1A2E]">
-                  Step 2 — Submit your deposit request
+                  Step 2: Submit your deposit request
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -265,7 +265,7 @@ export default function DepositPage() {
                       <p className="font-bold text-lg text-[#1A1A2E]">Request Submitted!</p>
                       <p className="text-sm text-[#666666] mt-2 leading-relaxed max-w-sm mx-auto">
                         Your deposit request is being reviewed. You&apos;ll be notified once
-                        it&apos;s confirmed — typically within 1–2 hours during business hours.
+                        it&apos;s confirmed, typically within 1–2 hours during business hours.
                       </p>
                     </div>
                     <Button
@@ -331,7 +331,7 @@ export default function DepositPage() {
                           <option value="">No specific goal</option>
                           {activeTargets.map((t) => (
                             <option key={t.id} value={t.id}>
-                              {t.name} — {formatNaira(t.current_amount)} / {formatNaira(t.target_amount)}
+                              {t.name}: {formatNaira(t.current_amount)} / {formatNaira(t.target_amount)}
                             </option>
                           ))}
                         </select>

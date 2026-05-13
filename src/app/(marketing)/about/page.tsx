@@ -26,11 +26,11 @@ const reasons = [
   },
   {
     title: "Built for Real Nigerians",
-    desc: "We understand the hustle. Salaries come late, emergencies happen, every thousand naira matters — that's why we made OOSSPAY honest.",
+    desc: "We understand the hustle. Salaries come late, emergencies happen, every thousand naira matters. That is why we made OOSSPAY honest.",
   },
   {
     title: "Your Money, Your Control",
-    desc: "You decide when to save, how much, and when to withdraw. We help you stay disciplined — not lock you out of your own money.",
+    desc: "You decide when to save, how much, and when to withdraw. We help you stay disciplined, not lock you out of your own money.",
   },
   {
     title: "A Community That Cares",
@@ -41,7 +41,7 @@ const reasons = [
 export const metadata: Metadata = {
   title: "About OOSSPAY — People Over Profit",
   description:
-    "Learn the story, mission, and values behind OOSSPAY — Nigeria's people-first savings community.",
+    "Learn the story, mission, and values behind OOSSPAY — Africa's people-first savings community.",
 };
 
 const team = [
@@ -109,7 +109,7 @@ export default function AboutPage() {
             </h2>
             <div className="space-y-5 text-[#666666] leading-relaxed text-lg">
               <p>
-                OOSSPAY started as a conversation on WhatsApp — a small group of
+                OOSSPAY started as a conversation on WhatsApp: a small group of
                 people who wanted to save together, hold each other accountable,
                 and build something bigger than themselves. What began as a
                 group chat became a movement.
@@ -140,7 +140,7 @@ export default function AboutPage() {
                 {
                   icon: Eye,
                   title: "Our Vision",
-                  body: "Making Many Wealthy — We envision a future where consistent saving is the foundation for generational wealth across Nigeria, Africa, and beyond.",
+                  body: "Making Many Wealthy: We envision a future where consistent saving is the foundation for generational wealth across Nigeria, Africa, and beyond.",
                 },
                 {
                   icon: Target,
@@ -150,7 +150,7 @@ export default function AboutPage() {
                 {
                   icon: Heart,
                   title: "Our Core Value",
-                  body: "People Over Profit — This isn't a tagline we put on a poster. It's the operating system behind every decision. If it doesn't serve the saver, we don't build it.",
+                  body: "People Over Profit: This isn't a tagline we put on a poster. It's the operating system behind every decision. If it doesn't serve the saver, we don't build it.",
                 },
               ].map(({ icon: Icon, title, body }) => (
                 <Card key={title} className="border-[#E0E0E0] text-center">
@@ -262,7 +262,7 @@ export default function AboutPage() {
             <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-5 py-2">
               <Sparkles size={14} className="text-[#FCE4EC]" />
               <span className="text-xs font-semibold uppercase tracking-widest text-[#FCE4EC]">
-                Start Today — It&apos;s Free
+                Start Today. It&apos;s Free.
               </span>
             </div>
 

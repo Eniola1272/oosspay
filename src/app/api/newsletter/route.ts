@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
   await resend.emails.send({
     from: FROM,
     to: email,
-    subject: "You're in — welcome to OOSSPAY updates",
+    subject: "You're in! Welcome to OOSSPAY updates",
     html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;color:#1A1A2E">
         <div style="background:#C2185B;display:inline-block;padding:8px 20px;border-radius:100px;margin-bottom:24px">
