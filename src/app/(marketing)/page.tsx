@@ -17,12 +17,12 @@ export const metadata: Metadata = {
   title:
     "OOSSPAY — Save Smarter, Grow Together | People-First Savings Platform",
   description:
-    "OOSSPAY is Nigeria's people-first savings community. Set targets, save consistently, and track your wealth — all from your personal dashboard. Join 500+ members today.",
+    "OOSSPAY is Africa's people-first savings community. Set targets, save consistently, and track your wealth — all from your personal dashboard. Join 500+ members today.",
   keywords: [
     "OOSSPAY",
-    "savings platform Nigeria",
+    "savings platform Africa",
     "target savings",
-    "save money Nigeria",
+    "save money Africa",
     "people first savings",
   ],
   openGraph: {

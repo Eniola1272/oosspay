@@ -16,11 +16,11 @@ import { useBalance } from "@/hooks/useBalance";
 import { useWithdrawals } from "@/hooks/useWithdrawals";
 import { useAuth } from "@/context/AuthContext";
 import { useUser } from "@/hooks/useUser";
-import { createClient } from "@/lib/supabase/client";
 import { withdrawalSchema, type WithdrawalInput } from "@/lib/validations";
 import { formatNaira, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
 import type { WithdrawalStatus } from "@/types";
+import { CycleStatusCard } from "@/components/dashboard/CycleStatusCard";
 
 const NIGERIAN_BANKS = [
   "Access Bank","Citibank","Ecobank","FCMB","Fidelity Bank","First Bank","GTBank","Heritage Bank",
@@ -42,9 +42,9 @@ export default function WithdrawPage() {
   const { profile } = useUser();
   const { balance, isLoading: balanceLoading } = useBalance();
   const { withdrawals, isLoading: historyLoading, refetch } = useWithdrawals();
-  const supabase = createClient();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [lastResult, setLastResult] = useState<{ payout_amount: number; is_penalized: boolean; penalty_amount: number } | null>(null);
 
   const { register, handleSubmit, watch, reset, formState: { errors } } = useForm<WithdrawalInput>({
     resolver: zodResolver(withdrawalSchema),
@@ -62,22 +62,24 @@ export default function WithdrawPage() {
 
   async function onSubmit(data: WithdrawalInput) {
     if (!user) return;
-    if (data.amount > balance) { toast.error("Withdrawal amount exceeds your available balance."); return; }
     setLoading(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from("withdrawal_requests").insert({
-      user_id: user.id,
-      amount: data.amount,
-      bank_name: data.bank_name,
-      bank_account_number: data.bank_account_number,
-      bank_account_name: data.bank_account_name,
-      reason: data.reason || null,
-    });
-    setLoading(false);
-    if (error) { toast.error(error.message); return; }
-    setSubmitted(true);
-    refetch();
-    reset();
+    try {
+      const res = await fetch("/api/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (!res.ok) { toast.error(json.error ?? "Could not submit withdrawal request."); return; }
+      setLastResult({ payout_amount: json.payout_amount, is_penalized: json.is_penalized, penalty_amount: json.penalty_amount });
+      setSubmitted(true);
+      refetch();
+      reset();
+    } catch {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -103,16 +105,29 @@ export default function WithdrawPage() {
                 <CheckCircle size={48} className="text-[#27AE60] mx-auto" />
                 <div>
                   <p className="font-bold text-lg text-[#1A1A2E]">Withdrawal Request Submitted!</p>
-                  <p className="text-sm text-[#666666] mt-2 leading-relaxed max-w-sm mx-auto">
-                    Your request is now being reviewed by our team. You&apos;ll receive a notification when it&apos;s processed. Most withdrawals are completed within 24 hours during business days.
-                  </p>
+                  {lastResult?.is_penalized ? (
+                    <div className="mt-3 space-y-1">
+                      <p className="text-sm text-[#666666] max-w-sm mx-auto">
+                        An early withdrawal penalty of{" "}
+                        <strong className="text-[#E74C3C]">{formatNaira(lastResult.penalty_amount)}</strong> has been deducted.
+                      </p>
+                      <p className="text-sm font-semibold text-[#1A1A2E]">
+                        You will receive <span className="text-[#27AE60]">{formatNaira(lastResult.payout_amount)}</span> when approved.
+                      </p>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-[#666666] mt-2 leading-relaxed max-w-sm mx-auto">
+                      Your request is now being reviewed. You&apos;ll receive a notification when it&apos;s processed.
+                    </p>
+                  )}
                 </div>
-                <Button onClick={() => setSubmitted(false)} variant="outline" className="border-[#C2185B] text-[#C2185B]">
+                <Button onClick={() => { setSubmitted(false); setLastResult(null); }} variant="outline" className="border-[#C2185B] text-[#C2185B]">
                   Make Another Request
                 </Button>
               </div>
             ) : (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                <CycleStatusCard withdrawAmount={amount > 0 ? amount : 0} />
                 <div className="space-y-1">
                   <Label>Amount (₦)</Label>
                   <Input type="number" placeholder="Enter amount to withdraw"
@@ -163,13 +178,16 @@ export default function WithdrawPage() {
 
                 {/* Summary preview */}
                 {amount > 0 && bankName && accountName && accountNumber.length === 10 && (
-                  <div className="bg-[#FAFAFA] border border-[#E0E0E0] rounded-xl p-4 text-sm text-[#666666] leading-relaxed">
-                    You are requesting a withdrawal of{" "}
-                    <strong className="text-[#1A1A2E]">{formatNaira(amount)}</strong> to{" "}
-                    <strong className="text-[#1A1A2E]">{accountName}</strong> at{" "}
-                    <strong className="text-[#1A1A2E]">{bankName}</strong>{" "}
-                    (••••••{accountNumber.slice(-4)}). Your remaining balance will be{" "}
-                    <strong className="text-[#1A1A2E]">{formatNaira(Math.max(0, balance - amount))}</strong>.
+                  <div className="bg-[#FAFAFA] border border-[#E0E0E0] rounded-xl p-4 text-sm text-[#666666] leading-relaxed space-y-1">
+                    <p>
+                      You are requesting <strong className="text-[#1A1A2E]">{formatNaira(amount)}</strong> to{" "}
+                      <strong className="text-[#1A1A2E]">{accountName}</strong> at{" "}
+                      <strong className="text-[#1A1A2E]">{bankName}</strong> (••••{accountNumber.slice(-4)}).
+                    </p>
+                    <p>
+                      Remaining balance after withdrawal:{" "}
+                      <strong className="text-[#1A1A2E]">{formatNaira(Math.max(0, balance - amount))}</strong>.
+                    </p>
                   </div>
                 )}
 
@@ -212,6 +230,11 @@ export default function WithdrawPage() {
                       </div>
                       <p className="text-xs text-[#666666]">{w.bank_name} · ••••{w.bank_account_number.slice(-4)}</p>
                       <p className="text-xs text-[#666666]">{formatDate(w.created_at)}</p>
+                      {w.is_penalized && (
+                        <p className="text-xs bg-amber-50 text-amber-800 rounded-lg px-3 py-2">
+                          Early penalty: −{formatNaira(Number(w.penalty_amount))} · Payout: {formatNaira(Number(w.payout_amount))}
+                        </p>
+                      )}
                       {w.admin_note && (
                         <p className="text-xs bg-[#E74C3C]/5 text-[#E74C3C] rounded-lg px-3 py-2">
                           Admin note: {w.admin_note}

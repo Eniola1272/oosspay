@@ -70,6 +70,11 @@ export interface WithdrawalRequest {
   reviewed_by: string | null;
   reviewed_at: string | null;
   created_at: string;
+  // Savings cycle penalty fields
+  is_penalized: boolean;
+  penalty_rate: number;
+  penalty_amount: number;
+  payout_amount: number | null; // null means full amount is paid out
 }
 
 export interface AppNotification {

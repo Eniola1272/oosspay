@@ -351,7 +351,7 @@ export default function SetupAutoPayPage() {
               <span className="text-[#C2185B]">Bank Beneficiary</span>
             </h1>
             <p className="text-white/60 text-lg max-w-xl mx-auto leading-relaxed">
-              Add OOSSPAY to your bank contacts once, then transfer funds in seconds — or set up automatic recurring transfers so your savings happen on autopilot.
+              Add OOSSPAY to your bank contacts once, then transfer funds in seconds, or set up automatic recurring transfers so your savings happen on autopilot.
             </p>
           </div>
         </div>
@@ -372,7 +372,7 @@ export default function SetupAutoPayPage() {
                 {
                   n: 2,
                   title: "Add as a beneficiary",
-                  desc: "Open your bank app and save OOSSPAY as a beneficiary. You only do this once — future transfers will be instant.",
+                  desc: "Open your bank app and save OOSSPAY as a beneficiary. You only do this once; future transfers will be instant.",
                 },
                 {
                   n: 3,
@@ -411,8 +411,8 @@ export default function SetupAutoPayPage() {
                   {[
                     "Log in to your OOSSPAY account.",
                     "From the sidebar, click Deposit Funds.",
-                    "Under Step 1 — Transfer to this account, you will see the bank name, account number, and account name.",
-                    "Copy or note these details — you will enter them in your bank app in the next step.",
+                    "Under Step 1 (Transfer to this account), you will see the bank name, account number, and account name.",
+                    "Copy or note these details; you will enter them in your bank app in the next step.",
                   ].map((s, i) => <StepItem key={i} number={i + 1} text={s} />)}
                 </ol>
                 <Link
@@ -427,7 +427,7 @@ export default function SetupAutoPayPage() {
 
           {/* Bank-specific instructions */}
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-[#C2185B] mb-3">Step 2 — Add beneficiary</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#C2185B] mb-3">Step 2: Add Beneficiary</p>
             <h2 className="text-2xl font-bold text-[#1A1A2E] mb-2">Instructions for your bank</h2>
             <p className="text-sm text-[#666666] mb-6">
               Select your bank below. Each guide covers adding OOSSPAY as a beneficiary via the mobile app, USSD, and (where supported) setting up automatic recurring transfers.
@@ -447,7 +447,7 @@ export default function SetupAutoPayPage() {
             <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex gap-2 text-sm text-blue-800">
               <AlertCircle size={15} className="shrink-0 mt-0.5 text-blue-500" />
               <span>
-                Don&apos;t see your bank? The process is similar across all Nigerian banks — find <strong>Transfer → Other Banks</strong> in your app and add OOSSPAY&apos;s account details. Contact{" "}
+                Don&apos;t see your bank? The process is similar across all Nigerian banks; find <strong>Transfer, then Other Banks</strong> in your app and add OOSSPAY&apos;s account details. Contact{" "}
                 <a href="mailto:hello@oosspay.com" className="underline font-medium">hello@oosspay.com</a> if you need help.
               </span>
             </div>
@@ -470,20 +470,20 @@ export default function SetupAutoPayPage() {
 
           {/* Step 4 detail */}
           <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-[#C2185B] mb-3">Step 4 — Confirm your deposit</p>
+            <p className="text-xs font-bold uppercase tracking-widest text-[#C2185B] mb-3">Step 4: Confirm Your Deposit</p>
             <h2 className="text-2xl font-bold text-[#1A1A2E] mb-2">Submit a deposit request after every transfer</h2>
             <p className="text-sm text-[#666666] mb-6">
-              Because OOSSPAY verifies each deposit manually, you need to submit a deposit request every time you transfer funds — even if you&apos;ve set up automatic bank transfers.
+              Because OOSSPAY verifies each deposit manually, you need to submit a deposit request every time you transfer funds, even if you&apos;ve set up automatic bank transfers.
             </p>
             <div className="space-y-3">
               {[
                 "After your bank transfer completes, log in to OOSSPAY.",
                 "Go to Deposit Funds from the sidebar.",
                 "Under Step 2, fill in the amount transferred and the date of transfer.",
-                "Optionally upload a screenshot of your bank transfer receipt — this speeds up verification.",
+                "Optionally upload a screenshot of your bank transfer receipt; this speeds up verification.",
                 "If you linked a savings goal earlier, select it from the Savings Goal dropdown.",
                 "Tap Submit Deposit Request.",
-                "Our team will verify your transfer and confirm the deposit — typically within 1–2 hours on business days.",
+                "Our team will verify your transfer and confirm the deposit, typically within 1–2 hours on business days.",
                 "You will receive a notification once your balance is updated.",
               ].map((s, i) => <StepItem key={i} number={i + 1} text={s} />)}
             </div>
@@ -499,7 +499,7 @@ export default function SetupAutoPayPage() {
               {[
                 {
                   title: "Pick a fixed savings day",
-                  desc: "Choose a day that aligns with when you receive income — payday, for example. Consistency beats amount.",
+                  desc: "Choose a day that aligns with when you receive income, like payday. Consistency beats amount.",
                 },
                 {
                   title: "Start small",
@@ -511,7 +511,7 @@ export default function SetupAutoPayPage() {
                 },
                 {
                   title: "Upload your receipt",
-                  desc: "A screenshot of your bank transfer confirmation helps our team verify your deposit faster — sometimes in minutes instead of hours.",
+                  desc: "A screenshot of your bank transfer confirmation helps our team verify your deposit faster, sometimes in minutes instead of hours.",
                 },
                 {
                   title: "Check your notifications",

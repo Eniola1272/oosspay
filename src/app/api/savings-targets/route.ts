@@ -30,7 +30,7 @@ export async function GET() {
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) { console.error("[savings-targets]", error.message); return NextResponse.json({ error: "Operation failed. Please try again." }, { status: 500 }); }
 
   return NextResponse.json({ targets: (data ?? []).map(normalizeTarget) });
 }
@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
     .select("*")
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) { console.error("[savings-targets]", error.message); return NextResponse.json({ error: "Operation failed. Please try again." }, { status: 500 }); }
 
   return NextResponse.json({ target: normalizeTarget(data) }, { status: 201 });
 }
@@ -87,7 +87,7 @@ export async function PATCH(request: NextRequest) {
     .select("*")
     .single();
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) { console.error("[savings-targets]", error.message); return NextResponse.json({ error: "Operation failed. Please try again." }, { status: 500 }); }
 
   return NextResponse.json({ target: normalizeTarget(data) });
 }
@@ -107,7 +107,7 @@ export async function DELETE(request: NextRequest) {
     .eq("id", id)
     .eq("user_id", user.id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  if (error) { console.error("[savings-targets]", error.message); return NextResponse.json({ error: "Operation failed. Please try again." }, { status: 500 }); }
 
   return NextResponse.json({ ok: true });
 }

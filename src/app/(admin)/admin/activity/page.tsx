@@ -186,7 +186,7 @@ export default function ActivityLogPage() {
             Activity Log
           </h1>
           <p className="text-sm text-[#666666] mt-1">
-            Every admin action on deposits and withdrawals — who did what, and when.
+            Every admin action on deposits and withdrawals: who did what, and when.
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-[#666666] bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">

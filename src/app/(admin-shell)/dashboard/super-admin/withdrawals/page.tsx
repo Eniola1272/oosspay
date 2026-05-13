@@ -83,10 +83,11 @@ export default function AdminWithdrawalsPage() {
     if (error) { toast.error(error.message); setSubmitting(false); return; }
 
     const notifTitle = newStatus === "approved" ? "Withdrawal Approved" : newStatus === "rejected" ? "Withdrawal Rejected" : newStatus === "completed" ? "Withdrawal Completed" : "Withdrawal Updated";
+    const payout = wr.is_penalized ? Number(wr.payout_amount) : Number(wr.amount);
     const notifMsg = newStatus === "completed"
-      ? `Your withdrawal of ${formatNaira(Number(wr.amount))} has been completed.`
+      ? `Your withdrawal has been completed. ${wr.is_penalized ? `${formatNaira(payout)} has been sent to your bank account (${(Number(wr.penalty_rate) * 100).toFixed(1)}% early withdrawal penalty of ${formatNaira(Number(wr.penalty_amount))} was deducted).` : `${formatNaira(payout)} has been sent to your bank account.`}`
       : newStatus === "approved"
-      ? `Your withdrawal request of ${formatNaira(Number(wr.amount))} has been approved and will be processed soon.`
+      ? `Your withdrawal request of ${formatNaira(Number(wr.amount))} has been approved and will be processed soon.${wr.is_penalized ? ` Note: a ${(Number(wr.penalty_rate) * 100).toFixed(1)}% early withdrawal penalty applies; you will receive ${formatNaira(payout)}.` : ""}`
       : newStatus === "rejected"
       ? `Your withdrawal request of ${formatNaira(Number(wr.amount))} was declined.${note ? ` Reason: ${note}` : ""}`
       : `Your withdrawal status has been updated.`;
@@ -153,8 +154,18 @@ export default function AdminWithdrawalsPage() {
                       <p className="font-semibold text-[#1A1A2E] text-sm">{wr.profile?.full_name ?? "Unknown"}</p>
                       <p className="text-xs text-[#666666]">{wr.profile?.email} · {formatDateTime(wr.created_at)}</p>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <p className="font-extrabold text-lg text-[#1A1A2E] tabular-nums">{formatNaira(Number(wr.amount))}</p>
+                    <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
+                      <div className="text-right">
+                        <p className="font-extrabold text-lg text-[#1A1A2E] tabular-nums">{formatNaira(Number(wr.amount))}</p>
+                        {wr.is_penalized && (
+                          <p className="text-xs text-[#27AE60] font-semibold tabular-nums">
+                            Payout: {formatNaira(Number(wr.payout_amount))}
+                          </p>
+                        )}
+                      </div>
+                      {wr.is_penalized && (
+                        <Badge className="bg-amber-100 text-amber-700 text-[10px]">Penalty</Badge>
+                      )}
                       <Badge className={`${STATUS_BADGE[wr.status]} text-[10px] flex items-center gap-1`}>
                         <StatusIcon size={10} />{wr.status}
                       </Badge>
@@ -170,6 +181,16 @@ export default function AdminWithdrawalsPage() {
                         <div><p className="text-xs text-[#666666]">Account Name</p><p className="font-medium text-[#1A1A2E]">{wr.bank_account_name}</p></div>
                         <div><p className="text-xs text-[#666666]">Reason</p><p className="font-medium text-[#1A1A2E]">{wr.reason || "—"}</p></div>
                       </div>
+                      {wr.is_penalized && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm space-y-1">
+                          <p className="font-semibold text-amber-900">Early Withdrawal: Penalty Applied</p>
+                          <div className="grid grid-cols-3 gap-3 text-xs">
+                            <div><p className="text-amber-700">Requested</p><p className="font-bold text-[#1A1A2E]">{formatNaira(Number(wr.amount))}</p></div>
+                            <div><p className="text-amber-700">Penalty ({(Number(wr.penalty_rate) * 100).toFixed(1)}%)</p><p className="font-bold text-[#E74C3C]">−{formatNaira(Number(wr.penalty_amount))}</p></div>
+                            <div><p className="text-amber-700">Transfer to member</p><p className="font-bold text-[#27AE60]">{formatNaira(Number(wr.payout_amount))}</p></div>
+                          </div>
+                        </div>
+                      )}
 
                       {wr.admin_note && (
                         <div className="text-sm">

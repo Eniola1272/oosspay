@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { rateLimit } from "@/lib/rateLimit";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = process.env.RESEND_FROM_EMAIL ?? "OOSSPAY <hello@oosspay.com>";
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID;
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, "newsletter", 5, 60 * 60 * 1000); // 5 per hour per IP
+  if (limited) return limited;
+
   const { email } = await req.json() as { email?: string };
 
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
@@ -39,7 +43,7 @@ export async function POST(req: NextRequest) {
   await resend.emails.send({
     from: FROM,
     to: email,
-    subject: "You're in — welcome to OOSSPAY updates",
+    subject: "You're in! Welcome to OOSSPAY updates",
     html: `
       <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:32px 24px;color:#1A1A2E">
         <div style="background:#C2185B;display:inline-block;padding:8px 20px;border-radius:100px;margin-bottom:24px">

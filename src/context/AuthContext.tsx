@@ -42,26 +42,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const warningRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const fetchProfile = useCallback(async (userId: string) => {
-    const response = await fetch("/api/profile");
-    const result = await response.json().catch(() => ({ profile: null }));
-
-    if (response.ok) {
+  const fetchProfile = useCallback(async (_userId: string) => {
+    try {
+      const response = await fetch("/api/profile");
+      if (!response.ok) {
+        // Do NOT silently assign role:"user" — leave profile null so isAdmin/isSuperAdmin
+        // correctly return false. The UI will retry on the next auth state change.
+        console.warn("[AuthContext] /api/profile returned", response.status);
+        setProfile(null);
+        return;
+      }
+      const result = await response.json();
       setProfile(result.profile ?? null);
-    } else {
-      setProfile({
-        id: userId,
-        full_name: "",
-        email: "",
-        phone: null,
-        bank_name: null,
-        bank_account_number: null,
-        bank_account_name: null,
-        role: "user",
-        avatar_url: null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
+    } catch (e) {
+      // Keep current profile on transient network errors rather than wiping admin access
+      console.warn("[AuthContext] /api/profile network error", e);
     }
   }, []);
 

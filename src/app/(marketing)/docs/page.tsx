@@ -21,7 +21,7 @@ export default function DocsPage() {
             <p className="text-[#C2185B] font-semibold text-sm mb-2 tracking-wide uppercase">Documentation</p>
             <h1 className="text-3xl lg:text-4xl font-extrabold mb-3">OOSSPAY User Guide</h1>
             <p className="text-white/60 max-w-xl text-sm">
-              Everything you need to know — from creating your account to managing savings targets
+              Everything you need to know: from creating your account to managing savings targets
               and processing withdrawals. Step-by-step instructions for every feature.
             </p>
           </div>
@@ -87,16 +87,16 @@ export default function DocsPage() {
 
               <SubSection id="deposit" title="Making a Deposit">
                 <p className="text-sm text-[#444]">
-                  Page: <strong>/dashboard/deposit</strong>. Deposits are a two-step process — transfer money to OOSSPAY&apos;s bank account first, then submit a request so the team can verify and confirm it.
+                  Page: <strong>/dashboard/deposit</strong>. Deposits are a two-step process: transfer money to OOSSPAY&apos;s bank account first, then submit a request so the team can verify and confirm it.
                 </p>
 
                 <div className="bg-[#FAFAFA] rounded-xl border border-[#E0E0E0] p-4 space-y-2 text-sm">
-                  <p className="font-semibold text-[#1A1A2E]">Step 1 — Transfer to the OOSSPAY account</p>
+                  <p className="font-semibold text-[#1A1A2E]">Step 1: Transfer to the OOSSPAY account</p>
                   <p className="text-[#666666]">The deposit page shows the platform&apos;s bank name, account number, and account name. Use the <strong>Copy</strong> button next to the account number to avoid errors. Complete the bank transfer before proceeding.</p>
                 </div>
 
                 <div className="bg-[#FAFAFA] rounded-xl border border-[#E0E0E0] p-4 space-y-2 text-sm">
-                  <p className="font-semibold text-[#1A1A2E]">Step 2 — Submit your deposit request</p>
+                  <p className="font-semibold text-[#1A1A2E]">Step 2: Submit your deposit request</p>
                   <FieldTable rows={[
                     { label: "Amount Transferred (₦)", type: "Number", required: true,  notes: "Minimum ₦100. Must match the exact amount you sent." },
                     { label: "Date of Transfer",        type: "Date",   required: true,  notes: "The date the transfer was made." },
@@ -112,7 +112,7 @@ export default function DocsPage() {
                   { scenario: "Submission error",                message: "Could not submit deposit request", type: "error" },
                 ]} />
 
-                <p className="text-sm text-[#444]">After submission the page shows: <em>&quot;Your deposit request is being reviewed. You&apos;ll be notified once it&apos;s confirmed — typically within 1–2 hours during business hours.&quot;</em></p>
+                <p className="text-sm text-[#444]">After submission the page shows: <em>&quot;Your deposit request is being reviewed. You&apos;ll be notified once it&apos;s confirmed, typically within 1–2 hours during business hours.&quot;</em></p>
                 <Note>Deposits are confirmed manually by an admin. Your balance will only update after an admin marks the deposit as <strong>Confirmed</strong>.</Note>
 
                 <div className="space-y-2">
@@ -157,6 +157,94 @@ export default function DocsPage() {
                   { scenario: "Amount exceeds balance", message: "Withdrawal amount exceeds your available balance.", type: "error" },
                 ]} />
                 <Note>Most withdrawals are completed within 24 hours during business days. You will receive a notification at each status change.</Note>
+              </SubSection>
+
+              <SubSection id="savings-cycle" title="Savings Cycle &amp; Withdrawal Penalties">
+                <p className="text-sm text-[#444]">
+                  OOSSPAY uses a <strong>3-month savings cycle</strong> to encourage disciplined saving. Each member&apos;s cycle is personal; it starts on the date your first deposit is confirmed and resets automatically every three months.
+                </p>
+
+                {/* Cycle structure */}
+                <div className="overflow-x-auto rounded-lg border border-[#E0E0E0]">
+                  <table className="w-full text-sm">
+                    <thead className="bg-[#FAFAFA] border-b border-[#E0E0E0]">
+                      <tr>
+                        {["Phase", "Duration", "What it means"].map((h) => (
+                          <th key={h} className="text-left px-4 py-2.5 text-xs font-semibold text-[#666666]">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#E0E0E0]">
+                      <tr>
+                        <td className="px-4 py-2.5 font-medium text-[#1A1A2E]">Lock Window</td>
+                        <td className="px-4 py-2.5 text-[#666666]">~83 days (full cycle minus free window)</td>
+                        <td className="px-4 py-2.5 text-[#666666]">Withdrawals are allowed but attract a <strong>3.5% early penalty</strong>.</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2.5 font-medium text-[#1A1A2E]">Free Window (Withdrawal Day)</td>
+                        <td className="px-4 py-2.5 text-[#666666]">Last 7 days of the cycle</td>
+                        <td className="px-4 py-2.5 text-[#666666]">No penalty. Withdraw any amount at no extra cost.</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2.5 font-medium text-[#1A1A2E]">Cycle Reset</td>
+                        <td className="px-4 py-2.5 text-[#666666]">Day after cycle ends</td>
+                        <td className="px-4 py-2.5 text-[#666666]">A new 3-month cycle begins automatically from the same anchor date.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Example */}
+                <div className="bg-[#FAFAFA] rounded-xl border border-[#E0E0E0] p-4 space-y-2 text-sm">
+                  <p className="font-semibold text-[#1A1A2E]">Example</p>
+                  <p className="text-[#666666]">First deposit confirmed on <strong>15 January</strong>:</p>
+                  <ul className="list-disc pl-5 space-y-1 text-[#666666]">
+                    <li>Cycle 1 lock window: <strong>15 Jan to 7 Apr</strong></li>
+                    <li>Cycle 1 free window (Withdrawal Day): <strong>8 Apr to 14 Apr</strong></li>
+                    <li>Cycle 2 starts: <strong>15 Apr</strong></li>
+                  </ul>
+                </div>
+
+                {/* Penalty */}
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-[#1A1A2E]">Early Withdrawal Penalty</p>
+                  <p className="text-sm text-[#444]">
+                    If you withdraw during the lock window, a <strong>3.5% penalty</strong> is deducted from the amount sent to your bank. It is never added on top; you simply receive less.
+                  </p>
+                  <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm space-y-2">
+                    <p className="font-semibold text-amber-900">Penalty calculation example</p>
+                    <div className="grid grid-cols-3 gap-3 text-xs">
+                      <div>
+                        <p className="text-amber-700">You request</p>
+                        <p className="font-bold text-[#1A1A2E]">₦50,000</p>
+                      </div>
+                      <div>
+                        <p className="text-amber-700">Penalty (3.5%)</p>
+                        <p className="font-bold text-[#E74C3C]">−₦1,750</p>
+                      </div>
+                      <div>
+                        <p className="text-amber-700">You receive</p>
+                        <p className="font-bold text-[#27AE60]">₦48,250</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Checking status */}
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-[#1A1A2E]">Checking your cycle status</p>
+                  <p className="text-sm text-[#444]">
+                    A status card is displayed at the top of the withdrawal form (<strong>/dashboard/withdraw</strong>) every time you visit:
+                  </p>
+                  <ul className="list-disc pl-5 text-sm text-[#444] space-y-1">
+                    <li><strong className="text-[#27AE60]">Green card:</strong> you are in the free window. No penalty applies.</li>
+                    <li><strong className="text-amber-700">Amber card:</strong> savings are locked. Shows days remaining and a live penalty preview as you type the amount.</li>
+                    <li><strong className="text-blue-600">Blue card:</strong> your first deposit has not been confirmed yet; cycle has not started.</li>
+                  </ul>
+                </div>
+
+                <Warning>The penalty is calculated and locked in at the time you submit the request. Waiting until the free window opens before withdrawing will always save you the 3.5%.</Warning>
+                <Tip>You can still withdraw during the lock window; the penalty is only a deduction, not a block. Your request will be reviewed and processed normally.</Tip>
               </SubSection>
 
               <SubSection id="savings" title="Savings Targets">
@@ -236,7 +324,7 @@ export default function DocsPage() {
                     <p className="font-semibold text-sm text-[#1A1A2E]">Personal Information</p>
                     <FieldTable rows={[
                       { label: "Full Name",     type: "Text",  required: true,  notes: "Min 2 characters" },
-                      { label: "Email Address", type: "Email", required: false, notes: "Read-only — contact support to change" },
+                      { label: "Email Address", type: "Email", required: false, notes: "Read-only; contact support to change" },
                       { label: "Phone Number",  type: "Text",  required: false, notes: "Nigerian format only" },
                     ]} />
                   </div>
@@ -266,13 +354,16 @@ export default function DocsPage() {
                     <table className="w-full text-sm">
                       <tbody className="divide-y divide-[#E0E0E0]">
                         {[
-                          ["Session timeout",       "30 minutes of inactivity"],
-                          ["Warning dialog",        "At 25 minutes idle"],
-                          ["Min deposit amount",    "₦100"],
-                          ["Min withdrawal amount", "₦1,000"],
-                          ["Max receipt file size", "5 MB (JPG, PNG, HEIC)"],
-                          ["Account number length", "Exactly 10 digits"],
-                          ["Password minimum",      "8 characters (registration)"],
+                          ["Session timeout",          "30 minutes of inactivity"],
+                          ["Warning dialog",           "At 25 minutes idle"],
+                          ["Min deposit amount",       "₦100"],
+                          ["Min withdrawal amount",    "₦1,000"],
+                          ["Max receipt file size",    "5 MB (JPG, PNG, HEIC)"],
+                          ["Account number length",    "Exactly 10 digits"],
+                          ["Password minimum",         "8 characters (registration)"],
+                          ["Savings cycle length",     "3 months (per member)"],
+                          ["Free withdrawal window",   "Last 7 days of each cycle"],
+                          ["Early withdrawal penalty", "3.5% deducted from payout"],
                         ].map(([k, v]) => (
                           <tr key={k}><td className="px-4 py-2 font-medium text-[#1A1A2E] text-xs">{k}</td><td className="px-4 py-2 text-[#666666] text-xs">{v}</td></tr>
                         ))}

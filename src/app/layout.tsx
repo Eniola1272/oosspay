@@ -15,8 +15,8 @@ export const metadata: Metadata = {
     template: "%s | OOSSPAY",
   },
   description:
-    "OOSSPAY is a people-first community savings platform in Nigeria. Set targets, save consistently, and withdraw when you're ready.",
-  keywords: ["savings", "Nigeria", "fintech", "community savings", "target savings", "OOSSPAY"],
+    "OOSSPAY is a people-first community savings platform in Africa. Set targets, save consistently, and withdraw when you're ready.",
+  keywords: ["savings", "Africa", "fintech", "community savings", "target savings", "OOSSPAY"],
   authors: [{ name: "OOSSPAY" }],
   openGraph: {
     title: "OOSSPAY — Save Together, Grow Together",
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "OOSSPAY — Save Together, Grow Together",
-    description: "A people-first community savings platform in Nigeria.",
+    description: "A people-first community savings platform in Africa.",
     images: ["/images/og-image.png"],
   },
 };

@@ -20,14 +20,14 @@ const services: Array<{
   {
     icon: Crosshair,
     title: "Target Savings",
-    desc: "Set a goal. Name it. Fund it at your own pace. Whether it&apos;s a new phone or rent, your dashboard tracks every step.",
+    desc: "Set a goal. Name it. Fund it at your own pace. Whether it's a new phone or rent, your dashboard tracks every step.",
     accent: "wine",
     span: "lg:col-span-2",
   },
   {
     icon: CalendarCheck,
     title: "Consistent Savings",
-    desc: "Build the habit that changes everything. Daily, weekly, or monthly &mdash; OOSSPAY keeps you accountable.",
+    desc: "Build the habit that changes everything. Daily, weekly, or monthly: OOSSPAY keeps you accountable.",
     accent: "white",
     span: "lg:col-span-1",
   },
@@ -41,7 +41,7 @@ const services: Array<{
   {
     icon: BarChart2,
     title: "Real-Time Dashboard",
-    desc: "See your savings balance, transactions, and target progress at a glance &mdash; 24/7, from any device.",
+    desc: "See your savings balance, transactions, and target progress at a glance, 24/7 from any device.",
     accent: "pink",
     span: "lg:col-span-2",
   },
@@ -55,7 +55,7 @@ const services: Array<{
   {
     icon: Users,
     title: "Community Networking",
-    desc: "You&apos;re not saving alone. OOSSPAY connects you with people who share tips and grow together.",
+    desc: "You're not saving alone. OOSSPAY connects you with people who share tips and grow together.",
     accent: "white",
     span: "lg:col-span-2",
   },
@@ -119,10 +119,7 @@ export function Services() {
                   >
                     {title}
                   </h3>
-                  <p
-                    className={`text-sm leading-relaxed ${isDark ? "text-white/75" : "text-[#1A1A2E]/60"}`}
-                    dangerouslySetInnerHTML={{ __html: desc }}
-                  />
+                  <p className={`text-sm leading-relaxed ${isDark ? "text-white/75" : "text-[#1A1A2E]/60"}`}>{desc}</p>
                 </div>
               </div>
             );

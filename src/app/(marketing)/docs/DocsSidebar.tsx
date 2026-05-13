@@ -12,6 +12,7 @@ const MEMBER_SECTIONS = [
   { id: "member-dashboard", label: "Member Dashboard" },
   { id: "deposit",          label: "Making a Deposit",        indent: true },
   { id: "withdraw",         label: "Requesting a Withdrawal", indent: true },
+  { id: "savings-cycle",   label: "Savings Cycle & Penalties", indent: true },
   { id: "savings",          label: "Savings Targets",         indent: true },
   { id: "transactions",     label: "Transaction History",     indent: true },
   { id: "notifications",    label: "Notifications",           indent: true },

@@ -25,7 +25,7 @@ export async function GET() {
   const fullName = typeof metadata.full_name === "string" ? metadata.full_name : "";
   const phone = typeof metadata.phone === "string" && metadata.phone.length > 0 ? metadata.phone : null;
 
-  if (fetchError) return NextResponse.json({ error: fetchError.message }, { status: 400 });
+  if (fetchError) { console.error("[profile] fetch:", fetchError.message); return NextResponse.json({ error: "Could not load profile." }, { status: 500 }); }
   if (existing) {
     const patch: Record<string, unknown> = {};
     if (!existing.email && user.email) patch.email = user.email;
@@ -41,7 +41,7 @@ export async function GET() {
       .select("*")
       .single();
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+    if (error) { console.error("[profile] write:", error.message); return NextResponse.json({ error: "Could not update profile." }, { status: 500 }); }
     return NextResponse.json({ profile: repaired });
   }
 

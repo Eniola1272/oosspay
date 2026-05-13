@@ -113,8 +113,23 @@ export default function DepositPage() {
     let receipt_url: string | null = null;
 
     if (receiptFile) {
-      const ext = receiptFile.name.split(".").pop();
-      // eslint-disable-next-line react-hooks/purity
+      const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
+      const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+      if (!ALLOWED_MIME.includes(receiptFile.type)) {
+        toast.error("Receipt must be a JPEG, PNG, WebP, GIF, or PDF file.");
+        setLoading(false);
+        return;
+      }
+      if (receiptFile.size > MAX_SIZE) {
+        toast.error("Receipt file must be smaller than 5 MB.");
+        setLoading(false);
+        return;
+      }
+      const SAFE_EXT: Record<string, string> = {
+        "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp",
+        "image/gif": "gif", "application/pdf": "pdf",
+      };
+      const ext = SAFE_EXT[receiptFile.type];
       const path = `${user.id}/${Date.now()}.${ext}`;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: uploadError } = await (supabase as any).storage
@@ -180,7 +195,7 @@ export default function DepositPage() {
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm text-[#1A1A2E] flex items-center gap-2">
                   <ArrowDownLeft size={15} className="text-[#C2185B]" />
-                  Step 1 — Transfer to this account
+                  Step 1: Transfer to this account
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -239,7 +254,7 @@ export default function DepositPage() {
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base text-[#1A1A2E]">
-                  Step 2 — Submit your deposit request
+                  Step 2: Submit your deposit request
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -250,7 +265,7 @@ export default function DepositPage() {
                       <p className="font-bold text-lg text-[#1A1A2E]">Request Submitted!</p>
                       <p className="text-sm text-[#666666] mt-2 leading-relaxed max-w-sm mx-auto">
                         Your deposit request is being reviewed. You&apos;ll be notified once
-                        it&apos;s confirmed — typically within 1–2 hours during business hours.
+                        it&apos;s confirmed, typically within 1–2 hours during business hours.
                       </p>
                     </div>
                     <Button
@@ -316,7 +331,7 @@ export default function DepositPage() {
                           <option value="">No specific goal</option>
                           {activeTargets.map((t) => (
                             <option key={t.id} value={t.id}>
-                              {t.name} — {formatNaira(t.current_amount)} / {formatNaira(t.target_amount)}
+                              {t.name}: {formatNaira(t.current_amount)} / {formatNaira(t.target_amount)}
                             </option>
                           ))}
                         </select>

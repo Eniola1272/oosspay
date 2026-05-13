@@ -3,13 +3,14 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET() {
-  // Auth: verify caller is admin or super_admin
+  // Auth: verify caller is admin or super_admin using the service-role client (bypasses RLS)
   const userClient = await createClient();
   const { data: { user } } = await userClient.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: profile } = await (userClient as any)
+  const sb = createAdminClient() as any;
+  const { data: profile } = await sb
     .from("profiles")
     .select("role")
     .eq("id", user.id)
@@ -18,9 +19,6 @@ export async function GET() {
   if (!profile || (profile.role !== "admin" && profile.role !== "super_admin")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sb = createAdminClient() as any;
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -56,7 +54,7 @@ export async function GET() {
   const txActivity = (recentTxRes.data ?? []).map((t: any) => ({
     id: `tx-${t.id}`,
     type: t.type === "deposit" ? "deposit" : "withdrawal_request",
-    description: `${t.type === "deposit" ? "Deposit" : "Withdrawal"} — ${t.profiles?.full_name ?? "Unknown member"}`,
+    description: `${t.type === "deposit" ? "Deposit" : "Withdrawal"}: ${t.profiles?.full_name ?? "Unknown member"}`,
     amount: Number(t.amount),
     created_at: t.created_at,
   }));
@@ -65,7 +63,7 @@ export async function GET() {
   const wActivity = (recentWRes.data ?? []).map((w: any) => ({
     id: `wr-${w.id}`,
     type: "withdrawal_request",
-    description: `Withdrawal request — ${w.profiles?.full_name ?? "Unknown member"}`,
+    description: `Withdrawal request: ${w.profiles?.full_name ?? "Unknown member"}`,
     amount: Number(w.amount),
     created_at: w.created_at,
   }));

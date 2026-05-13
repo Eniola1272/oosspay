@@ -63,7 +63,7 @@ export function CTABanner() {
         <div className="reveal grid sm:grid-cols-3 gap-4 mt-14 max-w-3xl mx-auto" data-reveal-delay="500">
           {[
             { icon: TrendingUp, label: "Avg. monthly growth", value: "+12%" },
-            { icon: Wallet, label: "Saved community-wide", value: "&#8358;25M+" },
+            { icon: Wallet, label: "Saved community-wide", value: "₦25M+" },
             { icon: Shield, label: "Withdrawals honoured", value: "100%" },
           ].map(({ icon: Icon, label, value }) => (
             <div
@@ -74,10 +74,7 @@ export function CTABanner() {
                 <Icon size={16} className="text-[#FCE4EC]" />
               </div>
               <div className="text-left">
-                <p
-                  className="text-lg font-extrabold text-white tabular-nums"
-                  dangerouslySetInnerHTML={{ __html: value }}
-                />
+                <p className="text-lg font-extrabold text-white tabular-nums">{value}</p>
                 <p className="text-[10px] text-white/60 font-medium uppercase tracking-wider">{label}</p>
               </div>
             </div>

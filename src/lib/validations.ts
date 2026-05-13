@@ -72,12 +72,12 @@ export const balanceUpdateSchema = z.object({
 
 export const withdrawalReviewSchema = z.object({
   status: z.enum(["approved", "rejected"]),
-  admin_note: z.string().optional().or(z.literal("")),
+  admin_note: z.string().max(500, "Admin note must be 500 characters or fewer").optional().or(z.literal("")),
 });
 
 export const announcementSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters"),
-  body: z.string().min(10, "Message must be at least 10 characters"),
+  title: z.string().min(3, "Title must be at least 3 characters").max(120, "Title must be 120 characters or fewer"),
+  body: z.string().min(10, "Message must be at least 10 characters").max(1000, "Message must be 1000 characters or fewer"),
 });
 
 export const depositRequestSchema = z.object({

@@ -6,7 +6,9 @@ export async function GET(request: Request) {
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type");
   const code = searchParams.get("code");
-  const next = searchParams.get("next") ?? "/onboarding/email-verified";
+  const rawNext = searchParams.get("next") ?? "";
+  // Only allow relative paths that start with "/" but not "//" (open redirect via protocol-relative URLs)
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/onboarding/email-verified";
 
   const supabase = await createClient();
 

@@ -6,11 +6,11 @@ import { WHATSAPP_LINK } from "@/lib/constants";
 const faqs = [
   {
     q: "What is OOSSPAY?",
-    a: "OOSSPAY is a people-first savings platform that helps you save consistently, set financial targets, and track your progress through a secure personal dashboard — all backed by a supportive community.",
+    a: "OOSSPAY is a people-first savings platform that helps you save consistently, set financial targets, and track your progress through a secure personal dashboard, backed by a supportive community.",
   },
   {
     q: "Is my money safe with OOSSPAY?",
-    a: "Absolutely. Your savings are tracked transparently on your dashboard. Every deposit and withdrawal is recorded and visible to you in real time. We operate with full transparency — your trust is our foundation.",
+    a: "Absolutely. Your savings are tracked transparently on your dashboard. Every deposit and withdrawal is recorded and visible to you in real time. We operate with full transparency; your trust is our foundation.",
   },
   {
     q: "How do I save money on OOSSPAY?",
@@ -30,7 +30,7 @@ const faqs = [
   },
   {
     q: "Does OOSSPAY charge any fees?",
-    a: "OOSSPAY is committed to the People Over Profit principle. We keep our fees transparent and minimal. Any applicable fees are clearly communicated upfront — never hidden.",
+    a: "OOSSPAY is committed to the People Over Profit principle. We keep our fees transparent and minimal. Any applicable fees are clearly communicated upfront, never hidden.",
   },
   {
     q: "How do I contact OOSSPAY?",
