@@ -1,12 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { rateLimit } from "@/lib/rateLimit";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = process.env.RESEND_FROM_EMAIL ?? "OOSSPAY <hello@oosspay.com>";
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID;
 
 export async function POST(req: NextRequest) {
+  const limited = rateLimit(req, "newsletter", 5, 60 * 60 * 1000); // 5 per hour per IP
+  if (limited) return limited;
+
   const { email } = await req.json() as { email?: string };
 
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {

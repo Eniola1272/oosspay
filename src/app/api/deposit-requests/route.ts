@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { depositRequestSchema } from "@/lib/validations";
+import { z } from "zod";
+import { rateLimit } from "@/lib/rateLimit";
+
+const ALLOWED_RECEIPT_ORIGINS = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").replace(/\/$/, "");
+
+function isSafeReceiptUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== "https:") return false;
+    // Only allow URLs from our own Supabase storage bucket
+    return ALLOWED_RECEIPT_ORIGINS.length > 0 && url.startsWith(ALLOWED_RECEIPT_ORIGINS);
+  } catch {
+    return false;
+  }
+}
+
+const uuidSchema = z.string().uuid();
 
 async function getUser() {
   const supabase = await createClient();
@@ -10,6 +27,9 @@ async function getUser() {
 }
 
 export async function POST(request: NextRequest) {
+  const limited = rateLimit(request, "deposit-requests", 20, 60 * 60 * 1000); // 20 per hour per IP
+  if (limited) return limited;
+
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -20,12 +40,34 @@ export async function POST(request: NextRequest) {
   }
 
   const { amount, deposit_date, description } = parsed.data;
-  const receiptUrl = typeof body.receipt_url === "string" && body.receipt_url.length > 0
-    ? body.receipt_url
-    : null;
-  const savingsTargetId = typeof body.savings_target_id === "string" && body.savings_target_id.length > 0
-    ? body.savings_target_id
-    : null;
+
+  // Validate receipt_url — must be a URL from our own Supabase storage
+  const rawReceipt = typeof body.receipt_url === "string" ? body.receipt_url.trim() : "";
+  const receiptUrl = rawReceipt.length > 0 && isSafeReceiptUrl(rawReceipt) ? rawReceipt : null;
+  if (rawReceipt.length > 0 && !receiptUrl) {
+    return NextResponse.json({ error: "Invalid receipt URL." }, { status: 400 });
+  }
+
+  // Validate savings_target_id ownership — must belong to this user
+  const rawTargetId = typeof body.savings_target_id === "string" ? body.savings_target_id.trim() : "";
+  let savingsTargetId: string | null = null;
+  if (rawTargetId.length > 0) {
+    if (!uuidSchema.safeParse(rawTargetId).success) {
+      return NextResponse.json({ error: "Invalid savings target." }, { status: 400 });
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const sb = createAdminClient() as any;
+    const { data: target } = await sb
+      .from("savings_targets")
+      .select("id")
+      .eq("id", rawTargetId)
+      .eq("user_id", user.id)
+      .single();
+    if (!target) {
+      return NextResponse.json({ error: "Invalid savings target." }, { status: 400 });
+    }
+    savingsTargetId = rawTargetId;
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sb = createAdminClient() as any;
@@ -41,7 +83,7 @@ export async function POST(request: NextRequest) {
       savings_target_id: savingsTargetId,
       status: "pending",
     })
-    .select("*")
+    .select("id, amount, status")
     .single();
 
   if (result.error && /deposit_request_date|receipt_url/.test(result.error.message)) {
@@ -55,12 +97,13 @@ export async function POST(request: NextRequest) {
         savings_target_id: savingsTargetId,
         status: "pending",
       })
-      .select("*")
+      .select("id, amount, status")
       .single();
   }
 
   if (result.error) {
-    return NextResponse.json({ error: result.error.message }, { status: 400 });
+    console.error("[deposit-requests] insert error:", result.error.message);
+    return NextResponse.json({ error: "Could not submit deposit request." }, { status: 500 });
   }
 
   return NextResponse.json({ transaction: result.data }, { status: 201 });

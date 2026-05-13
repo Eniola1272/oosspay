@@ -113,8 +113,23 @@ export default function DepositPage() {
     let receipt_url: string | null = null;
 
     if (receiptFile) {
-      const ext = receiptFile.name.split(".").pop();
-      // eslint-disable-next-line react-hooks/purity
+      const ALLOWED_MIME = ["image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"];
+      const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+      if (!ALLOWED_MIME.includes(receiptFile.type)) {
+        toast.error("Receipt must be a JPEG, PNG, WebP, GIF, or PDF file.");
+        setLoading(false);
+        return;
+      }
+      if (receiptFile.size > MAX_SIZE) {
+        toast.error("Receipt file must be smaller than 5 MB.");
+        setLoading(false);
+        return;
+      }
+      const SAFE_EXT: Record<string, string> = {
+        "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp",
+        "image/gif": "gif", "application/pdf": "pdf",
+      };
+      const ext = SAFE_EXT[receiptFile.type];
       const path = `${user.id}/${Date.now()}.${ext}`;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error: uploadError } = await (supabase as any).storage

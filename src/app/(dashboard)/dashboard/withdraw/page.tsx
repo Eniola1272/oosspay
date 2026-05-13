@@ -16,7 +16,6 @@ import { useBalance } from "@/hooks/useBalance";
 import { useWithdrawals } from "@/hooks/useWithdrawals";
 import { useAuth } from "@/context/AuthContext";
 import { useUser } from "@/hooks/useUser";
-import { createClient } from "@/lib/supabase/client";
 import { withdrawalSchema, type WithdrawalInput } from "@/lib/validations";
 import { formatNaira, formatDate } from "@/lib/utils";
 import { toast } from "sonner";
@@ -42,7 +41,6 @@ export default function WithdrawPage() {
   const { profile } = useUser();
   const { balance, isLoading: balanceLoading } = useBalance();
   const { withdrawals, isLoading: historyLoading, refetch } = useWithdrawals();
-  const supabase = createClient();
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -62,22 +60,23 @@ export default function WithdrawPage() {
 
   async function onSubmit(data: WithdrawalInput) {
     if (!user) return;
-    if (data.amount > balance) { toast.error("Withdrawal amount exceeds your available balance."); return; }
     setLoading(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { error } = await (supabase as any).from("withdrawal_requests").insert({
-      user_id: user.id,
-      amount: data.amount,
-      bank_name: data.bank_name,
-      bank_account_number: data.bank_account_number,
-      bank_account_name: data.bank_account_name,
-      reason: data.reason || null,
-    });
-    setLoading(false);
-    if (error) { toast.error(error.message); return; }
-    setSubmitted(true);
-    refetch();
-    reset();
+    try {
+      const res = await fetch("/api/withdraw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const json = await res.json();
+      if (!res.ok) { toast.error(json.error ?? "Could not submit withdrawal request."); return; }
+      setSubmitted(true);
+      refetch();
+      reset();
+    } catch {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

@@ -92,10 +92,9 @@ export function Testimonials() {
                   </div>
                 </div>
 
-                <p
-                  className={`relative text-sm leading-relaxed ${highlight ? "text-white" : "text-[#1A1A2E]/80"}`}
-                  dangerouslySetInnerHTML={{ __html: `&ldquo;${quote}&rdquo;` }}
-                />
+                <p className={`relative text-sm leading-relaxed ${highlight ? "text-white" : "text-[#1A1A2E]/80"}`}>
+                  &ldquo;{quote}&rdquo;
+                </p>
 
                 <div
                   className={`relative mt-auto flex items-center gap-3 pt-5 border-t ${highlight ? "border-white/20" : "border-[#E0E0E0]"}`}

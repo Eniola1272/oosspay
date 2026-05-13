@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminTopBar } from "@/components/admin/AdminTopBar";
-import { createClient } from "@/lib/supabase/client";
 import {
   depositAccountSchema, announcementSchema,
   type DepositAccountInput, type AnnouncementInput,
@@ -27,7 +26,6 @@ const NIGERIAN_BANKS = [
 ];
 
 export default function AdminSettingsPage() {
-  const supabase = createClient();
   const [loadingAccount, setLoadingAccount] = useState(true);
   const [savingAccount, setSavingAccount] = useState(false);
   const [savingAnnouncement, setSavingAnnouncement] = useState(false);
@@ -38,58 +36,54 @@ export default function AdminSettingsPage() {
   const announcementForm = useForm<AnnouncementInput>({ resolver: zodResolver(announcementSchema) });
 
   async function loadSettings() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sb = supabase as any;
-    const { data } = await sb.from("platform_settings").select("*").eq("key", "deposit_account_details").single();
-    if (data?.value) {
+    const res = await fetch("/api/admin/settings");
+    if (!res.ok) { setLoadingAccount(false); setLoadingAnnouncements(false); return; }
+    const json = await res.json();
+    if (json.account) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const v = data.value as any;
+      const v = json.account as any;
       accountForm.reset({ bank_name: v.bank_name ?? "", account_number: v.account_number ?? "", account_name: v.account_name ?? "", additional_info: v.additional_info ?? "" });
     }
+    if (Array.isArray(json.announcements)) setAnnouncements(json.announcements);
     setLoadingAccount(false);
-  }
-
-  async function loadAnnouncements() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sb = supabase as any;
-    const { data } = await sb.from("platform_settings").select("*").eq("key", "announcements").single();
-    if (data?.value && Array.isArray((data.value as { items?: Announcement[] }).items)) {
-      setAnnouncements((data.value as { items: Announcement[] }).items);
-    }
     setLoadingAnnouncements(false);
   }
 
-  useEffect(() => { loadSettings(); loadAnnouncements(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => { loadSettings(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function onSaveAccount(data: DepositAccountInput) {
     setSavingAccount(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sb = supabase as any;
-    const { error } = await sb.from("platform_settings").upsert({ key: "deposit_account_details", value: data }, { onConflict: "key" });
+    const res = await fetch("/api/admin/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "save_account", data }),
+    });
     setSavingAccount(false);
-    if (error) { toast.error(error.message); } else { toast.success("Deposit account details saved!"); }
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}));
+      toast.error((json as { error?: string }).error ?? "Could not save account details.");
+    } else {
+      toast.success("Deposit account details saved!");
+    }
   }
 
   async function onSendAnnouncement(data: AnnouncementInput) {
     setSavingAnnouncement(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sb = supabase as any;
-    const { data: profiles } = await sb.from("profiles").select("id").eq("role", "user");
-    const userIds: string[] = (profiles ?? []).map((p: { id: string }) => p.id);
-
-    if (userIds.length > 0) {
-      const notifications = userIds.map((uid) => ({ user_id: uid, title: data.title, message: data.body, type: "announcement" }));
-      await sb.from("notifications").insert(notifications);
-    }
-
-    const newAnnouncement: Announcement = { title: data.title, body: data.body, created_at: new Date().toISOString() };
-    const updated = [newAnnouncement, ...announcements].slice(0, 20);
-    await sb.from("platform_settings").upsert({ key: "announcements", value: { items: updated } }, { onConflict: "key" });
-
-    setAnnouncements(updated);
-    announcementForm.reset();
+    const res = await fetch("/api/admin/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "send_announcement", data }),
+    });
+    const json = await res.json().catch(() => ({}));
     setSavingAnnouncement(false);
-    toast.success(`Announcement sent to ${userIds.length} member${userIds.length !== 1 ? "s" : ""}!`);
+    if (!res.ok) {
+      toast.error((json as { error?: string }).error ?? "Could not send announcement.");
+    } else {
+      const { count, announcements: updated } = json as { count: number; announcements: Announcement[] };
+      if (Array.isArray(updated)) setAnnouncements(updated);
+      announcementForm.reset();
+      toast.success(`Announcement sent to ${count} member${count !== 1 ? "s" : ""}!`);
+    }
   }
 
   return (

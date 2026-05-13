@@ -16,7 +16,7 @@ async function getAdminUser() {
     .eq("id", user.id)
     .maybeSingle();
 
-  if (error) return { user: null, error: NextResponse.json({ error: error.message }, { status: 400 }) };
+  if (error) { console.error("[admin/deposits] role check:", error.message); return { user: null, error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) }; }
   if (profile?.role !== "admin" && profile?.role !== "super_admin") {
     return { user: null, error: NextResponse.json({ error: "Forbidden" }, { status: 403 }) };
   }
@@ -44,7 +44,7 @@ export async function GET() {
     .eq("type", "deposit")
     .order("created_at", { ascending: false });
 
-  if (fetchError) return NextResponse.json({ error: fetchError.message }, { status: 400 });
+  if (fetchError) { console.error("[admin/deposits] fetch:", fetchError.message); return NextResponse.json({ error: "Could not load deposits." }, { status: 500 }); }
 
   return NextResponse.json({ deposits: (data ?? []).map(normalizeDeposit) });
 }
@@ -54,9 +54,9 @@ export async function PATCH(request: NextRequest) {
   if (error) return error;
 
   const body = await request.json();
-  const id = typeof body.id === "string" ? body.id : "";
+  const id = typeof body.id === "string" ? body.id.trim() : "";
   const action = body.action === "approve" || body.action === "reject" ? body.action : "";
-  const adminNote = typeof body.admin_note === "string" ? body.admin_note : "";
+  const adminNote = typeof body.admin_note === "string" ? body.admin_note.slice(0, 500) : "";
 
   if (!id || !action) {
     return NextResponse.json({ error: "Invalid deposit action" }, { status: 400 });
@@ -76,7 +76,7 @@ export async function PATCH(request: NextRequest) {
     .select("*")
     .single();
 
-  if (updateError) return NextResponse.json({ error: updateError.message }, { status: 400 });
+  if (updateError) { console.error("[admin/deposits] update:", updateError.message); return NextResponse.json({ error: "Could not update deposit." }, { status: 500 }); }
 
   const confirmed = action === "approve";
   await sb.from("notifications").insert({

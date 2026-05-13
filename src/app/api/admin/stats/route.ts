@@ -3,13 +3,14 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET() {
-  // Auth: verify caller is admin or super_admin
+  // Auth: verify caller is admin or super_admin using the service-role client (bypasses RLS)
   const userClient = await createClient();
   const { data: { user } } = await userClient.auth.getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: profile } = await (userClient as any)
+  const sb = createAdminClient() as any;
+  const { data: profile } = await sb
     .from("profiles")
     .select("role")
     .eq("id", user.id)
@@ -18,9 +19,6 @@ export async function GET() {
   if (!profile || (profile.role !== "admin" && profile.role !== "super_admin")) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const sb = createAdminClient() as any;
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);

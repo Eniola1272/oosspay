@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUp, ArrowDown, Settings, TrendingUp } from "lucide-react";
+import { ArrowUp, ArrowDown, Settings } from "lucide-react";
 import { useBalance } from "@/hooks/useBalance";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
@@ -37,13 +37,6 @@ export function MyBalanceWidget() {
           ₦{fmt(balance ?? 0)}
         </p>
       )}
-
-      {/* % change */}
-      <div className="flex items-center gap-1 text-sm text-[#27AE60]">
-        <TrendingUp size={14} />
-        <span className="font-semibold">15.43%</span>
-        <span className="text-[#999999]">than last month</span>
-      </div>
 
       {/* Actions */}
       <div className="flex gap-3 pt-1">
