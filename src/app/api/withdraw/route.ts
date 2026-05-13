@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { withdrawalSchema } from "@/lib/validations";
 import { rateLimit } from "@/lib/rateLimit";
+import { getCycleInfo, calculatePayout } from "@/lib/savingsCycle";
 
 async function getUser() {
   const supabase = await createClient();
@@ -11,7 +12,7 @@ async function getUser() {
 }
 
 export async function POST(request: NextRequest) {
-  const limited = rateLimit(request, "withdraw", 10, 60 * 60 * 1000); // 10 per hour per IP
+  const limited = rateLimit(request, "withdraw", 10, 60 * 60 * 1000);
   if (limited) return limited;
 
   const user = await getUser();
@@ -29,13 +30,22 @@ export async function POST(request: NextRequest) {
   const sb = createAdminClient() as any;
 
   // Server-side balance check: confirmed balance minus any in-flight withdrawals
-  const [balanceRes, inflightRes] = await Promise.all([
+  const [balanceRes, inflightRes, firstDepositRes] = await Promise.all([
     sb.rpc("get_user_balance", { p_user_id: user.id }),
     sb
       .from("withdrawal_requests")
       .select("amount")
       .eq("user_id", user.id)
       .in("status", ["pending", "approved", "processing"]),
+    sb
+      .from("transactions")
+      .select("created_at")
+      .eq("user_id", user.id)
+      .eq("type", "deposit")
+      .eq("status", "completed")
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle(),
   ]);
 
   if (balanceRes.error) {
@@ -55,6 +65,23 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Determine penalty based on savings cycle
+  let isPenalized = false;
+  let penaltyRate = 0;
+  let penaltyAmount = 0;
+  let payoutAmount = amount;
+
+  if (firstDepositRes.data) {
+    const cycleInfo = getCycleInfo(new Date(firstDepositRes.data.created_at));
+    isPenalized = !cycleInfo.isInFreeWindow;
+    if (isPenalized) {
+      penaltyRate = cycleInfo.penaltyRate;
+      const payout = calculatePayout(amount, true);
+      penaltyAmount = payout.penaltyAmount;
+      payoutAmount = payout.payoutAmount;
+    }
+  }
+
   const { data, error } = await sb
     .from("withdrawal_requests")
     .insert({
@@ -64,6 +91,10 @@ export async function POST(request: NextRequest) {
       bank_account_number,
       bank_account_name,
       reason: reason || null,
+      is_penalized: isPenalized,
+      penalty_rate: penaltyRate,
+      penalty_amount: penaltyAmount,
+      payout_amount: isPenalized ? payoutAmount : null,
     })
     .select("id")
     .single();
@@ -73,5 +104,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Could not submit withdrawal request." }, { status: 500 });
   }
 
-  return NextResponse.json({ id: data.id }, { status: 201 });
+  return NextResponse.json({
+    id: data.id,
+    is_penalized: isPenalized,
+    penalty_amount: penaltyAmount,
+    payout_amount: isPenalized ? payoutAmount : amount,
+  }, { status: 201 });
 }
