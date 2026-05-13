@@ -23,6 +23,9 @@ export async function POST(request: NextRequest) {
   const receiptUrl = typeof body.receipt_url === "string" && body.receipt_url.length > 0
     ? body.receipt_url
     : null;
+  const savingsTargetId = typeof body.savings_target_id === "string" && body.savings_target_id.length > 0
+    ? body.savings_target_id
+    : null;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sb = createAdminClient() as any;
@@ -35,6 +38,7 @@ export async function POST(request: NextRequest) {
       description: description || "Savings Deposit",
       deposit_request_date: deposit_date,
       receipt_url: receiptUrl,
+      savings_target_id: savingsTargetId,
       status: "pending",
     })
     .select("*")
@@ -48,6 +52,7 @@ export async function POST(request: NextRequest) {
         type: "deposit",
         amount,
         description: description || "Savings Deposit",
+        savings_target_id: savingsTargetId,
         status: "pending",
       })
       .select("*")
