@@ -6,18 +6,35 @@ import { toast } from "sonner";
 
 export function Newsletter() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
       toast.error("Please enter a valid email address");
       return;
     }
-    setSubmitted(true);
-    toast.success("You're on the list. Welcome to the OOSSPAY family.");
-    setEmail("");
-    setTimeout(() => setSubmitted(false), 4000);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string }).error ?? "Something went wrong");
+      }
+      setSubmitted(true);
+      toast.success("You're on the list. Welcome to the OOSSPAY family.");
+      setEmail("");
+      setTimeout(() => setSubmitted(false), 4000);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not subscribe. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -63,13 +80,15 @@ export function Newsletter() {
 
             <button
               type="submit"
-              disabled={submitted}
+              disabled={loading || submitted}
               className="group inline-flex items-center justify-center gap-2 bg-[#C2185B] hover:bg-[#a01549] disabled:bg-[#27AE60] disabled:cursor-default text-white px-6 py-4 rounded-full font-bold text-sm shadow-xl shadow-[#C2185B]/30 transition-all"
             >
               {submitted ? (
                 <>
                   <CheckCircle2 size={16} /> Subscribed
                 </>
+              ) : loading ? (
+                "Subscribing…"
               ) : (
                 <>
                   Subscribe

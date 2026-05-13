@@ -3,13 +3,36 @@
 import { useState, type SVGProps } from "react";
 import Link from "next/link";
 import { Send } from "lucide-react";
+import { toast } from "sonner";
 
 export function Footer() {
   const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setEmail("");
+    if (!email) return;
+    setLoading(true);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error((data as { error?: string }).error ?? "Something went wrong");
+      }
+      setSubmitted(true);
+      setEmail("");
+      toast.success("You're subscribed! Check your inbox for a welcome email.");
+      setTimeout(() => setSubmitted(false), 4000);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not subscribe. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -42,13 +65,15 @@ export function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter your email"
-                  className="bg-white/10 border border-white/20 text-white placeholder:text-white/40 rounded-full px-6 py-3 flex-1 min-w-0 focus:outline-none focus:border-white/50 focus:bg-white/20 transition-all"
+                  disabled={loading || submitted}
+                  className="bg-white/10 border border-white/20 text-white placeholder:text-white/40 rounded-full px-6 py-3 flex-1 min-w-0 focus:outline-none focus:border-white/50 focus:bg-white/20 transition-all disabled:opacity-60"
                 />
                 <button
                   type="submit"
-                  className="bg-white text-[#5f1f3e] px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors flex items-center gap-2"
+                  disabled={loading || submitted}
+                  className="bg-white text-[#5f1f3e] px-8 py-3 rounded-full font-bold hover:bg-gray-100 disabled:opacity-70 disabled:cursor-default transition-colors flex items-center gap-2"
                 >
-                  Join <Send size={18} />
+                  {submitted ? "Joined!" : loading ? "…" : <><span>Join</span> <Send size={18} /></>}
                 </button>
               </form>
 

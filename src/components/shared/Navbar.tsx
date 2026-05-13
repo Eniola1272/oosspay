@@ -125,9 +125,9 @@ const navGroups: NavGroup[] = [
         icon: BookOpen,
       },
       {
-        label: "Recurring Transaction",
-        href: "/#how-it-works",
-        description: "Automate deposits and stay consistent.",
+        label: "Set Up Auto-Pay",
+        href: "/setup-autopay",
+        description: "Add OOSSPAY as a beneficiary and automate your deposits.",
         icon: RefreshCw,
       },
     ],

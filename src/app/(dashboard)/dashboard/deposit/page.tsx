@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import {
   CheckCircle, Upload, X, ImageIcon, ArrowDownLeft,
-  Clock, CheckCircle2, XCircle, Copy, Check,
+  Clock, CheckCircle2, XCircle, Copy, Check, Target, RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useSavingsTargets } from "@/hooks/useSavingsTargets";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { depositRequestSchema, type DepositRequestInput } from "@/lib/validations";
 import { formatNaira, formatDate } from "@/lib/utils";
@@ -60,6 +62,7 @@ export default function DepositPage() {
   const { user } = useAuth();
   const { transactions, isLoading: historyLoading, refetch } = useTransactions(50);
   const { details: accountDetails, loading: accountLoading } = useDepositAccount();
+  const { targets } = useSavingsTargets();
   const supabase = createClient();
 
   const [submitted, setSubmitted] = useState(false);
@@ -67,7 +70,10 @@ export default function DepositPage() {
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [receiptPreview, setReceiptPreview] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [savingsTargetId, setSavingsTargetId] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const activeTargets = targets.filter((t) => t.status === "active");
 
   const deposits = transactions.filter((tx) => tx.type === "deposit");
 
@@ -135,6 +141,7 @@ export default function DepositPage() {
         deposit_date: data.deposit_date,
         description: data.description,
         receipt_url,
+        savings_target_id: savingsTargetId || null,
       }),
     });
     const result = await response.json();
@@ -152,6 +159,7 @@ export default function DepositPage() {
     });
     setReceiptFile(null);
     setReceiptPreview(null);
+    setSavingsTargetId("");
     setLoading(false);
   }
 
@@ -215,6 +223,17 @@ export default function DepositPage() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Auto-pay tip */}
+            <div className="flex items-start gap-3 bg-[#27AE60]/5 border border-[#27AE60]/20 rounded-xl px-4 py-3 text-sm">
+              <RefreshCw size={14} className="text-[#27AE60] shrink-0 mt-0.5" />
+              <p className="text-[#1a6e3a] leading-relaxed">
+                Want to save automatically every month?{" "}
+                <Link href="/setup-autopay" className="font-semibold underline underline-offset-2 hover:text-[#27AE60]">
+                  Learn how to add OOSSPAY as a bank beneficiary and set up recurring transfers.
+                </Link>
+              </p>
+            </div>
 
             {/* Step 2: Deposit request form */}
             <Card>
@@ -282,6 +301,31 @@ export default function DepositPage() {
                       />
                     </div>
 
+                    {activeTargets.length > 0 && (
+                      <div className="space-y-1">
+                        <Label className="flex items-center gap-1.5">
+                          <Target size={13} className="text-[#C2185B]" />
+                          Savings Goal{" "}
+                          <span className="text-[#999999] font-normal">(optional)</span>
+                        </Label>
+                        <select
+                          value={savingsTargetId}
+                          onChange={(e) => setSavingsTargetId(e.target.value)}
+                          className="w-full rounded-md border border-[#E0E0E0] bg-white px-3 py-2 text-sm text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C2185B]/30 focus:border-[#C2185B]"
+                        >
+                          <option value="">No specific goal</option>
+                          {activeTargets.map((t) => (
+                            <option key={t.id} value={t.id}>
+                              {t.name} — {formatNaira(t.current_amount)} / {formatNaira(t.target_amount)}
+                            </option>
+                          ))}
+                        </select>
+                        <p className="text-[11px] text-[#999999]">
+                          When this deposit is approved, it will count toward the selected goal.
+                        </p>
+                      </div>
+                    )}
+
                     {/* Receipt upload */}
                     <div className="space-y-1">
                       <Label>
@@ -328,7 +372,11 @@ export default function DepositPage() {
                     {(amount ?? 0) > 0 && (
                       <div className="bg-[#FAFAFA] border border-[#E0E0E0] rounded-xl p-4 text-sm text-[#666666] leading-relaxed">
                         You are submitting a deposit request for{" "}
-                        <strong className="text-[#1A1A2E]">{formatNaira(amount)}</strong>.
+                        <strong className="text-[#1A1A2E]">{formatNaira(amount)}</strong>
+                        {savingsTargetId && (() => {
+                          const t = activeTargets.find((t) => t.id === savingsTargetId);
+                          return t ? <>, toward <strong className="text-[#1A1A2E]">{t.name}</strong></> : null;
+                        })()}.{" "}
                         Our team will verify your receipt and confirm the deposit.
                       </div>
                     )}
