@@ -68,12 +68,12 @@ function NavItem({ href, label, icon: Icon, exact, collapsed, badge, isAmber }: 
     >
       <Icon size={18} className="shrink-0" />
       {!collapsed && <span className="flex-1">{label}</span>}
-      {badge && badge > 0 && !collapsed && (
+      {(badge ?? 0) > 0 && !collapsed && (
         <span className="bg-[#F39C12] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full leading-none">
           {badge}
         </span>
       )}
-      {badge && badge > 0 && collapsed && (
+      {(badge ?? 0) > 0 && collapsed && (
         <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#F39C12] rounded-full" />
       )}
     </Link>
