@@ -85,7 +85,7 @@ export function RecentTransactionsPanel() {
         )}
       </div>
 
-      <Link href="/transactions" className="block text-center text-sm font-semibold text-[#C2185B] hover:underline">
+      <Link href="/dashboard/transactions" className="block text-center text-sm font-semibold text-[#C2185B] hover:underline">
         See All →
       </Link>
     </div>

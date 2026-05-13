@@ -10,40 +10,30 @@ export async function updateSession(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
+        getAll() { return request.cookies.getAll(); },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
           supabaseResponse = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
+          cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
         },
       },
     }
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const { data: { user } } = await supabase.auth.getUser();
   const { pathname } = request.nextUrl;
 
-  // Redirect authenticated users away from auth pages
+  // Redirect authenticated users away from auth pages → send to their role's dashboard
   if (user && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: p } = await (supabase as any).from("profiles").select("role").eq("id", user.id).single() as { data: { role: string } | null };
+    const role = p?.role ?? "user";
+    const dest = role === "super_admin" ? "/dashboard/super-admin" : role === "admin" ? "/dashboard/admin" : "/dashboard";
+    return NextResponse.redirect(new URL(dest, request.url));
   }
 
-  // Protect dashboard routes
-  if (!user && pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // Protect admin routes — also check role via profile
-  if (pathname.startsWith("/admin")) {
+  // Protect all /dashboard routes
+  if (pathname.startsWith("/dashboard")) {
     if (!user) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
@@ -55,9 +45,50 @@ export async function updateSession(request: NextRequest) {
       .eq("id", user.id)
       .single() as { data: { role: string } | null };
 
-    if (!profile || profile.role !== "admin") {
+    const role = profile?.role ?? "user";
+
+    // Role-based redirect when hitting the root /dashboard
+    if (pathname === "/dashboard") {
+      if (role === "super_admin") return NextResponse.redirect(new URL("/dashboard/super-admin", request.url));
+      if (role === "admin") return NextResponse.redirect(new URL("/dashboard/admin", request.url));
+      // regular user: stay at /dashboard (handled by the page itself)
+      return supabaseResponse;
+    }
+
+    // Protect /dashboard/admin/* — admin and super_admin only
+    if (pathname.startsWith("/dashboard/admin")) {
+      if (role !== "admin" && role !== "super_admin") {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    }
+
+    // Protect /dashboard/super-admin/* — super_admin only
+    if (pathname.startsWith("/dashboard/super-admin")) {
+      if (role !== "super_admin") {
+        return NextResponse.redirect(new URL("/dashboard", request.url));
+      }
+    }
+  }
+
+  // Legacy /admin/* routes — redirect to new paths
+  if (pathname.startsWith("/admin")) {
+    if (!user) return NextResponse.redirect(new URL("/login", request.url));
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: profile } = await (supabase as any)
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single() as { data: { role: string } | null };
+
+    const role = profile?.role ?? "user";
+    if (role !== "admin" && role !== "super_admin") {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
+
+    // Redirect to new URL structure
+    const newPath = pathname.replace(/^\/admin/, role === "super_admin" ? "/dashboard/super-admin" : "/dashboard/admin");
+    return NextResponse.redirect(new URL(newPath, request.url));
   }
 
   return supabaseResponse;

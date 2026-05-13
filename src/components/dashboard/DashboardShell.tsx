@@ -2,6 +2,7 @@
 
 import { SidebarProvider, useSidebar } from "./SidebarContext";
 import { DashboardSidebar } from "./DashboardSidebar";
+import { SupportWidget } from "./SupportWidget";
 
 function Shell({ children }: { children: React.ReactNode }) {
   const { collapsed } = useSidebar();
@@ -9,11 +10,11 @@ function Shell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-screen bg-[#F5F6FA]">
       <DashboardSidebar />
       <main
-        className="flex-1 min-w-0 transition-all duration-300"
-        style={{ marginLeft: collapsed ? 68 : 240 }}
+        className={`flex-1 min-w-0 transition-all duration-300 pb-16 lg:pb-0 ${collapsed ? "lg:ml-[68px]" : "lg:ml-60"}`}
       >
         {children}
       </main>
+      <SupportWidget />
     </div>
   );
 }

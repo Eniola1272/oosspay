@@ -28,7 +28,7 @@ export function SavingsSummaryWidget() {
           </div>
           <p className="text-sm font-bold text-[#1A1A2E]">Savings Targets</p>
         </div>
-        <Link href="/savings" className="text-xs text-[#C2185B] font-semibold hover:underline">
+        <Link href="/dashboard/savings" className="text-xs text-[#C2185B] font-semibold hover:underline">
           View All →
         </Link>
       </div>
@@ -47,7 +47,7 @@ export function SavingsSummaryWidget() {
           <Target size={32} className="text-[#C2185B]/30 mx-auto" />
           <p className="text-xs text-[#999999]">No active targets yet.</p>
           <Link
-            href="/savings"
+            href="/dashboard/savings"
             className="inline-block text-xs font-bold text-white bg-[#C2185B] hover:bg-[#a31545] px-4 py-1.5 rounded-lg transition-colors"
           >
             Create Your First Target

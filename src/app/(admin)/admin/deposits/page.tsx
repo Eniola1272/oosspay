@@ -8,8 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { createClient } from "@/lib/supabase/client";
-import { useAuth } from "@/context/AuthContext";
 import { formatNaira, formatDate, formatDateTime, getInitials } from "@/lib/utils";
 import { toast } from "sonner";
 import type { Transaction, TransactionStatus, Profile } from "@/types";
@@ -34,8 +32,6 @@ const STATUS_BADGE: Record<TransactionStatus, { label: string; color: string; ic
 };
 
 export default function AdminDepositsPage() {
-  const supabase = createClient();
-  const { user } = useAuth();
   const [deposits, setDeposits] = useState<TxWithUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabValue>("pending");
@@ -45,76 +41,53 @@ export default function AdminDepositsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   async function load() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = await (supabase as any)
-      .from("transactions")
-      .select("*, profiles(full_name, email)")
-      .eq("type", "deposit")
-      .order("created_at", { ascending: false });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rows = (data ?? []).map((r: any) => ({
-      ...r,
-      profile: r.profiles ?? null,
-    }));
-    setDeposits(rows);
+    const response = await fetch("/api/admin/deposits");
+    const result = await response.json().catch(() => ({ deposits: [] }));
+    if (!response.ok) {
+      toast.error(result.error ?? "Could not load deposit requests");
+    } else {
+      setDeposits(result.deposits ?? []);
+    }
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, []);
 
   const filtered = tab === "all" ? deposits : deposits.filter((d) => d.status === tab);
 
   async function handleApprove(tx: TxWithUser) {
     setSubmitting(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sb = supabase as any;
-
-    const { error } = await sb.from("transactions").update({
-      status: "completed",
-      recorded_by: user?.id ?? null,
-    }).eq("id", tx.id);
-
-    if (error) { toast.error(error.message); setSubmitting(false); return; }
-
-    await sb.from("notifications").insert({
-      user_id: tx.user_id,
-      title: "Deposit Confirmed!",
-      message: `Your deposit of ${formatNaira(Number(tx.amount))} has been confirmed and added to your savings balance.`,
-      type: "deposit",
+    const response = await fetch("/api/admin/deposits", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: tx.id, action: "approve" }),
     });
+    const result = await response.json().catch(() => ({}));
 
-    toast.success("Deposit confirmed");
+    if (!response.ok) { toast.error(result.error ?? "Could not confirm deposit"); setSubmitting(false); return; }
     setSubmitting(false);
-    load();
+    toast.success("Deposit confirmed");
+    await load();
   }
 
   async function handleReject(tx: TxWithUser, note: string) {
     setSubmitting(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sb = supabase as any;
-
-    const { error } = await sb.from("transactions").update({
-      status: "failed",
-      admin_note: note || null,
-    }).eq("id", tx.id);
-
-    if (error) { toast.error(error.message); setSubmitting(false); return; }
-
-    await sb.from("notifications").insert({
-      user_id: tx.user_id,
-      title: "Deposit Request Declined",
-      message: `Your deposit request of ${formatNaira(Number(tx.amount))} could not be confirmed.${
-        note ? ` Reason: ${note}` : " Please contact support for more information."
-      }`,
-      type: "deposit",
+    const response = await fetch("/api/admin/deposits", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: tx.id, action: "reject", admin_note: note }),
     });
+    const result = await response.json().catch(() => ({}));
 
-    toast.success("Deposit rejected");
+    if (!response.ok) { toast.error(result.error ?? "Could not reject deposit"); setSubmitting(false); return; }
     setRejectTarget(null);
     setAdminNote("");
     setSubmitting(false);
-    load();
+    toast.success("Deposit rejected");
+    await load();
   }
 
   return (

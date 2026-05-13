@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 import { formatNaira, formatDateTime, getInitials } from "@/lib/utils";
 import { toast } from "sonner";
 import type { WithdrawalRequest, WithdrawalStatus, Profile } from "@/types";
@@ -37,6 +38,7 @@ const STATUS_BADGE: Record<WithdrawalStatus, string> = {
 
 export default function AdminWithdrawalsPage() {
   const supabase = createClient();
+  const { user } = useAuth();
   const [requests, setRequests] = useState<WRWithUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabValue>("pending");
@@ -49,7 +51,7 @@ export default function AdminWithdrawalsPage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await (supabase as any)
       .from("withdrawal_requests")
-      .select("*, profiles(full_name, email)")
+      .select("*, profiles!withdrawal_requests_user_id_fkey(full_name, email)")
       .order("created_at", { ascending: false });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,7 +63,10 @@ export default function AdminWithdrawalsPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    load();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const filtered = tab === "all" ? requests : requests.filter((r) => r.status === tab);
 
@@ -73,6 +78,7 @@ export default function AdminWithdrawalsPage() {
     const { error } = await sb.from("withdrawal_requests").update({
       status: newStatus,
       admin_note: note || null,
+      reviewed_by: user?.id ?? null,
       reviewed_at: new Date().toISOString(),
     }).eq("id", wr.id);
 

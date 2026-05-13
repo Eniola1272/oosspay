@@ -1,27 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Target, Wallet, Bell, User,
-  LogOut, ChevronLeft, ChevronRight
+  LogOut, ChevronLeft, ChevronRight, ShieldCheck
 } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/shared/Logo";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useSidebar } from "./SidebarContext";
+import type { Profile } from "@/types";
 
 const NAV_ITEMS = [
-  { href: "/dashboard",      label: "Dashboard",   icon: LayoutDashboard },
-  { href: "/savings",        label: "My Savings",  icon: Target },
-  { href: "/withdraw",       label: "Withdraw",    icon: Wallet },
-  { href: "/notifications",  label: "Notifications", icon: Bell },
-  { href: "/profile",        label: "Profile",     icon: User },
+  { href: "/dashboard",                label: "Dashboard",     icon: LayoutDashboard },
+  { href: "/dashboard/savings",        label: "My Savings",    icon: Target },
+  { href: "/dashboard/withdraw",       label: "Withdraw",      icon: Wallet },
+  { href: "/dashboard/notifications",  label: "Notifications", icon: Bell },
+  { href: "/dashboard/profile",        label: "Profile",       icon: User },
 ];
 
 interface NavItemProps {
@@ -34,7 +42,7 @@ interface NavItemProps {
 
 function NavItem({ href, label, icon: Icon, collapsed, badge }: NavItemProps) {
   const pathname = usePathname();
-  const active = pathname === href || (href !== "/dashboard" && pathname.startsWith(href + "/"));
+  const active = pathname === href || (href !== "/dashboard" && href !== "/dashboard/profile" && pathname.startsWith(href));
   return (
     <Link
       href={href}
@@ -61,9 +69,127 @@ function NavItem({ href, label, icon: Icon, collapsed, badge }: NavItemProps) {
   );
 }
 
+function AccountMenu({
+  collapsed,
+  profile,
+  unreadCount,
+  isAdmin,
+  isSuperAdmin,
+  onNavigate,
+  onLogout,
+}: {
+  collapsed: boolean;
+  profile: Profile | null;
+  unreadCount: number;
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
+  onNavigate: (href: string) => void;
+  onLogout: () => void;
+}) {
+  if (!profile) return null;
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        title={collapsed ? "Account menu" : undefined}
+        className={cn(
+          "w-full rounded-lg text-left outline-none transition-all focus-visible:ring-2 focus-visible:ring-[#C2185B]/60",
+          collapsed
+            ? "flex items-center justify-center p-1 hover:bg-white/10"
+            : "flex items-center gap-3 px-3 py-2.5 hover:bg-white/10"
+        )}
+      >
+        {profile.avatar_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={profile.avatar_url}
+            alt={profile.full_name ?? "Avatar"}
+            className="w-9 h-9 rounded-full object-cover border-2 border-white/20 transition-all shrink-0 hover:border-[#C2185B]"
+          />
+        ) : (
+          <div className="w-9 h-9 rounded-full bg-linear-to-br from-[#C2185B] to-[#4A0820] flex items-center justify-center text-white text-sm font-bold shrink-0 border-2 border-white/10 transition-all">
+            {profile.full_name?.charAt(0).toUpperCase() ?? "U"}
+          </div>
+        )}
+
+        {!collapsed && (
+          <>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-white truncate leading-tight">{profile.full_name || "Member"}</p>
+              <p className="text-[10px] text-white/50 truncate mt-0.5">{profile.email}</p>
+            </div>
+            <ChevronRight size={14} className="text-white/35 shrink-0" />
+          </>
+        )}
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        side="right"
+        align="end"
+        sideOffset={10}
+        className="w-56 rounded-xl border border-[#E0E0E0] bg-white p-2 shadow-xl"
+      >
+        <div className="px-2 py-2">
+          <p className="text-xs font-semibold text-[#1A1A2E] truncate">{profile.full_name || "Member"}</p>
+          <p className="text-[11px] text-[#666666] truncate">{profile.email}</p>
+        </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() => onNavigate("/dashboard/profile")}
+          className="cursor-pointer gap-2 px-2 py-2 text-[#1A1A2E]"
+        >
+          <User size={15} />
+          Profile
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => onNavigate("/dashboard/notifications")}
+          className="cursor-pointer gap-2 px-2 py-2 text-[#1A1A2E]"
+        >
+          <Bell size={15} />
+          Notifications
+          {unreadCount > 0 && (
+            <Badge className="ml-auto bg-[#C2185B] text-white text-[10px] px-1.5 py-0 h-4 min-w-4 flex items-center justify-center">
+              {unreadCount > 9 ? "9+" : unreadCount}
+            </Badge>
+          )}
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => onNavigate("/dashboard/profile")}
+          className="cursor-pointer gap-2 px-2 py-2 text-[#1A1A2E]"
+        >
+          <ShieldCheck size={15} />
+          Account security
+        </DropdownMenuItem>
+        {isAdmin && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => onNavigate(isSuperAdmin ? "/dashboard/super-admin" : "/dashboard/admin")}
+              className="cursor-pointer gap-2 px-2 py-2 text-amber-600 font-semibold"
+            >
+              <ShieldCheck size={15} className="text-amber-500" />
+              Switch to Admin
+            </DropdownMenuItem>
+          </>
+        )}
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={onLogout}
+          variant="destructive"
+          className="cursor-pointer gap-2 px-2 py-2"
+        >
+          <LogOut size={15} />
+          Log out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 export function DashboardSidebar() {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, isAdmin, isSuperAdmin } = useAuth();
   const { unreadCount } = useNotifications();
+  const router = useRouter();
   const pathname = usePathname();
   const { collapsed, setCollapsed } = useSidebar();
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -110,30 +236,30 @@ export function DashboardSidebar() {
           ))}
         </nav>
 
-        {/* User + logout */}
-        <div className="border-t border-white/10 p-2 space-y-1">
-          <button
-            onClick={() => setLogoutOpen(true)}
-            title={collapsed ? "Logout" : undefined}
-            className={cn(
-              "flex items-center gap-3 rounded-lg text-sm font-medium text-white/65 hover:text-white hover:bg-white/10 w-full transition-all",
-              collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
-            )}
-          >
-            <LogOut size={18} className="shrink-0" />
-            {!collapsed && <span>Logout</span>}
-          </button>
-
-          {!collapsed && profile && (
-            <div className="flex items-center gap-2 px-3 py-2">
-              <div className="w-8 h-8 rounded-full bg-[#C2185B] flex items-center justify-center shrink-0 text-white text-xs font-bold">
-                {profile.full_name?.charAt(0).toUpperCase() ?? "U"}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-white truncate">{profile.full_name}</p>
-                <p className="text-[10px] text-white/50 truncate">{profile.email}</p>
-              </div>
+        {/* Account menu */}
+        <div className="border-t border-white/10 p-2">
+          {collapsed ? (
+            <div className="flex justify-center py-1">
+              <AccountMenu
+                collapsed
+                profile={profile}
+                unreadCount={unreadCount}
+                isAdmin={isAdmin}
+                isSuperAdmin={isSuperAdmin}
+                onNavigate={(href) => router.push(href)}
+                onLogout={() => setLogoutOpen(true)}
+              />
             </div>
+          ) : (
+            <AccountMenu
+              collapsed={false}
+              profile={profile}
+              unreadCount={unreadCount}
+              isAdmin={isAdmin}
+              isSuperAdmin={isSuperAdmin}
+              onNavigate={(href) => router.push(href)}
+              onLogout={() => setLogoutOpen(true)}
+            />
           )}
         </div>
       </aside>

@@ -45,9 +45,11 @@ export function LoginForm() {
     setLoading(false);
     if (error) { toast.error("Invalid email or password. Please try again."); return; }
 
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", authData.user.id).single();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    router.push((profile as any)?.role === "admin" ? "/admin" : "/dashboard");
+    const { data: profile } = await (supabase as any).from("profiles").select("role").eq("id", authData.user.id).single();
+    const role = profile?.role ?? "user";
+    const dest = role === "super_admin" ? "/dashboard/super-admin" : role === "admin" ? "/dashboard/admin" : "/dashboard";
+    router.push(dest);
   }
 
   return (

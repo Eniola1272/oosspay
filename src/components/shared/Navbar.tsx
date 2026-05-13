@@ -64,6 +64,12 @@ const navGroups: NavGroup[] = [
         icon: Sparkles,
       },
       {
+        label: "Documentation",
+        href: "/docs",
+        description: "Step-by-step guides for every feature on the platform.",
+        icon: BookOpen,
+      },
+      {
         label: "Privacy",
         href: "/privacy",
         description: "How we protect your data and your trust.",
@@ -284,7 +290,7 @@ export function Navbar() {
               href="/dashboard"
               className={cn(buttonVariants(), "bg-[#C2185B] hover:bg-[#a31545] text-white rounded-full px-5 h-9 text-xs")}
             >
-              Dashboard
+              Go to Dashboard
             </Link>
           ) : (
             <>
@@ -358,7 +364,7 @@ export function Navbar() {
                     onClick={() => setOpen(false)}
                     className={cn(buttonVariants(), "bg-[#C2185B] hover:bg-[#a31545] text-white w-full justify-center rounded-full")}
                   >
-                    Dashboard
+                    Go to Dashboard
                   </Link>
                 ) : (
                   <>

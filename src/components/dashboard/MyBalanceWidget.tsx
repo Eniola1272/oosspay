@@ -48,7 +48,7 @@ export function MyBalanceWidget() {
       {/* Actions */}
       <div className="flex gap-3 pt-1">
         <Link
-          href="/withdraw"
+          href="/dashboard/withdraw"
           className="flex-1 flex items-center justify-center gap-2 h-10 rounded-xl bg-[#1A1A2E] hover:bg-[#2a2a4a] text-white text-sm font-semibold transition-colors"
         >
           <ArrowUp size={15} /> Send
