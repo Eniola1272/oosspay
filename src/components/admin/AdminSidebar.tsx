@@ -1,16 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Users, CreditCard, Settings,
-  LogOut, ChevronLeft, ChevronRight, Inbox, ScrollText,
+  LogOut, ChevronLeft, ChevronRight, Inbox, ScrollText, User,
 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "@/components/shared/Logo";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
 import { useAdminSidebar } from "./AdminSidebarContext";
@@ -79,9 +82,9 @@ function NavItem({ href, label, icon: Icon, exact, collapsed, badge, isAmber }: 
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const { profile, signOut, isSuperAdmin } = useAuth();
   const { collapsed, setCollapsed } = useAdminSidebar();
-  const [logoutOpen, setLogoutOpen] = useState(false);
   const [pendingDeposits, setPendingDeposits] = useState(0);
 
   const isSuper = isSuperAdmin || pathname.startsWith("/dashboard/super-admin");
@@ -155,84 +158,83 @@ export function AdminSidebar() {
             />
           ))}
 
-          {/* Divider + user view link */}
-          <div className={cn("pt-3 mt-2 border-t border-white/10")}>
-            <Link
-              href="/dashboard"
-              title={collapsed ? "User View" : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-lg text-sm font-medium text-white/40 hover:text-white/70 hover:bg-white/10 transition-all",
-                collapsed ? "justify-center px-2 py-2.5" : "px-3 py-2.5"
-              )}
-            >
-              <LayoutDashboard size={16} className="shrink-0" />
-              {!collapsed && <span>User View</span>}
-            </Link>
-          </div>
         </nav>
 
-        {/* User + logout */}
+        {/* Account dropdown */}
         <div className="border-t border-white/10 p-2">
-          {collapsed ? (
-            <div className="flex flex-col items-center gap-1 py-1">
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              title={collapsed ? "Account menu" : undefined}
+              className={cn(
+                "w-full rounded-lg text-left outline-none transition-all focus-visible:ring-2",
+                isSuper ? "focus-visible:ring-amber-400/60" : "focus-visible:ring-[#C2185B]/60",
+                collapsed
+                  ? "flex items-center justify-center p-1 hover:bg-white/10"
+                  : "flex items-center gap-3 px-3 py-2.5 hover:bg-white/10"
+              )}
+            >
               {profile?.avatar_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={profile.avatar_url}
                   alt={profile.full_name ?? "Avatar"}
-                  className="w-9 h-9 rounded-full object-cover border-2 border-white/20"
+                  className="w-9 h-9 rounded-full object-cover border-2 border-white/20 shrink-0"
                 />
               ) : (
                 <div className={cn(
-                  "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold border-2 border-white/20",
-                  isSuper ? "bg-amber-500" : "bg-[#C2185B]"
+                  "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 border-2 border-white/10",
+                  isSuper ? "bg-linear-to-br from-amber-400 to-amber-600" : "bg-linear-to-br from-[#C2185B] to-[#4A0820]"
                 )}>
                   {profile?.full_name?.charAt(0).toUpperCase() ?? "A"}
                 </div>
               )}
-              <button
-                onClick={() => setLogoutOpen(true)}
-                title="Logout"
-                className="w-9 h-9 rounded-lg flex items-center justify-center text-white/50 hover:text-white hover:bg-white/10 transition-all"
-              >
-                <LogOut size={16} />
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              <button
-                onClick={() => setLogoutOpen(true)}
-                className="flex items-center gap-3 rounded-lg text-sm font-medium text-white/65 hover:text-white hover:bg-white/10 w-full transition-all px-3 py-2.5"
-              >
-                <LogOut size={18} className="shrink-0" />
-                <span>Logout</span>
-              </button>
-
-              {profile && (
-                <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg">
-                  {profile.avatar_url ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={profile.avatar_url}
-                      alt={profile.full_name ?? "Avatar"}
-                      className="w-9 h-9 rounded-full object-cover border-2 border-white/20 shrink-0"
-                    />
-                  ) : (
-                    <div className={cn(
-                      "w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 border-2 border-white/10",
-                      isSuper ? "bg-linear-to-br from-amber-400 to-amber-600" : "bg-linear-to-br from-[#C2185B] to-[#4A0820]"
-                    )}>
-                      {profile.full_name?.charAt(0).toUpperCase() ?? "A"}
-                    </div>
-                  )}
+              {!collapsed && (
+                <>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-white truncate leading-tight">{profile.full_name}</p>
-                    <p className="text-[10px] text-white/50 truncate mt-0.5">{profile.email}</p>
+                    <p className="text-xs font-semibold text-white truncate leading-tight">{profile?.full_name ?? "Admin"}</p>
+                    <p className="text-[10px] text-white/50 truncate mt-0.5">{profile?.email}</p>
                   </div>
-                </div>
+                  <ChevronRight size={14} className="text-white/35 shrink-0" />
+                </>
               )}
-            </div>
-          )}
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              side="right"
+              align="end"
+              sideOffset={10}
+              className="w-56 rounded-xl border border-[#E0E0E0] bg-white p-2 shadow-xl"
+            >
+              <div className="px-2 py-2">
+                <p className="text-xs font-semibold text-[#1A1A2E] truncate">{profile?.full_name ?? "Admin"}</p>
+                <p className="text-[11px] text-[#666666] truncate">{profile?.email}</p>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => router.push("/dashboard/profile")}
+                className="cursor-pointer gap-2 px-2 py-2 text-[#1A1A2E]"
+              >
+                <User size={15} />
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push("/dashboard")}
+                className="cursor-pointer gap-2 px-2 py-2 text-[#1A1A2E]"
+              >
+                <LayoutDashboard size={15} />
+                Switch to User View
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={handleLogout}
+                variant="destructive"
+                className="cursor-pointer gap-2 px-2 py-2"
+              >
+                <LogOut size={15} />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </aside>
 
@@ -257,19 +259,6 @@ export function AdminSidebar() {
         })}
       </nav>
 
-      {/* Logout dialog */}
-      <Dialog open={logoutOpen} onOpenChange={setLogoutOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Log out?</DialogTitle>
-            <DialogDescription>You will be signed out of the admin panel.</DialogDescription>
-          </DialogHeader>
-          <div className="flex gap-3 justify-end mt-2">
-            <Button variant="outline" onClick={() => setLogoutOpen(false)}>Cancel</Button>
-            <Button onClick={handleLogout} className="bg-[#E74C3C] hover:bg-red-700 text-white">Log out</Button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }
