@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AdminTopBar } from "@/components/admin/AdminTopBar";
-import { createClient } from "@/lib/supabase/client";
 import { formatNaira, formatDate, getInitials } from "@/lib/utils";
 import type { Profile } from "@/types";
 
@@ -21,20 +20,10 @@ export default function SuperAdminUsersPage() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data } = await (supabase as any).from("profiles").select("*").order("created_at", { ascending: false });
-      const profiles: Profile[] = data ?? [];
-      const withBalances = await Promise.all(profiles.map(async (p) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: balData } = await (supabase as any).rpc("get_user_balance", { p_user_id: p.id });
-        return { ...p, balance: Number(balData ?? 0) };
-      }));
-      setUsers(withBalances);
-      setLoading(false);
-    }
-    load();
+    fetch("/api/admin/users")
+      .then((r) => r.json())
+      .then((d) => { setUsers(d.users ?? []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   const filtered = users.filter((u) => {
@@ -94,7 +83,9 @@ export default function SuperAdminUsersPage() {
                     <td className="px-4 py-3 font-semibold text-[#1A1A2E] tabular-nums">{formatNaira(u.balance)}</td>
                     <td className="px-4 py-3 text-[#666666] hidden md:table-cell">{formatDate(u.created_at)}</td>
                     <td className="px-4 py-3">
-                      <Badge className={u.role === "admin" || u.role === "super_admin" ? "bg-amber-500 text-white text-[10px]" : "bg-[#E0E0E0] text-[#666666] text-[10px]"}>{u.role}</Badge>
+                      <Badge className={u.role === "admin" || u.role === "super_admin" ? "bg-amber-500 text-white text-[10px]" : "bg-[#E0E0E0] text-[#666666] text-[10px]"}>
+                        {u.role}
+                      </Badge>
                     </td>
                     <td className="px-4 py-3">
                       <Button size="sm" variant="ghost" className="text-amber-600 hover:bg-amber-50">
