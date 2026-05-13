@@ -64,6 +64,12 @@ const navGroups: NavGroup[] = [
         icon: Sparkles,
       },
       {
+        label: "Documentation",
+        href: "/docs",
+        description: "Step-by-step guides for every feature on the platform.",
+        icon: BookOpen,
+      },
+      {
         label: "Privacy",
         href: "/privacy",
         description: "How we protect your data and your trust.",
