@@ -139,6 +139,7 @@ export function Navbar() {
   const [hidden, setHidden] = useState(false);
   const [open, setOpen] = useState(false);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [mobileOpenGroup, setMobileOpenGroup] = useState<string | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastY = useRef(0);
   const { user } = useAuth();
@@ -311,80 +312,101 @@ export function Navbar() {
         </div>
 
         {/* Mobile hamburger */}
-        <Sheet open={open} onOpenChange={setOpen}>
+        <Sheet open={open} onOpenChange={(o) => { setOpen(o); if (!o) setMobileOpenGroup(null); }}>
           <SheetTrigger
-            className="lg:hidden p-2 text-[#1A1A2E] rounded-full hover:bg-black/5"
+            className="lg:hidden p-2 text-[#1A1A2E] rounded-full hover:bg-black/5 transition-colors"
             aria-label="Menu"
           >
-            {open ? <X size={20} /> : <Menu size={20} />}
+            <Menu size={20} />
           </SheetTrigger>
-          <SheetContent side="right" className="w-80 bg-white pt-12 overflow-y-auto">
-            <div className="flex flex-col gap-2">
-              {navGroups.map((group) => (
-                <details key={group.label} className="group/details border-b border-[#E0E0E0] last:border-b-0">
-                  <summary className="list-none cursor-pointer flex items-center justify-between py-3 px-2 text-base font-semibold text-[#1A1A2E] hover:text-[#C2185B] transition-colors">
-                    {group.label}
-                    <ChevronDown
-                      size={16}
-                      className="text-[#1A1A2E]/50 group-open/details:rotate-180 transition-transform"
-                    />
-                  </summary>
-                  <ul className="pl-2 pb-3 flex flex-col gap-1">
-                    {group.items.map(({ label, href, description, icon: Icon, external }) => {
-                      const linkProps = external
-                        ? { href, target: "_blank", rel: "noopener noreferrer" }
-                        : { href };
-                      const Tag = external ? "a" : Link;
-                      return (
-                        <li key={label}>
-                          <Tag
-                            {...linkProps}
-                            onClick={() => setOpen(false)}
-                            className="flex items-start gap-3 py-2.5 px-2 rounded-lg hover:bg-[#FCE4EC]/50 transition-colors"
-                          >
-                            <div className="w-8 h-8 rounded-md bg-[#FCE4EC] text-[#C2185B] flex items-center justify-center shrink-0">
-                              <Icon size={14} />
-                            </div>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium text-[#1A1A2E]">{label}</p>
-                              <p className="text-[11px] text-[#1A1A2E]/55 leading-snug">{description}</p>
-                            </div>
-                          </Tag>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </details>
-              ))}
 
-              <div className="flex flex-col gap-3 mt-6 px-2">
-                {user ? (
+          <SheetContent side="right" className="w-full sm:max-w-xs p-0 flex flex-col bg-white border-l border-[#F0F0F0]">
+            {/* Header */}
+            <div className="flex items-center pl-5 pr-14 h-16 border-b border-[#F0F0F0] shrink-0">
+              <Logo size="md" />
+            </div>
+
+            {/* Scrollable nav groups */}
+            <nav className="flex-1 overflow-y-auto">
+              {navGroups.map((group) => {
+                const isOpen = mobileOpenGroup === group.label;
+                return (
+                  <div key={group.label} className="border-b border-[#F0F0F0] last:border-b-0">
+                    <button
+                      type="button"
+                      onClick={() => setMobileOpenGroup(isOpen ? null : group.label)}
+                      className="w-full flex items-center justify-between px-5 py-4 text-sm font-bold text-[#1A1A2E] hover:text-[#C2185B] transition-colors"
+                    >
+                      {group.label}
+                      <ChevronDown
+                        size={15}
+                        className={cn("text-[#1A1A2E]/40 transition-transform duration-200", isOpen && "rotate-180 text-[#C2185B]")}
+                      />
+                    </button>
+
+                    <div
+                      className="overflow-hidden transition-all duration-200 ease-in-out"
+                      style={{ maxHeight: isOpen ? `${group.items.length * 60}px` : "0px" }}
+                    >
+                      <ul className="px-3 pb-3 space-y-0.5">
+                        {group.items.map(({ label, href, description, icon: Icon, external }) => {
+                          const linkProps = external
+                            ? { href, target: "_blank" as const, rel: "noopener noreferrer" }
+                            : { href };
+                          const Tag = external ? "a" : Link;
+                          return (
+                            <li key={label}>
+                              <Tag
+                                {...linkProps}
+                                onClick={() => setOpen(false)}
+                                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-[#FCE4EC]/60 active:bg-[#FCE4EC] transition-colors group/mitem"
+                              >
+                                <div className="w-9 h-9 rounded-xl bg-[#FCE4EC] text-[#C2185B] flex items-center justify-center shrink-0 group-hover/mitem:bg-[#C2185B] group-hover/mitem:text-white transition-colors">
+                                  <Icon size={15} />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-semibold text-[#1A1A2E] group-hover/mitem:text-[#C2185B] transition-colors">{label}</p>
+                                  <p className="text-[11px] text-[#666] leading-snug truncate">{description}</p>
+                                </div>
+                              </Tag>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  </div>
+                );
+              })}
+            </nav>
+
+            {/* Pinned CTA */}
+            <div className="shrink-0 px-5 py-5 border-t border-[#F0F0F0] space-y-2.5 bg-[#FAFAFA]">
+              {user ? (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-center w-full bg-[#C2185B] hover:bg-[#a31545] text-white font-bold text-sm rounded-2xl h-12 transition-colors shadow-md shadow-[#C2185B]/20"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <>
                   <Link
-                    href="/dashboard"
+                    href="/register"
                     onClick={() => setOpen(false)}
-                    className={cn(buttonVariants(), "bg-[#C2185B] hover:bg-[#a31545] text-white w-full justify-center rounded-full")}
+                    className="flex items-center justify-center w-full bg-[#C2185B] hover:bg-[#a31545] text-white font-bold text-sm rounded-2xl h-12 transition-colors shadow-md shadow-[#C2185B]/20"
                   >
-                    Go to Dashboard
+                    Sign Up Free
                   </Link>
-                ) : (
-                  <>
-                    <Link
-                      href="/login"
-                      onClick={() => setOpen(false)}
-                      className={cn(buttonVariants({ variant: "outline" }), "w-full border-[#C2185B] text-[#C2185B] justify-center rounded-full")}
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      href="/register"
-                      onClick={() => setOpen(false)}
-                      className={cn(buttonVariants(), "bg-[#C2185B] hover:bg-[#a31545] text-white w-full justify-center rounded-full")}
-                    >
-                      Sign Up Free
-                    </Link>
-                  </>
-                )}
-              </div>
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center justify-center w-full bg-white border border-[#E0E0E0] text-[#1A1A2E] font-semibold text-sm rounded-2xl h-11 hover:border-[#C2185B] hover:text-[#C2185B] transition-colors"
+                  >
+                    Login
+                  </Link>
+                </>
+              )}
             </div>
           </SheetContent>
         </Sheet>
