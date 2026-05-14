@@ -24,6 +24,8 @@ export async function GET() {
   const metadata = user.user_metadata ?? {};
   const fullName = typeof metadata.full_name === "string" ? metadata.full_name : "";
   const phone = typeof metadata.phone === "string" && metadata.phone.length > 0 ? metadata.phone : null;
+  // Google OAuth stores the profile photo in avatar_url (Supabase normalises Google's `picture` field)
+  const metaAvatar = typeof metadata.avatar_url === "string" ? metadata.avatar_url : null;
 
   if (fetchError) { console.error("[profile] fetch:", fetchError.message); return NextResponse.json({ error: "Could not load profile." }, { status: 500 }); }
   if (existing) {
@@ -31,6 +33,8 @@ export async function GET() {
     if (!existing.email && user.email) patch.email = user.email;
     if (!existing.full_name && fullName) patch.full_name = fullName;
     if (!existing.role) patch.role = "user";
+    // Backfill Google avatar if the profile has none and the user signed in with Google
+    if (!existing.avatar_url && metaAvatar) patch.avatar_url = metaAvatar;
 
     if (Object.keys(patch).length === 0) return NextResponse.json({ profile: existing });
 
@@ -53,6 +57,7 @@ export async function GET() {
       email: user.email ?? "",
       phone,
       role: "user",
+      avatar_url: metaAvatar,
     })
     .select("*")
     .single();

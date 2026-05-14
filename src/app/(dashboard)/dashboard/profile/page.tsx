@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { User, Shield, AlertTriangle, BadgeCheck } from "lucide-react";
+import { User, Shield, AlertTriangle, BadgeCheck, Camera, Loader2 } from "lucide-react";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,8 +27,52 @@ const NIGERIAN_BANKS = [
 export default function ProfilePage() {
   const { profile, isLoading, updateProfile } = useAuth();
   const [saving, setSaving] = useState(false);
+  const [avatarUploading, setAvatarUploading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  async function onAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowed = ["image/jpeg", "image/png", "image/webp"];
+    if (!allowed.includes(file.type)) {
+      toast.error("Only JPEG, PNG, and WebP images are allowed.");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be under 2 MB.");
+      return;
+    }
+
+    // Immediate local preview
+    setAvatarPreview(URL.createObjectURL(file));
+    setAvatarUploading(true);
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const res = await fetch("/api/profile/avatar", { method: "POST", body: formData });
+      const json = await res.json();
+      if (!res.ok) {
+        toast.error(json.error ?? "Could not upload avatar.");
+        setAvatarPreview(null);
+      } else {
+        updateProfile(json.profile);
+        toast.success("Profile picture updated!");
+      }
+    } catch {
+      toast.error("Network error. Please try again.");
+      setAvatarPreview(null);
+    } finally {
+      setAvatarUploading(false);
+      // Reset input so the same file can be re-selected after an error
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ProfileInput>({
     resolver: zodResolver(profileSchema),
@@ -117,10 +161,44 @@ export default function ProfilePage() {
       {/* Profile header */}
       <Card>
         <CardContent className="flex items-center gap-5 p-6">
-          <div className="w-16 h-16 rounded-full bg-[#C2185B] flex items-center justify-center text-white text-2xl font-bold shrink-0">
-            {profile?.full_name ? getInitials(profile.full_name) : <User size={28} />}
+          {/* Avatar with upload overlay */}
+          <div className="relative shrink-0 group">
+            <div className="w-16 h-16 rounded-full overflow-hidden bg-[#C2185B] flex items-center justify-center text-white text-2xl font-bold">
+              {(avatarPreview || profile?.avatar_url) ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={avatarPreview ?? profile!.avatar_url!}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                profile?.full_name ? getInitials(profile.full_name) : <User size={28} />
+              )}
+            </div>
+
+            {/* Upload overlay */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={avatarUploading}
+              className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:cursor-not-allowed"
+              aria-label="Change profile picture"
+            >
+              {avatarUploading
+                ? <Loader2 size={18} className="text-white animate-spin" />
+                : <Camera size={18} className="text-white" />}
+            </button>
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="hidden"
+              onChange={onAvatarChange}
+            />
           </div>
-          <div className="space-y-1">
+
+          <div className="space-y-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               <p className="text-lg font-bold text-[#1A1A2E]">{profile?.full_name ?? "—"}</p>
               {profile?.role && (
@@ -140,6 +218,14 @@ export default function ProfilePage() {
             {profile?.created_at && (
               <p className="text-xs text-[#666666]/70">Member since {formatDate(profile.created_at)}</p>
             )}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={avatarUploading}
+              className="text-xs text-[#C2185B] font-medium hover:underline disabled:opacity-50 mt-0.5"
+            >
+              {avatarUploading ? "Uploading…" : "Change photo"}
+            </button>
           </div>
         </CardContent>
       </Card>
