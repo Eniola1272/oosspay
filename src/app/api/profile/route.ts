@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { profileSchema } from "@/lib/validations";
+import { sendWelcomeEmail } from "@/lib/email";
 
 async function getUser() {
   const supabase = await createClient();
@@ -63,6 +64,11 @@ export async function GET() {
     .single();
 
   if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+
+  // Fire-and-forget welcome email
+  if (profile.email && profile.full_name) {
+    sendWelcomeEmail(profile.email, profile.full_name);
+  }
 
   return NextResponse.json({ profile });
 }

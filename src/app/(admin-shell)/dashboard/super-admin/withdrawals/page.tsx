@@ -9,8 +9,6 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { AdminTopBar } from "@/components/admin/AdminTopBar";
-import { createClient } from "@/lib/supabase/client";
-import { useAuth } from "@/context/AuthContext";
 import { formatNaira, formatDateTime, getInitials } from "@/lib/utils";
 import { toast } from "sonner";
 import type { WithdrawalRequest, WithdrawalStatus, Profile } from "@/types";
@@ -38,8 +36,6 @@ const STATUS_BADGE: Record<WithdrawalStatus, string> = {
 };
 
 export default function AdminWithdrawalsPage() {
-  const supabase = createClient();
-  const { user } = useAuth();
   const [requests, setRequests] = useState<WRWithUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<TabValue>("pending");
@@ -49,15 +45,10 @@ export default function AdminWithdrawalsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   async function load() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = await (supabase as any)
-      .from("withdrawal_requests")
-      .select("*, profiles!withdrawal_requests_user_id_fkey(full_name, email)")
-      .order("created_at", { ascending: false });
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const rows = (data ?? []).map((r: any) => ({ ...r, profile: r.profiles ?? null }));
-    setRequests(rows);
+    const res = await fetch("/api/admin/withdrawals");
+    const json = await res.json().catch(() => ({ withdrawals: [] }));
+    if (!res.ok) { toast.error(json.error ?? "Could not load withdrawals"); }
+    else { setRequests(json.withdrawals ?? []); }
     setLoading(false);
   }
 
@@ -70,34 +61,13 @@ export default function AdminWithdrawalsPage() {
 
   async function handleAction(wr: WRWithUser, newStatus: WithdrawalStatus, note?: string) {
     setSubmitting(true);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const sb = supabase as any;
-
-    const { error } = await sb.from("withdrawal_requests").update({
-      status: newStatus,
-      admin_note: note || null,
-      reviewed_by: user?.id ?? null,
-      reviewed_at: new Date().toISOString(),
-    }).eq("id", wr.id);
-
-    if (error) { toast.error(error.message); setSubmitting(false); return; }
-
-    const notifTitle = newStatus === "approved" ? "Withdrawal Approved" : newStatus === "rejected" ? "Withdrawal Rejected" : newStatus === "completed" ? "Withdrawal Completed" : "Withdrawal Updated";
-    const payout = wr.is_penalized ? Number(wr.payout_amount) : Number(wr.amount);
-    const notifMsg = newStatus === "completed"
-      ? `Your withdrawal has been completed. ${wr.is_penalized ? `${formatNaira(payout)} has been sent to your bank account (${(Number(wr.penalty_rate) * 100).toFixed(1)}% early withdrawal penalty of ${formatNaira(Number(wr.penalty_amount))} was deducted).` : `${formatNaira(payout)} has been sent to your bank account.`}`
-      : newStatus === "approved"
-      ? `Your withdrawal request of ${formatNaira(Number(wr.amount))} has been approved and will be processed soon.${wr.is_penalized ? ` Note: a ${(Number(wr.penalty_rate) * 100).toFixed(1)}% early withdrawal penalty applies; you will receive ${formatNaira(payout)}.` : ""}`
-      : newStatus === "rejected"
-      ? `Your withdrawal request of ${formatNaira(Number(wr.amount))} was declined.${note ? ` Reason: ${note}` : ""}`
-      : `Your withdrawal status has been updated.`;
-
-    await sb.from("notifications").insert({
-      user_id: wr.user_id,
-      title: notifTitle,
-      message: notifMsg,
-      type: "withdrawal",
+    const res = await fetch("/api/admin/withdrawals", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: wr.id, status: newStatus, admin_note: note ?? "" }),
     });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) { toast.error(json.error ?? "Could not update withdrawal"); setSubmitting(false); return; }
 
     toast.success(`Request marked as ${newStatus}`);
     setReviewTarget(null);

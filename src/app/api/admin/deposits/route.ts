@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 import { formatNaira } from "@/lib/utils";
+import { sendDepositConfirmedEmail, sendDepositRejectedEmail } from "@/lib/email";
 
 async function getAdminUser() {
   const userClient = await createClient();
@@ -79,6 +80,14 @@ export async function PATCH(request: NextRequest) {
   if (updateError) { console.error("[admin/deposits] update:", updateError.message); return NextResponse.json({ error: "Could not update deposit." }, { status: 500 }); }
 
   const confirmed = action === "approve";
+
+  // Fetch member profile for email
+  const { data: memberProfile } = await sb
+    .from("profiles")
+    .select("full_name, email")
+    .eq("id", tx.user_id)
+    .maybeSingle();
+
   await sb.from("notifications").insert({
     user_id: tx.user_id,
     title: confirmed ? "Deposit Confirmed!" : "Deposit Request Declined",
@@ -87,6 +96,15 @@ export async function PATCH(request: NextRequest) {
       : `Your deposit request of ${formatNaira(Number(tx.amount))} could not be confirmed.${adminNote ? ` Reason: ${adminNote}` : " Please contact support for more information."}`,
     type: "deposit",
   });
+
+  // Fire-and-forget email
+  if (memberProfile?.email && memberProfile?.full_name) {
+    if (confirmed) {
+      sendDepositConfirmedEmail(memberProfile.email, memberProfile.full_name, Number(tx.amount));
+    } else {
+      sendDepositRejectedEmail(memberProfile.email, memberProfile.full_name, Number(tx.amount), adminNote || undefined);
+    }
+  }
 
   return NextResponse.json({ transaction: tx });
 }
