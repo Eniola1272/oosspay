@@ -10,7 +10,7 @@ export const registerSchema = z.object({
   email: z.string().email("Enter a valid email address"),
   phone: z
     .string()
-    .regex(/^(\+234|0)[789]\d{9}$/, "Enter a valid Nigerian phone number")
+    .regex(/^(\+234|0)[789]\d{9}$/, "Enter a valid phone number (e.g. 08012345678)")
     .optional()
     .or(z.literal("")),
   password: z.string().min(8, "Password must be at least 8 characters"),
@@ -28,7 +28,7 @@ export const profileSchema = z.object({
   full_name: z.string().min(2, "Full name must be at least 2 characters"),
   phone: z
     .string()
-    .regex(/^(\+234|0)[789]\d{9}$/, "Enter a valid Nigerian phone number")
+    .regex(/^(\+234|0)[789]\d{9}$/, "Enter a valid phone number (e.g. 08012345678)")
     .optional()
     .or(z.literal("")),
   bank_name: z.string().optional().or(z.literal("")),

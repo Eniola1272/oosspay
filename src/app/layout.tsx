@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "OOSSPAY — Save Together, Grow Together",
     description:
-      "A people-first community savings platform helping Nigerians save consistently and reach their financial goals.",
+      "A people-first community savings platform helping Africans save consistently and reach their financial goals.",
     url: process.env.NEXT_PUBLIC_APP_URL,
     siteName: "OOSSPAY",
     images: [{ url: "/images/og-image.png", width: 1200, height: 630 }],

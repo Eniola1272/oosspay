@@ -83,7 +83,7 @@ export function Services() {
             </h2>
           </div>
           <p className="text-[#1A1A2E]/60 max-w-sm md:text-right">
-            Simple, powerful tools designed for real Nigerians with real
+            Simple, powerful tools designed for real Africans with real
             financial goals.
           </p>
         </div>

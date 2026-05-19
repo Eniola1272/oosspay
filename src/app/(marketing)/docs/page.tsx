@@ -47,7 +47,7 @@ export default function DocsPage() {
                 <FieldTable rows={[
                   { label: "Full Name",        type: "Text",     required: true,  notes: "Minimum 2 characters" },
                   { label: "Email Address",    type: "Email",    required: true,  notes: "Must be a valid email format" },
-                  { label: "Phone Number",     type: "Text",     required: false, notes: "Nigerian format: 0701234567 or +2347012345678" },
+                  { label: "Phone Number",     type: "Text",     required: false, notes: "e.g. 08012345678 or +2348012345678" },
                   { label: "Password",         type: "Password", required: true,  notes: "Minimum 8 characters" },
                   { label: "Confirm Password", type: "Password", required: true,  notes: "Must match Password exactly" },
                 ]} />
@@ -131,7 +131,7 @@ export default function DocsPage() {
                 </p>
                 <FieldTable rows={[
                   { label: "Amount (₦)",    type: "Number",   required: true,  notes: "Minimum ₦1,000. Cannot exceed your available balance." },
-                  { label: "Bank Name",      type: "Dropdown", required: true,  notes: "Select from 24 supported Nigerian banks." },
+                  { label: "Bank Name",      type: "Dropdown", required: true,  notes: "Select from 24 supported banks." },
                   { label: "Account Number", type: "Text",     required: true,  notes: "Exactly 10 digits." },
                   { label: "Account Name",   type: "Text",     required: true,  notes: "Name on the bank account." },
                   { label: "Reason",         type: "Text",     required: false, notes: "Brief reason for the withdrawal." },
@@ -325,7 +325,7 @@ export default function DocsPage() {
                     <FieldTable rows={[
                       { label: "Full Name",     type: "Text",  required: true,  notes: "Min 2 characters" },
                       { label: "Email Address", type: "Email", required: false, notes: "Read-only; contact support to change" },
-                      { label: "Phone Number",  type: "Text",  required: false, notes: "Nigerian format only" },
+                      { label: "Phone Number",  type: "Text",  required: false, notes: "e.g. 08012345678" },
                     ]} />
                   </div>
                   <div className="rounded-lg border border-[#E0E0E0] p-4 space-y-2">

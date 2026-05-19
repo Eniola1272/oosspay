@@ -25,7 +25,7 @@ const reasons = [
     desc: "No hidden charges. No surprise deductions. Your dashboard shows every naira in and every naira out.",
   },
   {
-    title: "Built for Real Nigerians",
+    title: "Built for Real Africans",
     desc: "We understand the hustle. Salaries come late, emergencies happen, every thousand naira matters. That is why we made OOSSPAY honest.",
   },
   {
@@ -41,26 +41,26 @@ const reasons = [
 export const metadata: Metadata = {
   title: "About OOSSPAY — People Over Profit",
   description:
-    "Learn the story, mission, and values behind OOSSPAY — Africa's people-first savings community.",
+    "Learn the story, mission, and values behind OOSSPAY, Africa's people-first savings community.",
 };
 
-const team = [
-  {
-    name: "Pastor Israel Ooss",
-    title: "CEO & Founder",
-    bio: "I am Pastor Israel Ooss, the Founder and CEO of OOSSPAY. I started this platform to bring financial empowerment to everyday Nigerians through community-driven savings.",
-  },
-  {
-    name: "Chiamaka F. Ogbodo",
-    title: "Sales Assistant",
-    bio: "I am Chiamaka, the Sales Assistant at OOSSPAY. I help onboard new members and ensure every saver gets the support they need to hit their financial goals.",
-  },
-  {
-    name: "Eniola Aderounmu",
-    title: "Lead Developer",
-    bio: "I am Eniola, the Lead Developer at OOSSPAY. I build and maintain the platform to make sure your savings experience is seamless, secure, and beautiful.",
-  },
-];
+// const team = [
+//   {
+//     name: "Pastor Israel Ooss",
+//     title: "CEO & Founder",
+//     bio: "I am Pastor Israel Ooss, the Founder and CEO of OOSSPAY. I started this platform to bring financial empowerment to everyday Nigerians through community-driven savings.",
+//   },
+//   {
+//     name: "Chiamaka F. Ogbodo",
+//     title: "Sales Assistant",
+//     bio: "I am Chiamaka, the Sales Assistant at OOSSPAY. I help onboard new members and ensure every saver gets the support they need to hit their financial goals.",
+//   },
+//   {
+//     name: "Eniola Aderounmu",
+//     title: "Lead Developer",
+//     bio: "I am Eniola, the Lead Developer at OOSSPAY. I build and maintain the platform to make sure your savings experience is seamless, secure, and beautiful.",
+//   },
+// ];
 
 export default function AboutPage() {
   return (
@@ -122,8 +122,7 @@ export default function AboutPage() {
                   <strong>S</strong>everal <strong>S</strong>olutions)
                 </span>
                 , built on the principle that when people come first, profit
-                follows. We&apos;re not backed by venture capital or driven by
-                investor returns. We&apos;re driven by the community we serve.
+                follows. We&apos;re driven by the community we serve.
               </p>
             </div>
           </div>
@@ -140,7 +139,7 @@ export default function AboutPage() {
                 {
                   icon: Eye,
                   title: "Our Vision",
-                  body: "Making Many Wealthy: We envision a future where consistent saving is the foundation for generational wealth across Nigeria, Africa, and beyond.",
+                  body: "Making Many Wealthy: We envision a future where consistent saving is the foundation for generational wealth across Africa and beyond.",
                 },
                 {
                   icon: Target,
@@ -188,7 +187,7 @@ export default function AboutPage() {
                     <span className="text-[#C2185B]">OOSSPAY</span>
                   </h2>
                   <p className="text-[#1A1A2E]/65 mb-8 max-w-md leading-relaxed">
-                    We&apos;re not just a savings platform. We&apos;re a movement &mdash; built for everyday Nigerians, by people who understand the journey.
+                    We&apos;re not just a savings platform. We&apos;re a movement built for everyday Africans, by people who understand the journey.
                   </p>
                 </div>
 

@@ -157,7 +157,7 @@ export function Hero() {
                 </div>
                 <p className="text-sm font-semibold text-[#1A1A2E]">
                   Trusted by <span className="text-[#C2185B]">500+</span>{" "}
-                  Nigerian savers
+                  African savers
                 </p>
               </div>
             </div>

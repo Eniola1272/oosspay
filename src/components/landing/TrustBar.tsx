@@ -17,7 +17,7 @@ const marqueeFeatures = [
   { icon: Zap, label: "Instant Dashboard" },
   { icon: BarChart3, label: "Real-Time Tracking" },
   { icon: Lock, label: "Zero Hidden Fees" },
-  { icon: HeartHandshake, label: "Built for Nigerians" },
+  { icon: HeartHandshake, label: "Built for Africans" },
   { icon: Wallet, label: "Withdraw Anytime" },
 ];
 

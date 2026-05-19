@@ -27,7 +27,7 @@ export function CTABanner() {
         </h2>
 
         <p className="reveal text-white/75 text-base md:text-lg mb-10 max-w-2xl mx-auto leading-relaxed" data-reveal-delay="220">
-          Join a community of Nigerians who are taking control of their finances, one saving at a time. No minimum amount. No complicated forms. Just a decision to start.
+          Join a community of Africans who are taking control of their finances, one saving at a time. No minimum amount. No complicated forms. Just a decision to start.
         </p>
 
         <div className="reveal flex flex-wrap items-center justify-center gap-4" data-reveal-delay="320">

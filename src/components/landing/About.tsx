@@ -52,7 +52,7 @@ export function About() {
               <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden shadow-2xl">
                 <Image
                   src="/images/girl-holding-tablet.png"
-                  alt="A young Nigerian saver tracking her goals on her tablet"
+                  alt="A young African saver tracking her goals on her tablet"
                   fill
                   sizes="(min-width: 1024px) 480px, 90vw"
                   className="object-cover"

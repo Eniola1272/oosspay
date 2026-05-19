@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title:
     "OOSSPAY — Save Smarter, Grow Together | People-First Savings Platform",
   description:
-    "OOSSPAY is Africa's people-first savings community. Set targets, save consistently, and track your wealth — all from your personal dashboard. Join 500+ members today.",
+    "OOSSPAY is Africa's people-first savings community. Set targets, save consistently, and track your wealth from your personal dashboard. Join 500+ members today.",
   keywords: [
     "OOSSPAY",
     "savings platform Africa",

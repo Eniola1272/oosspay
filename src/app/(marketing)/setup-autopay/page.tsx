@@ -447,7 +447,7 @@ export default function SetupAutoPayPage() {
             <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex gap-2 text-sm text-blue-800">
               <AlertCircle size={15} className="shrink-0 mt-0.5 text-blue-500" />
               <span>
-                Don&apos;t see your bank? The process is similar across all Nigerian banks; find <strong>Transfer, then Other Banks</strong> in your app and add OOSSPAY&apos;s account details. Contact{" "}
+                Don&apos;t see your bank? The process is similar across all supported banks; find <strong>Transfer, then Other Banks</strong> in your app and add OOSSPAY&apos;s account details. Contact{" "}
                 <a href="mailto:hello@oosspay.com" className="underline font-medium">hello@oosspay.com</a> if you need help.
               </span>
             </div>
