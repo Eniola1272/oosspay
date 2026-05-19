@@ -1,7 +1,10 @@
 "use client";
 
-import { CalendarDays, Clock } from "lucide-react";
+import { CalendarDays, Pencil, Trash2, MoreHorizontal } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ProgressRing } from "./ProgressRing";
 import { formatNaira, formatDate, getSavingsProgress } from "@/lib/utils";
 import type { SavingsTarget } from "@/types";
@@ -12,7 +15,15 @@ const statusColors: Record<string, string> = {
   cancelled: "bg-[#666666]/10 text-[#666666]",
 };
 
-export function SavingsTargetCard({ target }: { target: SavingsTarget }) {
+export function SavingsTargetCard({
+  target,
+  onEdit,
+  onDelete,
+}: {
+  target: SavingsTarget;
+  onEdit?: () => void;
+  onDelete?: () => void;
+}) {
   const progress = getSavingsProgress(target.current_amount, target.target_amount);
   const remaining = target.target_amount - target.current_amount;
 
@@ -22,11 +33,33 @@ export function SavingsTargetCard({ target }: { target: SavingsTarget }) {
 
   return (
     <div className="bg-white rounded-2xl border border-[#E0E0E0] p-5 hover:shadow-md transition-shadow space-y-4">
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="font-bold text-[#1A1A2E] text-base leading-tight">{target.name}</h3>
+      <div className="flex items-center gap-2">
+        <h3 className="font-bold text-[#1A1A2E] text-base leading-tight flex-1 min-w-0 truncate">{target.name}</h3>
         <Badge className={`text-[10px] shrink-0 ${statusColors[target.status] ?? ""}`}>
           {target.status.charAt(0).toUpperCase() + target.status.slice(1)}
         </Badge>
+        {(onEdit || onDelete) && (
+          <DropdownMenu>
+            <DropdownMenuTrigger className="shrink-0 p-1 rounded-lg text-[#999999] hover:text-[#1A1A2E] hover:bg-[#F5F5F5] transition-colors outline-none">
+              <MoreHorizontal size={16} />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              {onEdit && (
+                <DropdownMenuItem className="gap-2 cursor-pointer" onClick={onEdit}>
+                  <Pencil size={13} /> Edit target
+                </DropdownMenuItem>
+              )}
+              {onDelete && (
+                <DropdownMenuItem
+                  className="gap-2 cursor-pointer text-[#E74C3C] focus:text-[#E74C3C]"
+                  onClick={onDelete}
+                >
+                  <Trash2 size={13} /> Delete
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       <div className="flex items-center gap-5">

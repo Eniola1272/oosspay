@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard, Target, Wallet, Bell, User,
-  LogOut, ChevronLeft, ChevronRight, ShieldCheck
+  LogOut, ChevronLeft, ChevronRight, ShieldCheck, House
 } from "lucide-react";
 import { useState } from "react";
 import { Logo } from "@/components/shared/Logo";
@@ -266,6 +266,15 @@ export function DashboardSidebar() {
 
       {/* Mobile bottom nav */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A1A2E] border-t border-white/10 flex">
+        {/* Homepage link */}
+        <Link
+          href="/"
+          className="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-[10px] font-medium transition-colors relative text-white/50 hover:text-white"
+        >
+          <House size={20} />
+          Home
+        </Link>
+
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           const isNotif = label === "Notifications";

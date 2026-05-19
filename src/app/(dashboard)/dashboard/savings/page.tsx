@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { DashboardTopBar } from "@/components/dashboard/DashboardTopBar";
-import { Plus, Target, Pencil, Trash2 } from "lucide-react";
+import { Plus, Target } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -144,19 +144,12 @@ export default function SavingsPage() {
           {active.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-4">
               {active.map((t) => (
-                <div key={t.id} className="relative group">
-                  <SavingsTargetCard target={t} />
-                  <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button onClick={() => { setEditing(t); setModalOpen(true); }}
-                      className="p-1.5 bg-white rounded-lg border border-[#E0E0E0] hover:border-[#C2185B] text-[#666666] hover:text-[#C2185B]">
-                      <Pencil size={13} />
-                    </button>
-                    <button onClick={() => deleteTarget(t.id)}
-                      className="p-1.5 bg-white rounded-lg border border-[#E0E0E0] hover:border-[#E74C3C] text-[#666666] hover:text-[#E74C3C]">
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                </div>
+                <SavingsTargetCard
+                  key={t.id}
+                  target={t}
+                  onEdit={() => { setEditing(t); setModalOpen(true); }}
+                  onDelete={() => deleteTarget(t.id)}
+                />
               ))}
             </div>
           )}

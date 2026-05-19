@@ -107,7 +107,52 @@ export function TransactionTable() {
 
   return (
     <div className="bg-white rounded-2xl border border-[#EBEBEB] overflow-hidden">
-      <div className="overflow-x-auto">
+
+      {/* Mobile card list */}
+      <div className="lg:hidden divide-y divide-[#F5F5F5]">
+        {isLoading
+          ? Array.from({ length: PAGE_SIZE }).map((_, i) => (
+              <div key={i} className="px-4 py-3">
+                <Skeleton className="h-12 w-full" />
+              </div>
+            ))
+          : paginated.length === 0
+          ? (
+            <div className="px-4 py-10 text-center text-sm text-[#999999]">
+              No transactions found.
+            </div>
+          )
+          : paginated.map((tx) => {
+              const isDeposit = tx.type === "deposit";
+              const initials = tx.description?.charAt(0).toUpperCase() ?? (isDeposit ? "D" : "W");
+              const name = tx.description ?? (isDeposit ? "Deposit" : "Withdrawal");
+              const date = new Date(tx.created_at);
+              return (
+                <div key={tx.id} className="flex items-center gap-3 px-4 py-3.5">
+                  <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-xs font-bold shrink-0 ${isDeposit ? "bg-[#27AE60]" : "bg-[#C2185B]"}`}>
+                    {initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-[#1A1A2E] truncate">{name}</p>
+                    <p className="text-xs text-[#AAAAAA]">
+                      {date.toLocaleDateString("en-NG", { month: "short", day: "numeric", year: "numeric" })}
+                      {" · "}
+                      {date.toLocaleTimeString("en-NG", { hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className={`text-sm font-bold tabular-nums ${isDeposit ? "text-[#27AE60]" : "text-[#E74C3C]"}`}>
+                      {isDeposit ? "+" : "-"}₦{tx.amount.toLocaleString("en-NG", { minimumFractionDigits: 2 })}
+                    </p>
+                    <StatusBadge status={tx.status} />
+                  </div>
+                </div>
+              );
+            })}
+      </div>
+
+      {/* Desktop table */}
+      <div className="hidden lg:block overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-[#F0F0F0]">
@@ -201,7 +246,7 @@ export function TransactionTable() {
         </table>
       </div>
 
-      <div className="px-5 pb-4">
+      <div className="px-5 pb-4 border-t border-[#F5F5F5]">
         <Pager page={page} total={transactions.length} onPage={setPage} />
       </div>
     </div>

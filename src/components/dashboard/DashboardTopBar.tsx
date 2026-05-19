@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Bell } from "lucide-react";
+import { Bell } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -40,9 +40,6 @@ export function DashboardTopBar({ title, subtitle, showGreeting = false }: Dashb
 
       {/* Right: actions */}
       <div className="flex items-center gap-1">
-        <button className="w-9 h-9 rounded-full hover:bg-[#F5F5F5] flex items-center justify-center text-[#666666] transition-colors">
-          <Search size={18} />
-        </button>
         <Link
           href="/dashboard/notifications"
           className="relative w-9 h-9 rounded-full hover:bg-[#F5F5F5] flex items-center justify-center text-[#666666] transition-colors"

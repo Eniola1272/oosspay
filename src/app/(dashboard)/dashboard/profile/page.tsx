@@ -176,12 +176,12 @@ export default function ProfilePage() {
               )}
             </div>
 
-            {/* Upload overlay */}
+            {/* Upload overlay — always visible on mobile, hover-triggered on desktop */}
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={avatarUploading}
-              className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity disabled:cursor-not-allowed"
+              className="absolute inset-0 rounded-full bg-black/40 flex items-center justify-center opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity disabled:cursor-not-allowed"
               aria-label="Change profile picture"
             >
               {avatarUploading
