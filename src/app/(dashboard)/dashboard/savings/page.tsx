@@ -85,8 +85,8 @@ function TargetModal({
             <Input type="date" {...register("deadline")} min={new Date().toISOString().split("T")[0]} />
           </div>
           <div className="flex gap-3 pt-2">
-            <Button type="button" variant="outline" onClick={() => { onClose(); reset(); }} className="flex-1">Cancel</Button>
-            <Button type="submit" disabled={loading} className="flex-1 bg-[#C2185B] hover:bg-[#a31545] text-white">
+            <Button type="button" variant="outline" onClick={() => { onClose(); reset(); }} className="flex-1 h-12 rounded-xl">Cancel</Button>
+            <Button type="submit" disabled={loading} className="flex-1 h-12 rounded-xl bg-[#C2185B] hover:bg-[#a31545] text-white">
               {loading ? "Saving…" : editing ? "Save Changes" : "Create Target"}
             </Button>
           </div>

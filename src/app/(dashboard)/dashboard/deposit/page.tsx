@@ -326,7 +326,7 @@ export default function DepositPage() {
                         <select
                           value={savingsTargetId}
                           onChange={(e) => setSavingsTargetId(e.target.value)}
-                          className="w-full rounded-md border border-[#E0E0E0] bg-white px-3 py-2 text-sm text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C2185B]/30 focus:border-[#C2185B]"
+                          className="h-12 w-full rounded-xl border border-[#E0E0E0] bg-white px-4 text-sm text-[#333333] focus:outline-none focus:ring-2 focus:ring-[#C2185B]/20 focus:border-[#C2185B] transition-colors"
                         >
                           <option value="">No specific goal</option>
                           {activeTargets.map((t) => (
@@ -399,7 +399,7 @@ export default function DepositPage() {
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-[#C2185B] hover:bg-[#a31545] text-white"
+                      className="w-full h-12 rounded-xl bg-[#C2185B] hover:bg-[#a31545] text-white"
                     >
                       {loading ? "Submitting…" : "Submit Deposit Request"}
                     </Button>

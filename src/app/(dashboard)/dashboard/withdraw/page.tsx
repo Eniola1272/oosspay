@@ -146,7 +146,7 @@ export default function WithdrawPage() {
                   <Label>Bank Name</Label>
                   <select
                     {...register("bank_name")}
-                    className={`w-full border rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#C2185B]/30 ${errors.bank_name ? "border-[#E74C3C]" : "border-[#E0E0E0]"}`}
+                    className={`h-12 w-full rounded-xl border bg-white px-4 text-sm text-[#333333] focus:outline-none focus:ring-2 focus:ring-[#C2185B]/20 focus:border-[#C2185B] transition-colors ${errors.bank_name ? "border-[#E74C3C]" : "border-[#E0E0E0]"}`}
                   >
                     <option value="">Select your bank</option>
                     {NIGERIAN_BANKS.map((b) => <option key={b} value={b}>{b}</option>)}
@@ -192,8 +192,8 @@ export default function WithdrawPage() {
                 )}
 
                 <div className="flex gap-3">
-                  <Button type="button" variant="outline" onClick={() => reset()} className="flex-1">Cancel</Button>
-                  <Button type="submit" disabled={loading} className="flex-1 bg-[#C2185B] hover:bg-[#a31545] text-white">
+                  <Button type="button" variant="outline" onClick={() => reset()} className="flex-1 h-12 rounded-xl">Cancel</Button>
+                  <Button type="submit" disabled={loading} className="flex-1 h-12 rounded-xl bg-[#C2185B] hover:bg-[#a31545] text-white">
                     {loading ? "Submitting…" : "Submit Withdrawal Request"}
                   </Button>
                 </div>

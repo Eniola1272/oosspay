@@ -128,7 +128,7 @@ export function RegisterForm() {
       <div className="space-y-1">
         <IconInput
           icon={User}
-          placeholder="John Doe"
+          placeholder="First Name & Last Name"
           error={!!errors.full_name}
           {...register("full_name")}
         />

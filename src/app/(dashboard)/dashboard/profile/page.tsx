@@ -256,7 +256,7 @@ export default function ProfilePage() {
                 className={errors.phone ? "border-[#E74C3C]" : ""} />
               {errors.phone && <p className="text-xs text-[#E74C3C]">{errors.phone.message}</p>}
             </div>
-            <Button type="submit" disabled={saving} className="bg-[#C2185B] hover:bg-[#a31545] text-white">
+            <Button type="submit" disabled={saving} className="h-12 rounded-xl bg-[#C2185B] hover:bg-[#a31545] text-white">
               {saving ? "Saving…" : "Update Personal Info"}
             </Button>
           </form>
@@ -274,7 +274,7 @@ export default function ProfilePage() {
             <div className="space-y-1">
               <Label>Bank Name</Label>
               <select {...register("bank_name")}
-                className="w-full border border-[#E0E0E0] rounded-md px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#C2185B]/30">
+                className="h-12 w-full rounded-xl border border-[#E0E0E0] bg-white px-4 text-sm text-[#333333] focus:outline-none focus:ring-2 focus:ring-[#C2185B]/20 focus:border-[#C2185B] transition-colors">
                 <option value="">Select your bank</option>
                 {NIGERIAN_BANKS.map((b) => <option key={b} value={b}>{b}</option>)}
               </select>
@@ -289,7 +289,7 @@ export default function ProfilePage() {
               <Label>Account Name</Label>
               <Input placeholder="Name on bank account" {...register("bank_account_name")} />
             </div>
-            <Button type="submit" disabled={saving} className="bg-[#C2185B] hover:bg-[#a31545] text-white">
+            <Button type="submit" disabled={saving} className="h-12 rounded-xl bg-[#C2185B] hover:bg-[#a31545] text-white">
               {saving ? "Saving…" : "Update Bank Details"}
             </Button>
             <p className="text-xs text-[#666666]">
