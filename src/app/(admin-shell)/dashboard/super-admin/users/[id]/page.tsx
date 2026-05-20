@@ -1,16 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowLeft, Phone, Mail, Calendar, Wallet, CheckCircle2, Clock, XCircle, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import {
+  ArrowLeft, Phone, Mail, Calendar, Wallet,
+  CheckCircle2, Clock, XCircle, ArrowDownLeft, ArrowUpRight,
+  ShieldCheck, ShieldOff, UserX, UserCheck,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { AdminTopBar } from "@/components/admin/AdminTopBar";
 import { createClient } from "@/lib/supabase/client";
 import { balanceUpdateSchema, type BalanceUpdateInput } from "@/lib/validations";
@@ -29,7 +34,58 @@ const STATUS_BADGE: Record<string, string> = {
   rejected:   "bg-[#E74C3C]/10 text-[#E74C3C]",
 };
 
-export default function AdminUserDetailPage() {
+// ─── 4-digit PIN input ────────────────────────────────────────────────────────
+
+function PinInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const refs = [
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+    useRef<HTMLInputElement>(null),
+  ];
+  const digits = value.padEnd(4, "").split("").slice(0, 4);
+
+  function handleChange(i: number, ch: string) {
+    if (!/^\d?$/.test(ch)) return;
+    const next = digits.map((d, idx) => (idx === i ? ch : d)).join("").slice(0, 4);
+    onChange(next.replace(/ /g, ""));
+    if (ch && i < 3) refs[i + 1].current?.focus();
+  }
+
+  function handleKeyDown(i: number, e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Backspace" && !digits[i] && i > 0) {
+      refs[i - 1].current?.focus();
+    }
+  }
+
+  function handlePaste(e: React.ClipboardEvent) {
+    const text = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 4);
+    if (text.length === 4) { onChange(text); refs[3].current?.focus(); }
+    e.preventDefault();
+  }
+
+  return (
+    <div className="flex gap-3 justify-center" onPaste={handlePaste}>
+      {[0, 1, 2, 3].map((i) => (
+        <input
+          key={i}
+          ref={refs[i]}
+          type="password"
+          inputMode="numeric"
+          maxLength={1}
+          value={digits[i] === " " ? "" : digits[i]}
+          onChange={(e) => handleChange(i, e.target.value)}
+          onKeyDown={(e) => handleKeyDown(i, e)}
+          className="w-12 h-14 text-center text-xl font-bold border-2 border-[#E0E0E0] rounded-xl bg-white outline-none focus:border-[#C2185B] focus:ring-2 focus:ring-[#C2185B]/20 transition-colors"
+        />
+      ))}
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
+export default function SuperAdminUserDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const pathname = usePathname();
@@ -43,6 +99,11 @@ export default function AdminUserDetailPage() {
   const [withdrawals, setWithdrawals] = useState<WithdrawalRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+
+  // Role PIN dialog
+  const [roleDialog, setRoleDialog] = useState<"make_admin" | "remove_admin" | null>(null);
+  const [pin, setPin] = useState("");
+  const [pinSubmitting, setPinSubmitting] = useState(false);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<BalanceUpdateInput>({
     resolver: zodResolver(balanceUpdateSchema),
@@ -100,6 +161,44 @@ export default function AdminUserDetailPage() {
     loadData();
   }
 
+  async function toggleActive() {
+    if (!user) return;
+    setSubmitting(true);
+    const res = await fetch("/api/admin/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target_id: user.id, action: "set_active", is_active: !user.is_active }),
+    });
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) { toast.error(json.error ?? "Could not update account status"); setSubmitting(false); return; }
+    toast.success(user.is_active ? "Account deactivated" : "Account reactivated");
+    setSubmitting(false);
+    loadData();
+  }
+
+  async function confirmRoleChange() {
+    if (!user || !roleDialog) return;
+    if (pin.length !== 4) { toast.error("Enter your 4-digit PIN"); return; }
+    setPinSubmitting(true);
+    const newRole = roleDialog === "make_admin" ? "admin" : "user";
+    const res = await fetch("/api/admin/users", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ target_id: user.id, action: "set_role", role: newRole, pin }),
+    });
+    const json = await res.json().catch(() => ({}));
+    setPinSubmitting(false);
+    if (!res.ok) {
+      toast.error(json.error ?? "Could not update role");
+      setPin("");
+      return;
+    }
+    toast.success(roleDialog === "make_admin" ? `${user.full_name} is now an Admin` : `${user.full_name}'s admin access removed`);
+    setRoleDialog(null);
+    setPin("");
+    loadData();
+  }
+
   if (loading) {
     return (
       <div>
@@ -118,6 +217,8 @@ export default function AdminUserDetailPage() {
 
   if (!user) return null;
 
+  const isDeactivated = user.is_active === false;
+
   return (
     <div>
       <AdminTopBar title={user.full_name ?? "Member Detail"} subtitle={user.email} />
@@ -134,20 +235,68 @@ export default function AdminUserDetailPage() {
         <Card>
           <CardContent className="p-6">
             <div className="flex flex-wrap gap-5 items-start">
-              <div className="w-16 h-16 rounded-full bg-[#C2185B] text-white text-2xl font-bold flex items-center justify-center shrink-0">
+              <div className={`w-16 h-16 rounded-full text-white text-2xl font-bold flex items-center justify-center shrink-0 ${isDeactivated ? "bg-[#AAAAAA]" : "bg-[#C2185B]"}`}>
                 {getInitials(user.full_name)}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xl font-extrabold text-[#1A1A2E]">{user.full_name}</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="text-xl font-extrabold text-[#1A1A2E]">{user.full_name}</p>
+                  {isDeactivated && (
+                    <Badge className="bg-[#E74C3C]/10 text-[#E74C3C] text-[10px]">Deactivated</Badge>
+                  )}
+                </div>
                 <div className="mt-1.5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-[#666666]">
                   <span className="flex items-center gap-1.5"><Mail size={13} />{user.email}</span>
                   {user.phone && <span className="flex items-center gap-1.5"><Phone size={13} />{user.phone}</span>}
                   <span className="flex items-center gap-1.5"><Calendar size={13} />Joined {formatDate(user.created_at)}</span>
                 </div>
-                <div className="mt-1.5">
+                <div className="mt-2 flex flex-wrap items-center gap-2">
                   <Badge className={user.role === "admin" || user.role === "super_admin" ? "bg-[#C2185B] text-white text-[10px]" : "bg-[#E0E0E0] text-[#666666] text-[10px]"}>
                     {user.role}
                   </Badge>
+
+                  {/* Super-admin actions — never shown for super_admin targets */}
+                  {user.role !== "super_admin" && (
+                    <div className="flex flex-wrap gap-2 mt-0.5">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={submitting}
+                        onClick={toggleActive}
+                        className={isDeactivated
+                          ? "border-[#27AE60] text-[#27AE60] hover:bg-[#27AE60]/10 h-7 text-xs"
+                          : "border-[#E74C3C] text-[#E74C3C] hover:bg-[#E74C3C]/10 h-7 text-xs"
+                        }
+                      >
+                        {isDeactivated
+                          ? <><UserCheck size={12} className="mr-1" />Reactivate</>
+                          : <><UserX size={12} className="mr-1" />Deactivate</>
+                        }
+                      </Button>
+
+                      {user.role === "admin" ? (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={submitting}
+                          onClick={() => { setPin(""); setRoleDialog("remove_admin"); }}
+                          className="border-amber-500 text-amber-600 hover:bg-amber-50 h-7 text-xs"
+                        >
+                          <ShieldOff size={12} className="mr-1" />Remove Admin
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={submitting}
+                          onClick={() => { setPin(""); setRoleDialog("make_admin"); }}
+                          className="border-amber-500 text-amber-600 hover:bg-amber-50 h-7 text-xs"
+                        >
+                          <ShieldCheck size={12} className="mr-1" />Make Admin
+                        </Button>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="text-right shrink-0">
@@ -315,6 +464,43 @@ export default function AdminUserDetailPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* PIN confirmation dialog for role changes */}
+      <Dialog open={!!roleDialog} onOpenChange={(o) => { if (!o) { setRoleDialog(null); setPin(""); } }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              {roleDialog === "make_admin"
+                ? <><ShieldCheck size={18} className="text-amber-500" /> Make Admin</>
+                : <><ShieldOff size={18} className="text-amber-500" /> Remove Admin</>
+              }
+            </DialogTitle>
+            <DialogDescription>
+              {roleDialog === "make_admin"
+                ? `Grant admin access to ${user.full_name}. Enter your 4-digit super admin PIN to confirm.`
+                : `Remove admin access from ${user.full_name}. Enter your 4-digit super admin PIN to confirm.`
+              }
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 mt-2">
+            <PinInput value={pin} onChange={setPin} />
+            <div className="flex gap-3">
+              <Button variant="outline" className="flex-1" disabled={pinSubmitting}
+                onClick={() => { setRoleDialog(null); setPin(""); }}>
+                Cancel
+              </Button>
+              <Button
+                disabled={pin.length !== 4 || pinSubmitting}
+                className="flex-1 bg-amber-500 hover:bg-amber-600 text-white"
+                onClick={confirmRoleChange}
+              >
+                {pinSubmitting ? "Confirming…" : "Confirm"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

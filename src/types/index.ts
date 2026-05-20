@@ -25,6 +25,7 @@ export interface Profile {
   bank_account_number: string | null;
   bank_account_name: string | null;
   role: UserRole;
+  is_active: boolean;
   avatar_url: string | null;
   created_at: string;
   updated_at: string;

@@ -83,9 +83,14 @@ export default function SuperAdminUsersPage() {
                     <td className="px-4 py-3 font-semibold text-[#1A1A2E] tabular-nums">{formatNaira(u.balance)}</td>
                     <td className="px-4 py-3 text-[#666666] hidden md:table-cell">{formatDate(u.created_at)}</td>
                     <td className="px-4 py-3">
-                      <Badge className={u.role === "admin" || u.role === "super_admin" ? "bg-amber-500 text-white text-[10px]" : "bg-[#E0E0E0] text-[#666666] text-[10px]"}>
-                        {u.role}
-                      </Badge>
+                      <div className="flex flex-wrap gap-1">
+                        <Badge className={u.role === "admin" || u.role === "super_admin" ? "bg-amber-500 text-white text-[10px]" : "bg-[#E0E0E0] text-[#666666] text-[10px]"}>
+                          {u.role}
+                        </Badge>
+                        {u.is_active === false && (
+                          <Badge className="bg-[#E74C3C]/10 text-[#E74C3C] text-[10px]">inactive</Badge>
+                        )}
+                      </div>
                     </td>
                     <td className="px-4 py-3">
                       <Button size="sm" variant="ghost" className="text-amber-600 hover:bg-amber-50">
