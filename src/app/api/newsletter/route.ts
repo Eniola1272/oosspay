@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
         <h1 style="font-size:26px;font-weight:800;margin:0 0 12px">You're on the list.</h1>
         <p style="font-size:15px;color:#555;line-height:1.6;margin:0 0 24px">
           Thanks for subscribing! You'll hear from us when we have saving tips, member stories, or product updates worth sharing.
-          No spam &mdash; ever.
+          No spam... ever.
         </p>
         <p style="font-size:15px;color:#555;line-height:1.6;margin:0 0 32px">
           In the meantime, <a href="${process.env.NEXT_PUBLIC_APP_URL ?? "https://oosspay.com"}/register" style="color:#C2185B;font-weight:600;text-decoration:none">create your free savings account</a> if you haven't already.

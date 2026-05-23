@@ -25,7 +25,7 @@ export function WhyChooseUs() {
           {/* Left: Copy */}
           <div className="reveal max-w-md" data-reveal-delay="120">
             <h3 className="text-3xl md:text-4xl font-extrabold text-[#1A1A2E] leading-[1.15] tracking-tight mb-7">
-              Most people don&apos;t have a money problem&mdash;they have a{" "}
+              Most people don&apos;t have a money problem;they have a{" "}
               <span className="text-[#C2185B]">structure problem.</span>
             </h3>
             <p className="text-[#1A1A2E]/65 leading-relaxed text-base">

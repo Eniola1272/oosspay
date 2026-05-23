@@ -95,7 +95,7 @@ export function Hero() {
             >
               A people-first savings platform built for collective growth. Set
               targets, save consistently, and watch your financial future take
-              shape &mdash; together.
+              shape.
             </p>
 
             <div

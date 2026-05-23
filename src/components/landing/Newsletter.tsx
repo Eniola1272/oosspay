@@ -56,7 +56,7 @@ export function Newsletter() {
               <span className="text-[#C2185B]">the latest.</span>
             </h2>
             <p className="text-[#1A1A2E]/60 text-sm leading-relaxed max-w-md">
-              Saving tips, member stories, and product updates &mdash; straight to your inbox. No spam, ever.
+              Saving tips, member stories, and product updates straight to your inbox. No spam, ever.
             </p>
           </div>
 

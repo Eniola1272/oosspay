@@ -18,10 +18,10 @@ export function About() {
             </div>
 
             <p className="reveal text-[#1A1A2E]/65 leading-relaxed text-base" data-reveal-delay="100">
-              OOSSPAY isn&apos;t just another savings platform. We&apos;re a people-first economic community &mdash; built on the belief that wealth shouldn&apos;t be a privilege, it should be a shared journey.
+              OOSSPAY isn&apos;t just another savings platform. We&apos;re a people-first economic community built on the belief that wealth shouldn&apos;t be a privilege, it should be a shared journey.
             </p>
             <p className="reveal text-[#1A1A2E]/65 leading-relaxed text-base" data-reveal-delay="180">
-              Our mantra is simple: <strong className="text-[#C2185B]">People Over Profit.</strong> Everything we build, every decision we make, starts with one question &mdash; does this serve the people we exist for?
+              Our mantra is simple: <strong className="text-[#C2185B]">People Over Profit.</strong> Everything we build, every decision we make, starts with one question: does this serve the people we exist for?
             </p>
 
             <div className="reveal grid sm:grid-cols-3 gap-3 pt-4" data-reveal-delay="260">

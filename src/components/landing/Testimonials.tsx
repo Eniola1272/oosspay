@@ -13,7 +13,7 @@ const testimonials = [
   },
   {
     quote:
-      "What I love most is the transparency. I can see everything &mdash; every deposit, every update. No surprises. It&apos;s the first platform where I actually trust where my money is.",
+      "What I love most is the transparency. I can see everything; every deposit, every update. No surprises. It&apos;s the first platform where I actually trust where my money is.",
     name: "Abiodun R.",
     location: "Abuja",
     role: "Software Engineer",
@@ -22,7 +22,7 @@ const testimonials = [
   },
   {
     quote:
-      "The community aspect makes all the difference. It&apos;s not just an app &mdash; you feel like you&apos;re part of something bigger. People Over Profit isn&apos;t just a slogan here.",
+      "The community aspect makes all the difference. It&apos;s not just an app; you feel like you&apos;re part of something bigger. People Over Profit isn&apos;t just a slogan here.",
     name: "Nuru B.",
     location: "Port Harcourt",
     role: "Marketing Lead",
@@ -56,11 +56,10 @@ export function Testimonials() {
             ({ quote, name, location, role, image, highlight }, i) => (
               <div
                 key={name}
-                className={`reveal relative overflow-hidden rounded-3xl p-7 flex flex-col gap-5 transition-all hover:-translate-y-1 ${
-                  highlight
-                    ? "bg-linear-to-br from-[#C2185B] via-[#a01549] to-[#4A0820] text-white shadow-2xl shadow-[#C2185B]/40 md:scale-105"
-                    : "bg-white border border-[#E0E0E0] hover:shadow-xl"
-                }`}
+                className={`reveal relative overflow-hidden rounded-3xl p-7 flex flex-col gap-5 transition-all hover:-translate-y-1 ${highlight
+                  ? "bg-linear-to-br from-[#C2185B] via-[#a01549] to-[#4A0820] text-white shadow-2xl shadow-[#C2185B]/40 md:scale-105"
+                  : "bg-white border border-[#E0E0E0] hover:shadow-xl"
+                  }`}
                 data-reveal-delay={`${i * 120}`}
               >
                 {highlight && (
@@ -100,9 +99,8 @@ export function Testimonials() {
                   className={`relative mt-auto flex items-center gap-3 pt-5 border-t ${highlight ? "border-white/20" : "border-[#E0E0E0]"}`}
                 >
                   <div
-                    className={`relative w-11 h-11 rounded-full overflow-hidden shrink-0 ring-2 ${
-                      highlight ? "ring-white/30" : "ring-[#FCE4EC]"
-                    }`}
+                    className={`relative w-11 h-11 rounded-full overflow-hidden shrink-0 ring-2 ${highlight ? "ring-white/30" : "ring-[#FCE4EC]"
+                      }`}
                   >
                     <Image
                       src={image}
