@@ -4,7 +4,7 @@ import { Quote, Star } from "lucide-react";
 const testimonials = [
   {
     quote:
-      "I used to struggle saving 5,000 naira a month. With OOSSPAY, I&apos;ve saved over 150,000 naira in 6 months. The target tracker kept me going even when I wanted to give up.",
+      "I used to struggle saving 5,000 naira a month. With OOSSPAY, I've saved over 150,000 naira in 6 months. The target tracker kept me going even when I wanted to give up",
     name: "Chiamaka O.",
     location: "Lagos",
     role: "Small Business Owner",
@@ -13,7 +13,7 @@ const testimonials = [
   },
   {
     quote:
-      "What I love most is the transparency. I can see everything; every deposit, every update. No surprises. It&apos;s the first platform where I actually trust where my money is.",
+      "What I love most is the transparency. I can see everything; every deposit, every update. No surprises. It's the first platform where I actually trust where my money is.",
     name: "Abiodun R.",
     location: "Abuja",
     role: "Software Engineer",
@@ -22,7 +22,7 @@ const testimonials = [
   },
   {
     quote:
-      "The community aspect makes all the difference. It&apos;s not just an app; you feel like you&apos;re part of something bigger. People Over Profit isn&apos;t just a slogan here.",
+      "The community aspect makes all the difference. It's not just an app; you feel like you're part of something bigger. People Over Profit isn't just a slogan here.",
     name: "Nuru B.",
     location: "Port Harcourt",
     role: "Marketing Lead",
