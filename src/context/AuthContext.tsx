@@ -9,6 +9,8 @@ import type { Profile } from "@/types";
 
 const IDLE_TIMEOUT_MS  = 30 * 60 * 1000; // 30 minutes → sign out
 const IDLE_WARNING_MS  = 25 * 60 * 1000; // 25 minutes → show warning
+const LAST_ACTIVE_KEY  = "oosspay_last_active";      // persists across browser closes
+const PERSIST_THROTTLE = 60_000;                     // write localStorage at most once/min
 
 interface AuthContextValue {
   user: User | null;
@@ -66,24 +68,45 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [fetchProfile, user]);
 
   async function signOut() {
+    localStorage.removeItem(LAST_ACTIVE_KEY);
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
   }
 
   const forceSignOut = useCallback(async () => {
+    localStorage.removeItem(LAST_ACTIVE_KEY);
     setShowWarning(false);
     await supabase.auth.signOut();
     window.location.href = "/login";
   }, [supabase]);
 
+  // Write last-active to localStorage (throttled — avoids a write on every mousemove)
+  const persistLastActive = useCallback(() => {
+    const now = Date.now();
+    const stored = Number(localStorage.getItem(LAST_ACTIVE_KEY) ?? 0);
+    if (now - stored > PERSIST_THROTTLE) {
+      localStorage.setItem(LAST_ACTIVE_KEY, String(now));
+    }
+  }, []);
+
+  // Check whether the stored last-active time has already passed the idle threshold.
+  // Used on mount and when the user switches back to this tab.
+  const checkSessionExpiry = useCallback(async () => {
+    const stored = localStorage.getItem(LAST_ACTIVE_KEY);
+    if (stored && Date.now() - Number(stored) > IDLE_TIMEOUT_MS) {
+      await forceSignOut();
+    }
+  }, [forceSignOut]);
+
   const resetTimer = useCallback(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     if (warningRef.current) clearTimeout(warningRef.current);
     setShowWarning(false);
+    persistLastActive();
     warningRef.current = setTimeout(() => setShowWarning(true), IDLE_WARNING_MS);
     timeoutRef.current = setTimeout(forceSignOut, IDLE_TIMEOUT_MS);
-  }, [forceSignOut]);
+  }, [forceSignOut, persistLastActive]);
 
   // Start/stop idle tracking based on auth state
   useEffect(() => {
@@ -97,19 +120,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const events = ["mousemove", "keydown", "mousedown", "touchstart", "scroll"] as const;
     events.forEach((e) => window.addEventListener(e, resetTimer, { passive: true }));
+
+    // When the user returns to this tab after being away, check whether the
+    // persisted last-active time already passed the threshold.
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") checkSessionExpiry();
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
     resetTimer();
 
     return () => {
       events.forEach((e) => window.removeEventListener(e, resetTimer));
+      document.removeEventListener("visibilitychange", handleVisibility);
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (warningRef.current) clearTimeout(warningRef.current);
     };
-  }, [user, resetTimer]);
+  }, [user, resetTimer, checkSessionExpiry]);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (user) {
+        // Sign out immediately if the session went idle while the browser was closed
+        const stored = localStorage.getItem(LAST_ACTIVE_KEY);
+        if (stored && Date.now() - Number(stored) > IDLE_TIMEOUT_MS) {
+          localStorage.removeItem(LAST_ACTIVE_KEY);
+          await supabase.auth.signOut();
+          window.location.href = "/login";
+          return;
+        }
+        // Seed the timestamp on first load so future checks have a reference point
+        if (!stored) localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now()));
+        await fetchProfile(user.id);
+      }
       setUser(user);
-      if (user) await fetchProfile(user.id);
       setIsLoading(false);
     });
 
