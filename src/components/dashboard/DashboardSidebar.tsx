@@ -25,11 +25,11 @@ import { useSidebar } from "./SidebarContext";
 import type { Profile } from "@/types";
 
 const NAV_ITEMS = [
-  { href: "/dashboard",                label: "Dashboard",     icon: LayoutDashboard },
-  { href: "/dashboard/savings",        label: "My Savings",    icon: Target },
-  { href: "/dashboard/withdraw",       label: "Withdraw",      icon: Wallet },
-  { href: "/dashboard/notifications",  label: "Notifications", icon: Bell },
-  { href: "/dashboard/profile",        label: "Profile",       icon: User },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard/savings", label: "My Savings", icon: Target },
+  { href: "/dashboard/withdraw", label: "Withdraw", icon: Wallet },
+  { href: "/dashboard/notifications", label: "Notifications", icon: Bell },
+  { href: "/dashboard/profile", label: "Profile", icon: User },
 ];
 
 interface NavItemProps {
@@ -153,13 +153,13 @@ function AccountMenu({
             </Badge>
           )}
         </DropdownMenuItem>
-        <DropdownMenuItem
+        {/* <DropdownMenuItem
           onClick={() => onNavigate("/dashboard/profile")}
           className="cursor-pointer gap-2 px-2 py-2 text-[#1A1A2E]"
         >
           <ShieldCheck size={15} />
           Account security
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
         {isAdmin && (
           <>
             <DropdownMenuSeparator />

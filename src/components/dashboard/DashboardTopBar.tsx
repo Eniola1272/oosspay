@@ -142,13 +142,13 @@ export function DashboardTopBar({ title, subtitle, showGreeting = false }: Dashb
                     Settings
                   </DropdownMenuItem>
 
-                  <DropdownMenuItem
+                  {/* <DropdownMenuItem
                     onClick={() => router.push("/dashboard/profile")}
                     className="cursor-pointer gap-2 px-2 py-2 text-[#1A1A2E]"
                   >
                     <ShieldCheck size={15} />
                     Account security
-                  </DropdownMenuItem>
+                  </DropdownMenuItem> */}
 
                   {isAdmin && (
                     <>
