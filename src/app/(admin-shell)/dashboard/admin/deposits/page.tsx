@@ -130,21 +130,40 @@ export default function AdminDepositsPage() {
               return (
                 <div key={tx.id} className="rounded-2xl border border-[#E0E0E0] overflow-hidden bg-white">
                   <div
-                    className="flex flex-wrap items-center gap-3 px-5 py-4 cursor-pointer hover:bg-[#FAFAFA] transition-colors"
+                    className="flex items-start gap-3 px-5 py-4 cursor-pointer hover:bg-[#FAFAFA] transition-colors"
                     onClick={() => setExpandedId(isExpanded ? null : tx.id)}
                   >
-                    <div className="w-9 h-9 rounded-full bg-[#C2185B] text-white text-sm font-bold flex items-center justify-center shrink-0">
+                    {/* Avatar */}
+                    <div className="w-9 h-9 rounded-full bg-[#C2185B] text-white text-sm font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {getInitials(tx.profile?.full_name ?? "?")}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-[#1A1A2E] text-sm">{tx.profile?.full_name ?? "Unknown"}</p>
-                      <p className="text-xs text-[#666666]">{tx.profile?.email} · {formatDateTime(tx.created_at)}</p>
+
+                    {/* Content column */}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      {/* Row 1: name + amount */}
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-semibold text-[#1A1A2E] text-sm leading-tight truncate">
+                          {tx.profile?.full_name ?? "Unknown"}
+                        </p>
+                        <p className="font-extrabold text-base text-[#1A1A2E] tabular-nums shrink-0">
+                          {formatNaira(Number(tx.amount))}
+                        </p>
+                      </div>
+
+                      {/* Row 2: email */}
+                      <p className="text-xs text-[#666666] truncate">{tx.profile?.email}</p>
+
+                      {/* Row 3: date + status badge */}
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-xs text-[#666666]">{formatDateTime(tx.created_at)}</p>
+                        <Badge className={`${cfg.color} text-[10px] flex items-center gap-1 shrink-0`}>
+                          <Icon size={10} /> {cfg.label}
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <p className="font-extrabold text-lg text-[#1A1A2E] tabular-nums">{formatNaira(Number(tx.amount))}</p>
-                      <Badge className={`${cfg.color} text-[10px] flex items-center gap-1`}><Icon size={10} /> {cfg.label}</Badge>
-                      <ChevronDown size={16} className={`text-[#666666] transition-transform ${isExpanded ? "rotate-180" : ""}`} />
-                    </div>
+
+                    {/* Chevron */}
+                    <ChevronDown size={16} className={`text-[#666666] transition-transform shrink-0 mt-1 ${isExpanded ? "rotate-180" : ""}`} />
                   </div>
 
                   {isExpanded && (
