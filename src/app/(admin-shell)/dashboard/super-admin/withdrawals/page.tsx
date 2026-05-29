@@ -114,33 +114,52 @@ export default function AdminWithdrawalsPage() {
               return (
                 <div key={wr.id} className="rounded-2xl border border-[#E0E0E0] overflow-hidden bg-white">
                   <div
-                    className="flex flex-wrap items-center gap-3 px-5 py-4 cursor-pointer hover:bg-[#FAFAFA] transition-colors"
+                    className="flex items-start gap-3 px-5 py-4 cursor-pointer hover:bg-[#FAFAFA] transition-colors"
                     onClick={() => setExpandedId(isExpanded ? null : wr.id)}
                   >
-                    <div className="w-9 h-9 rounded-full bg-[#C2185B] text-white text-sm font-bold flex items-center justify-center shrink-0">
+                    {/* Avatar */}
+                    <div className="w-9 h-9 rounded-full bg-[#C2185B] text-white text-sm font-bold flex items-center justify-center shrink-0 mt-0.5">
                       {getInitials(wr.profile?.full_name ?? "?")}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-[#1A1A2E] text-sm">{wr.profile?.full_name ?? "Unknown"}</p>
-                      <p className="text-xs text-[#666666]">{wr.profile?.email} · {formatDateTime(wr.created_at)}</p>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0 flex-wrap justify-end">
-                      <div className="text-right">
-                        <p className="font-extrabold text-lg text-[#1A1A2E] tabular-nums">{formatNaira(Number(wr.amount))}</p>
-                        {wr.is_penalized && (
-                          <p className="text-xs text-[#27AE60] font-semibold tabular-nums">
-                            Payout: {formatNaira(Number(wr.payout_amount))}
-                          </p>
-                        )}
+
+                    {/* Content column — owns all rows */}
+                    <div className="flex-1 min-w-0 space-y-1">
+                      {/* Row 1: name + amount */}
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="font-semibold text-[#1A1A2E] text-sm leading-tight truncate">
+                          {wr.profile?.full_name ?? "Unknown"}
+                        </p>
+                        <p className="font-extrabold text-base text-[#1A1A2E] tabular-nums shrink-0">
+                          {formatNaira(Number(wr.amount))}
+                        </p>
                       </div>
+
+                      {/* Row 2: email */}
+                      <p className="text-xs text-[#666666] truncate">{wr.profile?.email}</p>
+
+                      {/* Row 3: date + badges */}
+                      <div className="flex items-center justify-between gap-2 flex-wrap">
+                        <p className="text-xs text-[#666666]">{formatDateTime(wr.created_at)}</p>
+                        <div className="flex items-center gap-1.5">
+                          {wr.is_penalized && (
+                            <Badge className="bg-amber-100 text-amber-700 text-[10px]">Penalty</Badge>
+                          )}
+                          <Badge className={`${STATUS_BADGE[wr.status]} text-[10px] flex items-center gap-1`}>
+                            <StatusIcon size={10} />{wr.status}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      {/* Row 4: payout (only when penalized) */}
                       {wr.is_penalized && (
-                        <Badge className="bg-amber-100 text-amber-700 text-[10px]">Penalty</Badge>
+                        <p className="text-xs text-[#27AE60] font-semibold tabular-nums">
+                          Payout: {formatNaira(Number(wr.payout_amount))}
+                        </p>
                       )}
-                      <Badge className={`${STATUS_BADGE[wr.status]} text-[10px] flex items-center gap-1`}>
-                        <StatusIcon size={10} />{wr.status}
-                      </Badge>
-                      <ChevronDown size={16} className={`text-[#666666] transition-transform ${isExpanded ? "rotate-180" : ""}`} />
                     </div>
+
+                    {/* Chevron */}
+                    <ChevronDown size={16} className={`text-[#666666] transition-transform shrink-0 mt-1 ${isExpanded ? "rotate-180" : ""}`} />
                   </div>
 
                   {isExpanded && (

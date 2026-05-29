@@ -223,18 +223,24 @@ export default function WithdrawPage() {
                 {withdrawals.map((w) => {
                   const cfg = statusConfig[w.status];
                   return (
-                    <div key={w.id} className="border border-[#E0E0E0] rounded-xl p-4 space-y-2">
-                      <div className="flex items-center justify-between">
+                    <div key={w.id} className="border border-[#E0E0E0] rounded-xl p-4 space-y-1.5">
+                      {/* Amount + status badge */}
+                      <div className="flex items-start justify-between gap-2">
                         <span className="font-bold text-[#1A1A2E] tabular-nums">{formatNaira(w.amount)}</span>
-                        <Badge className={`text-[10px] font-semibold ${cfg.color}`}>{cfg.label}</Badge>
+                        <Badge className={`text-[10px] font-semibold shrink-0 ${cfg.color}`}>{cfg.label}</Badge>
                       </div>
-                      <p className="text-xs text-[#666666]">{w.bank_name} · ••••{w.bank_account_number.slice(-4)}</p>
+                      {/* Bank info */}
+                      <p className="text-xs text-[#666666] truncate">{w.bank_name} · ••••{w.bank_account_number.slice(-4)}</p>
+                      {/* Date */}
                       <p className="text-xs text-[#666666]">{formatDate(w.created_at)}</p>
+                      {/* Penalty breakdown */}
                       {w.is_penalized && (
-                        <p className="text-xs bg-amber-50 text-amber-800 rounded-lg px-3 py-2">
-                          Early penalty: −{formatNaira(Number(w.penalty_amount))} · Payout: {formatNaira(Number(w.payout_amount))}
-                        </p>
+                        <div className="bg-amber-50 text-amber-800 rounded-lg px-3 py-2 space-y-0.5">
+                          <p className="text-xs">Early penalty: −{formatNaira(Number(w.penalty_amount))}</p>
+                          <p className="text-xs font-semibold">Payout: {formatNaira(Number(w.payout_amount))}</p>
+                        </div>
                       )}
+                      {/* Admin note */}
                       {w.admin_note && (
                         <p className="text-xs bg-[#E74C3C]/5 text-[#E74C3C] rounded-lg px-3 py-2">
                           Admin note: {w.admin_note}
